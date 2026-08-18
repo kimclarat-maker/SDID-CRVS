@@ -1,0 +1,29 @@
+.signature-area-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-card);
+}
+
+.signature-area-container .image-preview img {
+  border-radius: var(--radius-md);
+}
+
+#signatureCaptureWindow {
+  height: 300px;
+  background-color: var(--surface-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+#signatureImageWrapper {
+  height: 300px;
+}
+
+#signatureTxtWrapper {
+  height: 300px;
+}

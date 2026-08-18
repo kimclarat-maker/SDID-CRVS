@@ -1,0 +1,16 @@
+.landingSectionLayoutContainer {
+  padding: 3rem 1.5rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.landingSectionLayoutContainer .landingSectionLayoutTitle {
+  margin-bottom: 2rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .landingSectionLayoutContainer {
+    min-height: 40vh;
+  }
+}

@@ -1,0 +1,36 @@
+/*
+  The shared Table wrapper renders inside a ".card" (border/shadow/radius
+  already defined in components/card/styles.css). This file only needs to
+  clip the RSuite table to that rounded card and restyle the header row,
+  since row backgrounds/hover/borders already flow from the --rs-* token
+  mapping in App.less.
+*/
+.card:has(> .rs-table) ,
+.card > .rs-table {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.rs-table-cell-header {
+  background-color: var(--surface-subtle);
+}
+
+.rs-table-cell-header .rs-table-cell-content {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13.5px;
+}
+
+.rs-table-row {
+  font-size: 13.5px;
+  color: var(--text-primary);
+}
+
+.rs-table-cell {
+  border-bottom: 1px solid var(--border-default);
+}
+
+.card-footer {
+  border-top: 1px solid var(--border-default);
+  padding: 0 1.25rem;
+}

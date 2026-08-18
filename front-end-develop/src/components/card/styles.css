@@ -1,0 +1,17 @@
+.card {
+  border: 1px solid var(--border-default);
+  background-color: var(--surface-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.card-header {
+  border-bottom: 1px solid var(--border-default) !important;
+  min-height: 3rem;
+  border-right: 0;
+  border-left: 0;
+  border-top: 0;
+  background-color: transparent !important;
+  font-weight: 600;
+  color: var(--text-primary);
+}

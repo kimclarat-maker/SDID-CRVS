@@ -1,0 +1,161 @@
+/*
+  Legacy variable names used across ~50 component stylesheets and inline
+  styles, aliased onto the semantic tokens defined in
+  common/styles/tokens.css. Kept in place (rather than renamed at every
+  call site) so the whole app repaints from one source of truth.
+*/
+:root {
+  --primaryColor: var(--color-primary-500);
+  --primaryColor10: var(--color-primary-50);
+  --light: var(--surface-card);
+  --danger: var(--status-danger);
+  --hover: var(--surface-hover);
+  --infoColor: var(--status-info-bg);
+  --border: var(--border-default);
+  --dropdownShadow: var(--shadow-modal);
+  --success: var(--status-success);
+
+  --light-color: var(--surface-card);
+
+  --primary-color: var(--color-primary-500);
+
+  --bg-color: var(--surface-page);
+
+  --text-color: var(--text-primary);
+}
+
+.rs-theme-light {
+  --light: var(--surface-card);
+  --sidebar-bg: var(--surface-card);
+  --navbar-bg: var(--surface-card);
+  --bg-color: var(--surface-page);
+  --text-color: var(--text-primary);
+
+  --rs-gray-50: var(--surface-subtle);
+  --rs-gray-100: var(--surface-hover);
+  --rs-gray-200: var(--border-default);
+  --rs-gray-300: var(--border-strong);
+  --rs-gray-400: var(--text-muted);
+  --rs-gray-500: var(--text-secondary);
+  --rs-gray-600: var(--text-secondary);
+  --rs-gray-700: var(--text-primary);
+  --rs-gray-800: var(--text-primary);
+  --rs-gray-900: var(--text-primary);
+
+  --border-color: var(--border-default);
+
+  --rs-btn-default-text: var(--text-primary);
+  --rs-text-link: var(--color-primary-600);
+  --rs-text-secondary: var(--text-secondary);
+
+  --rs-primary-5: var(--surface-card);
+  --rs-primary-10: var(--color-primary-50);
+  --rs-primary-50: var(--color-primary-50);
+  --rs-primary-100: var(--color-primary-100);
+  --rs-primary-200: var(--color-primary-200);
+  --rs-primary-300: var(--color-primary-300);
+  --rs-primary-400: var(--color-primary-400);
+  --rs-primary-500: var(--color-primary-500);
+  --rs-primary-600: var(--color-primary-600);
+  --rs-primary-700: var(--color-primary-700);
+  --rs-primary-800: var(--color-primary-800);
+  --rs-primary-900: var(--color-primary-900);
+
+  --rs-success-500: var(--status-success);
+  --rs-warning-500: var(--status-warning);
+  --rs-danger-500: var(--status-danger);
+  --rs-info-500: var(--status-info);
+
+  /* Text */
+  --rs-text-primary: var(--text-primary);
+  --rs-text-secondary: var(--text-secondary);
+  --rs-text-heading: var(--text-primary);
+  --rs-text-disabled: var(--text-muted);
+  --rs-text-error: var(--status-danger);
+  --rs-text-active: var(--color-primary-600);
+  --rs-text-inverse: var(--text-inverse);
+
+  /* Surfaces / borders (cards, modals, overlays, tables, dividers) */
+  --rs-bg-card: var(--surface-card);
+  --rs-bg-overlay: var(--surface-card);
+  --rs-bg-well: var(--surface-subtle);
+  --rs-bg-active: var(--color-primary-50);
+  --rs-border-primary: var(--border-default);
+  --rs-border-secondary: var(--border-default);
+  --rs-divider-border: var(--border-default);
+  --rs-modal-border: var(--border-default);
+  --rs-table-border-color: var(--border-default);
+  --rs-state-hover-bg: var(--surface-hover);
+  --rs-input-bg: var(--surface-card);
+  --rs-input-focus-border: var(--focus-ring);
+
+  /* Tooltips */
+  --rs-tooltip-bg: var(--text-primary);
+  --rs-tooltip-text: var(--text-inverse);
+
+  /* Dropdown / listbox / selects / calendar selection */
+  --rs-dropdown-item-bg-active: var(--surface-selected);
+  --rs-dropdown-item-text-active: var(--color-primary-600);
+  --rs-listbox-option-hover-bg: var(--surface-hover);
+  --rs-listbox-option-selected-bg: var(--surface-selected);
+  --rs-listbox-option-selected-text: var(--color-primary-600);
+  --rs-menuitem-active-bg: var(--surface-selected);
+  --rs-menuitem-active-text: var(--color-primary-600);
+  --rs-calendar-today-bg: var(--color-primary-50);
+  --rs-calendar-today-text: var(--color-primary-600);
+  --rs-calendar-range-bg: var(--surface-selected);
+  --rs-calendar-date-selected-text: var(--text-inverse);
+
+  /* Status messages / alerts */
+  --rs-message-success-bg: var(--status-success-bg);
+  --rs-message-success-border: var(--status-success);
+  --rs-message-success-text: var(--status-success);
+  --rs-message-warning-bg: var(--status-warning-bg);
+  --rs-message-warning-border: var(--status-warning);
+  --rs-message-warning-text: var(--status-warning);
+  --rs-message-error-bg: var(--status-danger-bg);
+  --rs-message-error-border: var(--status-danger);
+  --rs-message-error-text: var(--status-danger);
+  --rs-message-info-bg: var(--status-info-bg);
+  --rs-message-info-border: var(--status-info);
+  --rs-message-info-text: var(--status-info);
+
+  /* Nav / tabs underline */
+  --rs-navs-text: var(--text-secondary);
+  --rs-navs-text-hover: var(--text-primary);
+  --rs-navs-text-active: var(--color-primary-600);
+  --rs-navs-tab-border: var(--border-default);
+
+  /* Sidenav (Sidenav component itself, distinct from our custom overrides) */
+  --rs-sidenav-default-bg: var(--surface-card);
+  --rs-sidenav-default-text: var(--text-secondary);
+  --rs-sidenav-default-hover-bg: var(--surface-hover);
+  --rs-sidenav-default-hover-text: var(--text-primary);
+  --rs-sidenav-default-selected-text: var(--color-primary-600);
+
+  --navbar-shadow: var(--shadow-sm);
+  --card-shadow: var(--shadow-card);
+
+  --input-placeholder: var(--text-muted);
+
+  --bs-secondary-color: var(--text-secondary);
+}
+
+/*
+  Dark theme intentionally removed: it was incomplete (missing half the
+  token set, a malformed rgba() value) and inconsistent with the light
+  design system. The theme switcher UI has been removed (see
+  components/navbar) and CustomProvider is now pinned to "light", so this
+  selector is unreachable; it is kept as a no-op alias rather than deleted
+  outright in case any third-party widget still probes for it.
+*/
+.rs-theme-dark {
+  .rs-theme-light();
+}
+
+@primary-color: #078ece;
+@base-color: #078ece;
+
+@font-family-base: "font-regular", "font-bold", "font-light", "font-medium",
+  sans-serif;
+@font-size-base: 16px;

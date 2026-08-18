@@ -1,0 +1,675 @@
+/* ==========================================================
+ * Titles
+ * =========================================================*/
+
+/* title of capture dialog */
+#BioCore-Capture-Title:before {
+	content:"Capture Preview";
+}
+
+/* title of annotations dialog */
+#BioCore-Annotation-Title:before {
+	content:"Annotation";
+}
+
+/* title of user interactions dialog */
+#BioCore-Interaction-Title:before {
+	content:"User action required..."
+}
+
+/* title of error message box */
+#BioCore-Exception-Title:before {
+	content: "Error..."
+}
+
+/* title of status dialog */
+#BioCore-Status-Title:before {
+	content: "Checking Status..."
+}
+
+#BioCore-Exception-Message-Title:before {
+	content: "Message"
+}
+
+#BioCore-Exception-Code-Title:before {
+	content: "Code"
+}
+
+#BioCore-Exception-CallStack-Title:before {
+	content: "Callstack"
+}
+
+#BioCore-Exception-LogData-Title:before {
+	content: "LogData"
+}
+
+#BioCore-Exception-Details-Title:before {
+	content: "Exception details"
+}
+
+#BioCore-Exception-Logs-Title:before {
+	content: "Open session logs"
+}
+
+#BioCore-Exception-Logs-Title.active:before {
+	content: "Close session logs"
+}
+
+/* ==========================================================
+ * Exceptions
+ * =========================================================*/
+/* message, if glass is dirty */
+.BioCore-Exception-DirtyGlass:before {
+	content: "Please clean the device."
+}
+
+/* message, if device is not present (anymore) */
+.BioCore-Exception-NoDevice:before {
+	content: "No device or device removed."
+}
+
+/* message, if device is not present (anymore) */
+.BioCore-Exception-Unexpected:before {
+	content: "Error message from server..."
+}
+
+/* ==========================================================
+ * Buttons
+ * =========================================================*/
+
+/* capture dialog - stop collection */
+#BioCore-Btn-StopCollection:before {
+	content: "Stop Collection"
+}
+
+/* capture dialog - force collection */
+#BioCore-Btn-ForceCollection:before {
+	content:"Force Collection"
+}
+
+/* annotation dialog - send annotations and start collection */
+#BioCore-Btn-StartCollection:before {
+	content:"Start Collection"
+}
+
+/* annotation dialog - send annotations and confirm user request */
+#BioCore-Btn-Confirm:before {
+	content: "Confirm"
+}
+
+/* annotation dialog - clear all annotations */
+#BioCore-Btn-Reset:before {
+	content: "Reset"
+}
+
+/* annotation dialog - cancel capture process */
+#BioCore-Btn-Cancel:before {
+	content:"Cancel"
+}
+
+/* errors dialog - accept message */
+#BioCore-Btn-Accept:before {
+	content: "Ok"
+}
+
+/* status dialog - cancel */
+#BioCore-Btn-StatusCancel:before {
+	content: "Cancel"
+}
+
+/* ==========================================================
+ * User Interaction
+ * =========================================================*/
+
+#BioCore-Title-Step:before {
+	content:"Step";
+}
+#BioCore-Title-Code:before {
+	content:"Code";
+}
+
+/* user interaction dialog - possible decisions */
+#BioCore-Box-Actions .enumNoResponse:before {
+	content:"No Response";
+}
+#BioCore-Annotation-SupportedDecisions .enumConfirmResult:before,
+#BioCore-Box-SupportedDecisions .enumConfirmResult:before {
+	content:"Confirm";
+}
+#BioCore-Annotation-SupportedDecisions .enumOverrideResult:before,
+#BioCore-Box-SupportedDecisions .enumOverrideResult:before {
+	content:"Override";
+}
+#BioCore-Annotation-SupportedDecisions .enumRepeatStep:before,
+#BioCore-Box-SupportedDecisions .enumRepeatStep:before {
+	content:"Repeat";
+}
+#BioCore-Annotation-SupportedDecisions .enumSkipStep:before,
+#BioCore-Box-SupportedDecisions .enumSkipStep:before {
+	content:"Skip";
+}
+#BioCore-Annotation-SupportedDecisions .enumAbortWorkflow:before,
+#BioCore-Box-SupportedDecisions .enumAbortWorkflow:before {
+	content:"Abort";
+}
+
+/* user interaction dialog - possible precessing steps */
+#BioCore-Content-Step.enumUnknownProcStep:before {
+	content:"Unknown processing step";
+}
+#BioCore-Content-Step.enumAcquisition:before {
+	content:"Aquisition";
+}
+#BioCore-Content-Step.enumSegmentation:before {
+	content:"Segmentation";
+}
+#BioCore-Content-Step.enumRollToSlapRatio:before {
+	content:"RollToSlapRatio";
+}
+#BioCore-Content-Step.enumSlapStitching:before {
+	content:"SlapStitching";
+}
+#BioCore-Content-Step.enumFitInFinalSize:before {
+	content:"FitInFinalSize";
+}
+#BioCore-Content-Step.enumLowerWritersPalmRatio:before {
+	content:"LowerWritersPalmRatio";
+}
+#BioCore-Content-Step.enumQualityCheck:before {
+	content:"Quality check";
+}
+#BioCore-Content-Step.enumUniquenessCheck:before {
+	content:"Uniqueness check";
+}
+#BioCore-Content-Step.enumSequenceCheck:before {
+	content:"Sequence check";
+}
+#BioCore-Content-Step.enumComplianceCheck:before {
+	content:"Compliance check";
+}
+#BioCore-Content-Step.enumVerification:before {
+	content:"Verification";
+}
+#BioCore-Content-Step.enumCompression:before {
+	content:"Compression";
+}
+#BioCore-Content-Step.enumTemplateExtraction:before {
+	content:"Template extraction";
+}
+#BioCore-Content-Step.enumUserReview:before {
+	content:"Review";
+}
+#BioCore-Content-Step.enumFinalize:before {
+	content:"Finalize";
+}
+
+/* user interaction dialog - possible errors */
+#BioCore-Content-Code.enumGenericError:before {
+	content:"Generic Error";
+}
+#BioCore-Content-Code.enumShiftedOrSmeared:before {
+	content:"ShiftedOrSmeared";
+}
+#BioCore-Content-Code.enumClearCaptureArea:before {
+	content:"ClearCaptureArea";
+}
+#BioCore-Content-Code.enumPresentationAttackDetected:before {
+	content:"PresentationAttackDetected";
+}
+#BioCore-Content-Code.enumMissingBiometrics:before {
+	content:"MissingBiometrics";
+}
+#BioCore-Content-Code.enumTooManyBiometrics:before {
+	content:"TooManyBiometrics";
+}
+#BioCore-Content-Code.enumNotFitInFinal:before {
+	content:"NotFitInFinal";
+}
+#BioCore-Content-Code.enumRollToSlapRatioToSmall:before {
+	content:"RollToSlapRatioToSmall";
+}
+#BioCore-Content-Code.enumLowQuality:before {
+	content:"LowQuality";
+}
+#BioCore-Content-Code.enumTooFewFeatures:before {
+	content:"TooFewFeatures";
+}
+#BioCore-Content-Code.enumWrongControlThumbs:before {
+	content:"WrongControlThumbs";
+}
+#BioCore-Content-Code.enumWrongControlFingers:before {
+	content:"WrongControlFingers";
+}
+#BioCore-Content-Code.enumMissingControlFingers:before {
+	content:"MissingControlFingers";
+}
+#BioCore-Content-Code.enumForeignFinger:before {
+	content:"ForeignFinger";
+}
+#BioCore-Content-Code.enumSwitchedFingers:before {
+	content:"SwitchedFingers";
+}
+#BioCore-Content-Code.enumSwitchedHands:before {
+	content:"SwitchedHands";
+}
+#BioCore-Content-Code.enumDoubledFinger:before {
+	content:"DoubledFinger";
+}
+#BioCore-Content-Code.enumComplianceWarning:before {
+	content:"ComplianceWarning";
+}
+#BioCore-Content-Code.enumNotVerified:before {
+	content:"NotVerified";
+}
+#BioCore-Content-Code.enumLowConfidence:before {
+	content:"LowConfidence";
+}
+#BioCore-Content-Code.enumCompressionRatioWarning:before {
+	content:"CompressionRatioWarning";
+}
+
+/* ==========================================================
+ * Capturing / Annotation - Positions
+ * =========================================================*/
+
+/* finger positions */
+#BioCore-ActivePosition.PositionFinger0:before {
+	content:"Unknown Finger";
+}
+#BioCore-ActivePosition.PositionFinger1:before,
+.Annotation-Label-RightThumb:before {
+	content:"Right Thumb";
+}
+#BioCore-ActivePosition.PositionFinger2:before,
+.Annotation-Label-RightIndex:before {
+	content:"Right Index Finger";
+}
+#BioCore-ActivePosition.PositionFinger3:before,
+.Annotation-Label-RightMiddle:before {
+	content:"Right Middle Finger";
+}
+#BioCore-ActivePosition.PositionFinger4:before,
+.Annotation-Label-RightRing:before {
+	content:"Right Ring Finger";
+}
+#BioCore-ActivePosition.PositionFinger5:before,
+.Annotation-Label-RightLittle:before {
+	content:"Right Little Finger";
+}
+#BioCore-ActivePosition.PositionFinger6:before,
+.Annotation-Label-LeftThumb:before {
+	content:"Left Thumb";
+}
+#BioCore-ActivePosition.PositionFinger7:before,
+.Annotation-Label-LeftIndex:before {
+	content:"Left Index Finger";
+}
+#BioCore-ActivePosition.PositionFinger8:before,
+.Annotation-Label-LeftMiddle:before {
+	content:"Left Middle Finger";
+}
+#BioCore-ActivePosition.PositionFinger9:before,
+.Annotation-Label-LeftRing:before {
+	content:"Left Ring Finger";
+}
+#BioCore-ActivePosition.PositionFinger10:before,
+.Annotation-Label-LeftLittle:before {
+	content:"Left Little Finger";
+}
+#BioCore-ActivePosition.PositionFinger11:before {
+	content:"Right Control Thumb";
+}
+#BioCore-ActivePosition.PositionFinger12:before {
+	content:"Left Control Thumb";
+}
+#BioCore-ActivePosition.PositionFinger13:before {
+	content:"Right Four Control Fingers";
+}
+#BioCore-ActivePosition.PositionFinger14:before {
+	content:"Left Four Control Fingers";
+}
+#BioCore-ActivePosition.PositionFinger15:before {
+	content:"Both Thumbs";
+}
+#BioCore-ActivePosition.PositionFinger20:before {
+	content:"UnknownPalm";
+}
+#BioCore-ActivePosition.PositionFinger21:before {
+	content:"RightFullPalm";
+}
+#BioCore-ActivePosition.PositionFinger22:before {
+	content:"RightWritersPalm";
+}
+#BioCore-ActivePosition.PositionFinger23:before {
+	content:"LeftFullPalm";
+}
+#BioCore-ActivePosition.PositionFinger24:before {
+	content:"LeftWritersPalm";
+}
+#BioCore-ActivePosition.PositionFinger25:before {
+	content:"RightLowerPalm";
+}
+#BioCore-ActivePosition.PositionFinger26:before {
+	content:"RightUpperPalm";
+}
+#BioCore-ActivePosition.PositionFinger27:before {
+	content:"LeftLowerPalm";
+}
+#BioCore-ActivePosition.PositionFinger28:before {
+	content:"LeftUpperPalm";
+}
+#BioCore-ActivePosition.PositionFinger29:before {
+	content:"RightOtherPalm";
+}
+#BioCore-ActivePosition.PositionFinger30:before {
+	content:"LeftOtherPalm";
+}
+#BioCore-ActivePosition.PositionFinger31:before {
+	content:"RightInterdigital";
+}
+#BioCore-ActivePosition.PositionFinger32:before {
+	content:"RightThenar";
+}
+#BioCore-ActivePosition.PositionFinger33:before {
+	content:"RightHypothenar";
+}
+#BioCore-ActivePosition.PositionFinger34:before {
+	content:"LeftInterdigital";
+}
+#BioCore-ActivePosition.PositionFinger35:before {
+	content:"LeftThenar";
+}
+#BioCore-ActivePosition.PositionFinger36:before {
+	content:"LeftHypothenar";
+}
+#BioCore-ActivePosition.PositionFinger40:before {
+	content:"RightIndexMiddle";
+}
+#BioCore-ActivePosition.PositionFinger41:before {
+	content:"RightMiddleRing";
+}
+#BioCore-ActivePosition.PositionFinger42:before {
+	content:"RightRingLittle";
+}
+#BioCore-ActivePosition.PositionFinger43:before {
+	content:"LeftIndexMiddle";
+}
+#BioCore-ActivePosition.PositionFinger44:before {
+	content:"LeftMiddleRing";
+}
+#BioCore-ActivePosition.PositionFinger45:before {
+	content:"LeftRingLittle";
+}
+#BioCore-ActivePosition.PositionFinger46:before {
+	content:"RightIndexLeftIndex";
+}
+#BioCore-ActivePosition.PositionFinger47:before {
+	content:"RightIndexMiddleRing";
+}
+#BioCore-ActivePosition.PositionFinger48:before {
+	content:"RightMiddleRingLittle";
+}
+#BioCore-ActivePosition.PositionFinger49:before {
+	content:"LeftIndexMiddleRing";
+}
+#BioCore-ActivePosition.PositionFinger50:before {
+	content:"LeftMiddleRingLittle";
+}
+
+/* face positions */
+#BioCore-ActivePosition.PositionFace0:before {
+	content: "Unknown Pose";
+}
+#BioCore-ActivePosition.PositionFace1:before {
+	content: "Frontal Face";
+}
+#BioCore-ActivePosition.PositionFace2:before {
+	content: "Full Frontal Face";
+}
+#BioCore-ActivePosition.PositionFace3:before {
+	content: "Token Frontal Face";
+}
+#BioCore-ActivePosition.PositionFace4:before {
+	content: "Right Profile Face";
+}
+#BioCore-ActivePosition.PositionFace5:before {
+	content: "Left Profile Face";
+}
+#BioCore-ActivePosition.PositionFace6:before {
+	content: "Right Angled Face";
+}
+#BioCore-ActivePosition.PositionFace7:before {
+	content: "Left Angled Face";
+}
+
+/* ==========================================================
+ * Capturing - Impressions
+ * =========================================================*/
+/* finger impressions */
+#BioCore-ActivePosition.ImpressionFinger0:after {
+	content: "Livescan Unknown Finger Capture";
+}
+#BioCore-ActivePosition.ImpressionFinger1:after {
+	content:"Livescan Plain Finger Capture";
+}
+#BioCore-ActivePosition.ImpressionFinger2:after {
+	content:"Livescan Rolled Finger Capture";
+}
+
+/* face impressions */
+#BioCore-ActivePosition.ImpressionFace0:after {
+	content: "Unknown Face Impression";
+}
+#BioCore-ActivePosition.ImpressionFace1:after {
+	content: "Static Photo Unknown Source";
+}
+#BioCore-ActivePosition.ImpressionFace2:after {
+	content: "Static Photo Still Camera";
+}
+#BioCore-ActivePosition.ImpressionFace3:after {
+	content: "Static Photo Scanner";
+}
+#BioCore-ActivePosition.ImpressionFace4:after{
+	content: "Video Unknown Source";
+}
+#BioCore-ActivePosition.ImpressionFace5:after {
+	content: "Video Digital Video Camera";
+}
+
+/* ==========================================================
+ * Capturing - Quality Indicators
+ * =========================================================*/
+#BioCore-QualityIndicators .BioCore-Quality0:before {
+	content: "NotPresent";
+	background: #c0c0c0;
+}
+#BioCore-QualityIndicators .BioCore-Quality1:before {
+	content:"Good";
+	background: #06D857;
+}
+#BioCore-QualityIndicators .BioCore-Quality2:before {
+	content:"TooLight";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality3:before {
+	content:"TooDark";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality4:before {
+	content:"BadShape";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality5:before {
+	content:"PosNotOk";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality6:before {
+	content:"NotPresent";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality7:before {
+	content:"TrackNotOk";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality8:before {
+	content:"PosTooHigh";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality9:before {
+	content:"PosTooLeft";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality10:before {
+	content:"PosTooRight";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality11:before {
+	content:"PosTooLow";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality12:before {
+	content:"FlxPosTooHigh";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality13:before {
+	content:"FlxPosTooLeft";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality14:before {
+	content:"FlxPosTooRight";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality15:before {
+	content:"FlxPosTooLow";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality16:before {
+	content:"TooClose";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality17:before {
+	content:"TooFar";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality18:before {
+	content:"NotFocused";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality19:before {
+	content:"NotStill";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality20:before {
+	content:"NotAligned";
+	background: #d9a420;
+}
+#BioCore-QualityIndicators .BioCore-Quality21:before {
+	content:"Occlusion";
+	background: #d9a420;
+}
+
+/* ==========================================================
+ * Annotations - Reasons
+ * =========================================================*/
+
+#BioCore-Annotation a.BioCore-Annotation0:before,
+#Annotation-Label.BioCore-Annotation0:after {
+	content:"NotAnnotated";
+}
+#BioCore-Annotation a.BioCore-Annotation1:before,
+#Annotation-Label.BioCore-Annotation1:after {
+	content:"OtherReason";
+}
+#BioCore-Annotation a.BioCore-Annotation2:before,
+#Annotation-Label.BioCore-Annotation2:after {
+	content:"Handicaped";
+}
+#BioCore-Annotation a.BioCore-Annotation3:before,
+#Annotation-Label.BioCore-Annotation3:after {
+	content:"UnableToAquire";
+}
+#BioCore-Annotation a.BioCore-Annotation4:before,
+#Annotation-Label.BioCore-Annotation4:after {
+	content:"PermanentMissing";
+}
+
+/* ==========================================================
+ * Status - States
+ * =========================================================*/
+
+.BioCore-Status-unchecked .BioCore-Status-Result:after {
+	content: "...";
+	color: darkgray;
+}
+
+.BioCore-Status-error .BioCore-Status-Result:after {
+	content: "Not available";
+	color: darkred;
+}
+
+.BioCore-Status-notready .BioCore-Status-Result:after {
+	content: "Not ready";
+	color: darkred;
+}
+
+.BioCore-Status-ok .BioCore-Status-Result:after {
+	content: "Ok";
+	color: darkgreen;
+}
+
+.BioCore-Status-yes .BioCore-Status-Result:after {
+	content: "Yes";
+	color: darkgreen;
+}
+
+.BioCore-Status-no-ok .BioCore-Status-Result:after {
+	content: "No";
+	color: darkgray;
+}
+
+.BioCore-Status-no .BioCore-Status-Result:after {
+	content: "No";
+	color: darkred;
+}
+
+#BioCore-Status-Connection .BioCore-Status-Label:before {
+	content: "Connection"
+}
+
+#BioCore-Status-License .BioCore-Status-Label:before {
+	content: "License"
+}
+
+#BioCore-Status-Device .BioCore-Status-Label:before {
+	content: "Device"
+}
+
+#BioCore-Status-Fingerprint .BioCore-Status-Label:before {
+	content: "Supports fingerprints?"
+}
+
+#BioCore-Status-Face .BioCore-Status-Label:before {
+	content: "Supports faces?"
+}
+
+#BioCore-Status-Iris .BioCore-Status-Label:before {
+	content: "Supports Irises?"
+}
+
+#BioCore-Status-Calibrating .BioCore-Status-Label:before {
+	content: "Calibration ok?"
+}
+
+#BioCore-Status-Session .BioCore-Status-Label:before {
+	content: "Session"
+}
+
+#BioCore-Status-Session.BioCore-Status-acquired .BioCore-Status-Result:after,
+#BioCore-Status-Session.BioCore-Status-available .BioCore-Status-Result:after {
+	content: "Ok";
+	color: darkgreen;
+}
+
+#BioCore-Status-Ready .BioCore-Status-Label:before {
+	content: "Ready"
+}

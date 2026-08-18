@@ -1,0 +1,47 @@
+.description-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem 1.5rem;
+  margin: 0;
+}
+
+.description-list-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.description-list-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.description-item dt {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.3rem;
+}
+
+.description-item dd {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  word-break: break-word;
+}
+
+@media only screen and (max-width: 900px) {
+  .description-list,
+  .description-list-cols-2,
+  .description-list-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media only screen and (max-width: 560px) {
+  .description-list,
+  .description-list-cols-2,
+  .description-list-cols-3 {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,19 @@
+<Workflow>
+  <Name>Face Capture</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Face>
+      <Pose>FrontalFace</Pose>
+      <Impression>FaceSingleVideoDigitalVideoCamera</Impression>
+    </Face>
+  </Step>
+  <Step>
+    <UseAutoCapture>false</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Face>
+      <Pose>UnknownFacePose</Pose>
+      <Impression>FaceSingleVideoDigitalVideoCamera</Impression>
+    </Face>
+  </Step>
+</Workflow>

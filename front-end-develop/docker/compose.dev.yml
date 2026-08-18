@@ -1,0 +1,5 @@
+services:
+  app:
+    image: ${TAG_COMMIT}
+    environment:
+      - VITE_NODE_ENV=development

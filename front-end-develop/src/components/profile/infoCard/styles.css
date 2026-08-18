@@ -1,0 +1,12 @@
+.info-card-profile-photo {
+  border-radius: 16px;
+  /* height: 200px;
+  width: 200px; */
+}
+
+.info-card-profile-photo img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  /* aspect-ratio: 3/2; */
+}

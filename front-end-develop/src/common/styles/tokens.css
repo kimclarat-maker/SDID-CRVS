@@ -1,0 +1,138 @@
+/*
+  Central design tokens for the SDID application shell — shared by the
+  internal staff/dashboard shell (App.less maps these onto the legacy
+  --bg-color, --rs-primary-*, etc. variable names the rest of the codebase
+  already consumes) AND the public-facing site (public-design-tokens.css
+  aliases its --brand-* names onto this same brand-primary-* scale), so the
+  whole application repaints from one source of truth: the login-page blue.
+*/
+:root {
+  /* Typography */
+  --font-family-sans: "Public Sans", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+
+  --font-size-display: clamp(2.5rem, 5vw, 4.75rem);
+  --font-size-h1: clamp(2rem, 3.5vw, 3.5rem);
+  --font-size-h2: clamp(1.75rem, 2.5vw, 2.75rem);
+  --font-size-h3: clamp(1.25rem, 1.8vw, 1.75rem);
+  --font-size-h4: 1.125rem;
+  --font-size-body-lg: 1.125rem;
+  --font-size-body: 1rem;
+  --font-size-body-sm: 0.875rem;
+  --font-size-caption: 0.75rem;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-display: 1.02;
+  --line-height-heading: 1.15;
+  --line-height-body: 1.6;
+  --line-height-compact: 1.35;
+
+  /* Brand color system (the existing login-page blue) */
+  --brand-primary-25: #f7fcfe;
+  --brand-primary-50: #eff9fd;
+  --brand-primary-100: #d9f1fb;
+  --brand-primary-200: #b8e4f7;
+  --brand-primary-300: #85d1f1;
+  --brand-primary-400: #42b4e5;
+  --brand-primary-500: #078ece;
+  --brand-primary-600: #067db6;
+  --brand-primary-700: #086493;
+  --brand-primary-800: #0c5478;
+  --brand-primary-900: #0d4665;
+
+  --surface-page: #f4f8fb;
+  --surface-card: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-subtle: #f8fbfd;
+  --surface-hover: #edf7fc;
+  --surface-selected: #e5f5fc;
+  --surface-overlay: rgba(13, 70, 101, 0.32);
+
+  --text-primary: #172b3a;
+  --text-secondary: #4d6575;
+  --text-muted: #718796;
+  --text-disabled: #9aabb5;
+  --text-inverse: #ffffff;
+
+  --border-subtle: #e8f0f4;
+  --border-default: #dce7ed;
+  --border-strong: #c7d7df;
+  --focus-ring: #078ece;
+
+  --status-success: #16865c;
+  --status-success-bg: #eaf8f1;
+  --status-warning: #b76b00;
+  --status-warning-bg: #fff7e6;
+  --status-danger: #c33d45;
+  --status-danger-bg: #fff0f1;
+  --status-info: #078ece;
+  --status-info-bg: #eaf7fc;
+  --status-neutral: #4d6575;
+  --status-neutral-bg: #f8fbfd;
+
+  --shadow-xs: 0 1px 2px rgba(23, 43, 58, 0.04);
+  --shadow-sm: 0 2px 8px rgba(23, 43, 58, 0.06);
+  --shadow-card: 0 8px 24px rgba(23, 43, 58, 0.07);
+  --shadow-modal: 0 24px 60px rgba(23, 43, 58, 0.18);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Public-page section / content spacing */
+  --section-space-desktop: 112px;
+  --section-space-tablet: 80px;
+  --section-space-mobile: 56px;
+  --content-gap-xl: 48px;
+  --content-gap-lg: 32px;
+  --content-gap-md: 24px;
+  --content-gap-sm: 16px;
+  --content-gap-xs: 8px;
+
+  /*
+    Legacy alias names consumed across ~50 existing component stylesheets
+    (dashboard shell, forms, tables). Kept in place rather than renamed at
+    every call site — they now resolve onto the brand-primary-* scale above
+    instead of a separate palette.
+  */
+  --color-primary-50: var(--brand-primary-50);
+  --color-primary-100: var(--brand-primary-100);
+  --color-primary-200: var(--brand-primary-200);
+  --color-primary-300: var(--brand-primary-300);
+  --color-primary-400: var(--brand-primary-400);
+  --color-primary-500: var(--brand-primary-500);
+  --color-primary-600: var(--brand-primary-600);
+  --color-primary-700: var(--brand-primary-700);
+  --color-primary-800: var(--brand-primary-800);
+  --color-primary-900: var(--brand-primary-900);
+
+  --color-accent-50: var(--brand-primary-50);
+  --color-accent-500: var(--brand-primary-700);
+  --color-accent-600: var(--brand-primary-800);
+}
+
+body {
+  font-family: var(--font-family-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

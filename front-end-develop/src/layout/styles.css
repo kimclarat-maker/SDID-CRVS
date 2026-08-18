@@ -1,0 +1,8 @@
+.appWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.appWrapper .appWrapperContent {
+  flex: 1;
+}

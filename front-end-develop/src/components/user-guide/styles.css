@@ -1,0 +1,30 @@
+.user-guide-attachment {
+  /* height: 50vh; */
+  border-radius: 16px;
+  margin-top: 2rem;
+}
+
+.user-guide-attachment img {
+  width: 100%;
+  border-radius: 16px;
+}
+
+.user-guide-content-container {
+  height: 95vh;
+  overflow-y: auto;
+}
+
+.user-guide-attachment:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* .user-guide-table-content-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: red;
+  overflow-y: auto;
+} */

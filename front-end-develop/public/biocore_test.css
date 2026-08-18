@@ -1,0 +1,124 @@
+/* ==========================================================
+ * index page
+ * =========================================================*/
+
+#targetFrame {
+  border: 0px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  z-index: 3;
+  background: #fff;
+}
+
+#targetFrame.hidden {
+  visibility: hidden;    
+}
+
+/* ==========================================================
+ * test pages
+ * =========================================================*/
+
+table.results {
+  table-layout: auto;
+  text-align: center;
+  vertical-align: middle;
+  width: 90%;
+  height: 90%;
+}
+
+div.framed {
+  position: relative;
+  border-radius: 5px;
+  text-align: center;
+  border: 1px solid black;
+}
+
+img {
+  position: relative;
+  border: none;
+}
+
+img.fourFingers {
+  width: 240px;
+  height: 200px;
+}
+img.twoFingers {
+  width: 120px;
+  height: 100px;
+}
+img.singleFinger {
+  width: 120px;
+  height: 180px;
+}
+img.rolledFinger {
+  width: 180px;
+  height: 180px;
+}
+img.faceResult {
+  width: 600px;
+  height: 800px;
+}
+img.upperPalm {
+  width: 240px;
+  height: 200px;
+}
+img.lowerPalm {
+  width: 240px;
+  height: 200px;
+}
+img.writersPalm {
+  width: 120px;
+  height: 200px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+
+.tooltip:hover {
+  border: 1px solid lightblue;
+}
+
+.tooltip > .tooltiptext {
+  visiblity: hidden;
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 20px;
+  padding: 10px;
+  background-color: lightblue;
+  font-family: Arial;
+  border-radius: 5px;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  width: 200px;
+}
+
+.tooltip > .tooltipte {
+  visibility: visible;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover > .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

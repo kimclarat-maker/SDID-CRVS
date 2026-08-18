@@ -1,0 +1,23 @@
+name: sdid-enrollment-frontend
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/dockerfile
+      target: runtime
+    restart: always
+    environment:
+      - VITE_API_KEY=${VITE_API_KEY}
+      - VITE_API_SECRET_KEY=${VITE_API_SECRET_KEY}
+      - VITE_APP_NAME=${VITE_APP_NAME}
+      - VITE_CLIENT=${VITE_CLIENT}
+      - VITE_DEVELOPMENT_API=${VITE_DEVELOPMENT_API}
+      - VITE_NODE_ENV=${VITE_NODE_ENV}
+      - VITE_PRODUCTION_API=${VITE_PRODUCTION_API}
+      - VITE_TEST_API=${VITE_TEST_API}
+      - VITE_LOCAL_SERVICE_API=${VITE_LOCAL_SERVICE_API}
+      - VITE_LOCAL_SERVICE_TIMEOUT=${VITE_LOCAL_SERVICE_TIMEOUT}
+      - VITE_OFFLINE_PACKAGE_DOWNLOAD_URL=${VITE_OFFLINE_PACKAGE_DOWNLOAD_URL}
+    ports:
+      - ${PORT}:80

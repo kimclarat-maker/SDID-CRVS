@@ -1,0 +1,31 @@
+/*
+  Scoped Bootstrap <-> design-token bridge.
+
+  Audit finding: Bootstrap 5 is loaded globally (index.html, CDN) purely for
+  utility classes (d-flex, gap-*, etc.) and react-bootstrap's Tabs/Tab.
+  Nothing else in the app imports react-bootstrap or relies on Bootstrap's
+  component classes (.btn, .card, .modal, .badge, .alert are all RSuite or
+  custom components instead), so this file only needs to repoint the small
+  set of Bootstrap CSS variables that leak into shared/utility markup
+  (Tabs, .d-flex helpers, disabled form controls) onto our own tokens,
+  rather than fighting Bootstrap's component styles selector-by-selector.
+*/
+:root {
+  --bs-body-font-family: "font-regular", sans-serif;
+  --bs-body-color: var(--text-primary);
+  --bs-body-bg: var(--surface-page);
+  --bs-border-color: var(--border-default);
+  --bs-primary: var(--color-primary-500);
+  --bs-primary-rgb: 7, 142, 206;
+  --bs-link-color: var(--color-primary-600);
+  --bs-link-hover-color: var(--color-primary-700);
+  --bs-focus-ring-color: rgba(7, 142, 206, 0.25);
+  --bs-secondary-color: var(--text-secondary);
+}
+
+/* react-bootstrap Tab content wrapper: avoid Bootstrap's default border/
+   padding fighting the pale-underline tab style in components/tabs. */
+.tab-content {
+  border: 0;
+  padding: 0;
+}

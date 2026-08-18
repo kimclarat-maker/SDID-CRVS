@@ -1,0 +1,11 @@
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.inputLabel {
+  display: flex;
+  align-items: center;
+}

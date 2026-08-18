@@ -1,0 +1,42 @@
+<Workflow>
+  <Name>Right To Left; 442; 1000 ppi; Jpeg 2000</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>JP2</ImageCompressionMethod>
+      <ImageCompressionRatio>12</ImageCompressionRatio>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+      <ImageResolution>1000</ImageResolution>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>JP2</ImageCompressionMethod>
+      <ImageCompressionRatio>12</ImageCompressionRatio>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>LeftFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+      <ImageResolution>1000</ImageResolution>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>JP2</ImageCompressionMethod>
+      <ImageCompressionRatio>12</ImageCompressionRatio>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>BothThumbs</Position>
+      <Impression>LivescanPlain</Impression>
+      <ImageResolution>1000</ImageResolution>
+    </Fingerprint>
+  </Step>
+</Workflow>

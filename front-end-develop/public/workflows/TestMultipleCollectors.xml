@@ -1,0 +1,35 @@
+<Workflow>
+  <Name>Test Multiple Collectors (442 + Iris)</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>LeftFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Iris>
+      <Position>BothIrises</Position>
+      <Impression>IrisRegular</Impression>
+    </Iris>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>BothThumbs</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

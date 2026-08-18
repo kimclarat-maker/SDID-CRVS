@@ -1,0 +1,18 @@
+<Workflow>
+  <Name>Single prints; both thumbs and both index fingers</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <Fingerprint>
+      <Position>BothThumbs</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightIndexLeftIndex</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Workflow>
+  <Name>Cherry Pick 13</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

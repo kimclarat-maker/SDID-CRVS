@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" role="img" aria-labelledby="platformLogoTitle">
+  <title id="platformLogoTitle">Legal Identity Services Platform</title>
+  <g>
+    <rect x="0" y="4" width="32" height="32" rx="8" fill="#12213B"/>
+    <path d="M16 10c-4.4 0-8 2.2-8 5v10c0 4 3.6 6.8 8 9 4.4-2.2 8-5 8-9V15c0-2.8-3.6-5-8-5z" fill="#0F9E96"/>
+    <path d="M12.5 20.2l2.6 2.6 5.4-5.6" stroke="#F5F7FA" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="40" y="26" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#12213B">Legal Identity</text>
+  <text x="40" y="36" font-family="Segoe UI, Arial, sans-serif" font-size="9" letter-spacing="1.5" fill="#0F9E96">SERVICES PLATFORM</text>
+</svg>

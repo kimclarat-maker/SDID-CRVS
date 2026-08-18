@@ -1,0 +1,6 @@
+export default {
+  shouldResetPassword: true,
+  email: "kibugenzad@gmail.com",
+  tempToken:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImtpYnVnZW56YWRAZ21haWwuY29tIiwic3RlcCI6Im1mYSIsImlhdCI6MTc0NjY1NzQwOSwiZXhwIjoxNzQ2NjU3NzA5LCJpc3MiOiIwWXBGMWVCR3Z1am04bTBkcjZaU2FuaXJEdUxkZ0VZSVpGeFFjLzVmeVFSNi9tSHl2SDBBeUdTNVNCWk94Zz09In0.yeNTwXYMF1ZbM0SiXvFK_6mv_lyHSeQw19xPb6G0v2A",
+};

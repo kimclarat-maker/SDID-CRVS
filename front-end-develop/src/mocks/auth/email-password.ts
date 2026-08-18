@@ -1,0 +1,5 @@
+export default {
+  message: "Choose MFA method.",
+  tempToken:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImtpYnVnZW56YWRAZ21haWwuY29tIiwic3RlcCI6Im1mYSIsImlhdCI6MTc0NjY1Njk1NCwiZXhwIjoxNzQ2NjU3MjU0LCJpc3MiOiIwWXBGMWVCR3Z1am04bTBkcjZaU2FuaXJEdUxkZ0VZSVpGeFFjLzVmeVFSNi9tSHl2SDBBeUdTNVNCWk94Zz09In0.y3EJiaAca_jI-41W2YJLTb53m4pxCTDwUCb1MN3Blrs",
+};

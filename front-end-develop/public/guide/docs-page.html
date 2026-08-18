@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SDID Enrollment – Citizen Biometric Capture Documentation</title>
+
+    <!-- Styles & Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.2/styles/atom-one-dark.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/plugins/simplelightbox/simple-lightbox.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/theme.css" />
+    <link rel="stylesheet" href="assets/css/global.css" />
+    <script defer src="assets/fontawesome/js/all.min.js"></script>
+  </head>
+
+  <body class="docs-page">
+    <!-- Header -->
+    <header class="header fixed-top">
+      <div class="branding docs-branding">
+        <div class="container-fluid position-relative py-2">
+          <div class="docs-logo-wrapper">
+            <button
+              id="docs-sidebar-toggler"
+              class="docs-sidebar-toggler docs-sidebar-visible me-2 d-xl-none"
+              type="button"
+            >
+              <span></span><span></span><span></span>
+            </button>
+            <div class="site-logo">
+              <a class="navbar-brand" href="/docs/index.html">
+                <img
+                  class="logo-icon me-2"
+                  src="assets/images/logo.png"
+                  alt="logo"
+                />
+                <span class="logo-text"
+                  >Enrollment<span class="text-alt"> Docs</span></span
+                >
+              </a>
+            </div>
+          </div>
+
+          <div
+            class="docs-top-utilities d-flex justify-content-end align-items-center gap-3"
+          >
+            <div class="top-search-box d-none d-lg-flex">
+              <form class="search-form">
+                <input
+                  type="text"
+                  placeholder="Search the docs..."
+                  name="search"
+                  class="form-control search-input"
+                />
+                <button type="submit" class="btn search-btn">
+                  <i class="fas fa-search"></i>
+                </button>
+              </form>
+            </div>
+
+            <div class="language-switcher ms-3">
+              <select id="language-select" class="form-select form-select-sm">
+                <option value="en" selected>English</option>
+                <option value="fr">French</option>
+                <option value="rw">Kinyarwanda</option>
+              </select>
+            </div>
+
+            <a
+              href="https://sdid.enrollment.dev.nida.gov.rw/"
+              class="btn btn-primary d-none d-lg-flex"
+            >
+              Start Enroll
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar + Content -->
+    <div class="docs-wrapper">
+      <div id="docs-sidebar" class="docs-sidebar">
+        <nav id="docs-nav" class="docs-nav navbar">
+          <ul class="section-items list-unstyled nav flex-column pb-3">
+            <!-- Sidebar links injected dynamically -->
+          </ul>
+        </nav>
+      </div>
+
+      <div class="docs-content">
+        <div class="container" id="docs-sections">
+          <!-- Articles injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/plugins/popper.min.js"></script>
+    <script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/plugins/smoothscroll.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.8/highlight.min.js"></script>
+    <script src="assets/js/highlight-custom.js"></script>
+    <script src="assets/plugins/simplelightbox/simple-lightbox.min.js"></script>
+    <script src="assets/plugins/gumshoe/gumshoe.polyfills.min.js"></script>
+
+    <!-- Load your docs data first -->
+    <script src="assets/js/docs-content.js"></script>
+
+    <!-- Then dynamic rendering script -->
+    <script src="assets/js/docs.js"></script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "pageTitle": "Inscription",
+  "pageIntro": "Toutes les informations nécessaires pour commencer avec le système d'inscription.",
+  "sections": [
+    {
+      "title": "Introduction",
+      "icon": "fas fa-info-circle",
+      "description": "Présentation claire du projet et des premières étapes pour utiliser le système d'inscription.",
+      "link": "docs-page.html#section-1"
+    },
+    {
+      "title": "Installation",
+      "icon": "fas fa-download",
+      "description": "Guide étape par étape pour installer et configurer les packages d'inscription.",
+      "link": "docs-page.html#section-2"
+    },
+    {
+      "title": "Authentification",
+      "icon": "fas fa-user-lock",
+      "description": "Instructions pour gérer les comptes utilisateurs et les méthodes d'authentification.",
+      "link": "docs-page.html#section-3"
+    },
+    {
+      "title": "Démarrer la capture biométrique",
+      "icon": "fas fa-fingerprint",
+      "description": "Guide pour capturer et traiter les données biométriques des utilisateurs.",
+      "link": "docs-page.html#section-4"
+    },
+    {
+      "title": "Vérification par selfie",
+      "icon": "fas fa-camera",
+      "description": "Instructions pour vérifier l'identité de l'utilisateur via la reconnaissance faciale.",
+      "link": "docs-page.html#section-5"
+    },
+    {
+      "title": "Approbation des demandes",
+      "icon": "fas fa-check-circle",
+      "description": "Guide pour examiner et approuver les demandes d'inscription efficacement.",
+      "link": "docs-page.html#section-6"
+    },
+    {
+      "title": "Gestion des rendez-vous",
+      "icon": "fas fa-calendar-alt",
+      "description": "Gérer, planifier et suivre les rendez-vous pour l'inscription.",
+      "link": "docs-page.html#section-7"
+    },
+    {
+      "title": "Gestion des centres",
+      "icon": "fas fa-building",
+      "description": "Gérer les centres d'inscription, leurs emplacements et détails.",
+      "link": "docs-page.html#section-8"
+    },
+    {
+      "title": "Gestion des appareils",
+      "icon": "fas fa-microchip",
+      "description": "Gérer les appareils biométriques, leur configuration et leur utilisation.",
+      "link": "docs-page.html#section-9"
+    }
+  ]
+}

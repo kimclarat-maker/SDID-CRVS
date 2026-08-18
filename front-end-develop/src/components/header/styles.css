@@ -1,0 +1,11 @@
+.headerContainer {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.headerContainer h1 {
+  font-size: 18px;
+  color: var(--primaryColor);
+}

@@ -1,0 +1,43 @@
+<Workflow>
+  <Name>Left To Right; 4411; 1200x1000</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <FinalImageWidth>1600</FinalImageWidth>
+    <FinalImageHeight>1000</FinalImageHeight>
+    <Fingerprint>
+      <Position>LeftFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <FinalImageWidth>1600</FinalImageWidth>
+    <FinalImageHeight>1000</FinalImageHeight>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <FinalImageWidth>500</FinalImageWidth>
+    <FinalImageHeight>1000</FinalImageHeight>
+    <Fingerprint>
+      <Position>LeftCtrlThumb</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <FinalImageWidth>500</FinalImageWidth>
+    <FinalImageHeight>1000</FinalImageHeight>
+    <Fingerprint>
+      <Position>RightCtrlThumb</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

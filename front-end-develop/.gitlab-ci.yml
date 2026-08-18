@@ -1,0 +1,144 @@
+stages:
+  - build
+  - deploy-uat
+  - deploy-test
+  - deploy-prod
+
+variables:
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+
+.build-config:
+  image: docker:cli
+  only:
+    - testing
+    - main
+    - develop
+    - merge_requests
+  tags:
+    - sdiduat
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - curl -I https://npm.wacom.com/node-modules/
+  script:
+    - |
+      if [ "$CI_COMMIT_REF_NAME" = "main" ]; then
+        echo "Building for production with clean cache..."
+        docker build --no-cache -t $TAG_COMMIT -t $TAG_LATEST -f docker/dockerfile .
+      else
+        echo "Building with cache..."
+        docker build -t $TAG_COMMIT -t $TAG_LATEST -f docker/dockerfile .
+      fi
+    - docker push $TAG_COMMIT
+    - docker push $TAG_LATEST
+
+build:
+  stage: build
+  extends: .build-config
+
+.deploy-config:
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+.deploy-config-test:
+  extends: .deploy-config
+  stage: deploy-test
+  only:
+    - testing
+  needs:
+    - build
+  dependencies:
+    - build
+  script:
+    - docker pull $TAG_COMMIT
+    - docker compose -p sdid-enrollment-frontend down --remove-orphans || true
+    - docker compose -p sdid-enrollment-frontend -f docker/compose.yml -f docker/compose.test.yml up -d --pull always --force-recreate --remove-orphans
+    - docker image prune -f || true
+
+.deploy-config-uat:
+  extends: .deploy-config
+  stage: deploy-uat
+  needs:
+    - build
+  dependencies:
+    - build
+  only:
+    - develop
+  environment:
+    name: sdid-enrollment-uat
+    url: https://sdid.enrollment.dev.nida.gov.rw
+  script:
+    - docker pull $TAG_COMMIT
+    - docker compose -p sdid-enrollment-frontend down --remove-orphans || true
+    - docker compose -p sdid-enrollment-frontend -f docker/compose.yml -f docker/compose.dev.yml up -d --pull always --force-recreate --remove-orphans
+    - docker image prune -f || true
+
+deploy-uat-sd1:
+  extends: .deploy-config-uat
+  tags:
+    - sdid-enrollment-uat-sd1
+
+deploy-uat-sd2:
+  extends: .deploy-config-uat
+  tags:
+    - sdid-enrollment-uat-sd2
+
+deploy-uat-sd3:
+  extends: .deploy-config-uat
+  tags:
+    - sdid-enrollment-uat-sd3
+
+deploy-test-dl2:
+  extends: .deploy-config-test
+  tags:
+    - sdid-enrollment-test-dl2
+  environment:
+    name: sdid-enrollment-test-dl2
+    url: https://enrollment.sdid.nida.gov.rw
+
+.deploy-config-prod:
+  extends: .deploy-config
+  stage: deploy-prod
+  needs:
+    - build
+  dependencies:
+    - build
+  only:
+    - main
+  environment:
+    name: sdid-enrollment-prod
+    url: https://sdid.enrollment.nida.gov.rw
+  script:
+    - docker pull $TAG_COMMIT
+    - docker compose -p sdid-enrollment-frontend down --remove-orphans || true
+    - docker compose -p sdid-enrollment-frontend -f docker/compose.yml -f docker/compose.prod.yml up -d --pull always --force-recreate --remove-orphans
+    - docker image prune -f || true
+
+deploy-prod-sd1:
+  extends: .deploy-config-prod
+  tags:
+    - sdid-enrollment-prod-sd1
+
+deploy-prod-sd2:
+  extends: .deploy-config-prod
+  tags:
+    - sdid-enrollment-prod-sd2
+
+deploy-prod-sd3:
+  extends: .deploy-config-prod
+  tags:
+    - sdid-enrollment-prod-sd3
+
+deploy-prod-sd4:
+  extends: .deploy-config-prod
+  tags:
+    - sdid-enrollment-prod-sd4
+
+deploy-prod-dr1:
+  extends: .deploy-config-prod
+  tags:
+    - sdid-enrollment-disrec-dr1
+  environment:
+    name: sdid-enrollment-disrec-dr1

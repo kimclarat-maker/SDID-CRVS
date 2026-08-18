@@ -1,0 +1,39 @@
+<Workflow>
+  <Name>Left To Right; 442; Wsq</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>WSQ</ImageCompressionMethod>
+      <ImageCompressionRatio>12</ImageCompressionRatio>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>LeftFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>WSQ</ImageCompressionMethod>
+      <ImageCompressionRatio>12</ImageCompressionRatio>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>WSQ</ImageCompressionMethod>
+      <ImageCompressionRatio>12</ImageCompressionRatio>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>BothThumbs</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

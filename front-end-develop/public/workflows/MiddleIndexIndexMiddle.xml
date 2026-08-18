@@ -1,0 +1,12 @@
+<Workflow>
+  <Name>Middle Index Index Middle</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>LeftMiddleIndexRightIndexMiddle</Position>
+      <Impression>LivescanPlain</Impression>
+      <UseAsCtrlFinger>true</UseAsCtrlFinger>
+    </Fingerprint>
+  </Step>
+</Workflow>

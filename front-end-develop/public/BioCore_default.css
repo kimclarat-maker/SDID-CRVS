@@ -1,0 +1,801 @@
+/* ==========================================================
+ * Modal Common
+ * =========================================================*/
+
+/* default class for a dialog, to be hidden */
+.BioCore-modal {
+  display: none;
+}
+
+/* default class for a dialog, to be shown */
+.BioCore-modal-open {
+  display: block;
+}
+
+/* overlays, to hide lower layers in case a modal dialog is shown */
+#BioCore-Overlay-L0,
+#BioCore-Overlay-L1,
+#BioCore-Overlay-L2,
+#BioCore-Overlay-L3,
+#BioCore-Overlay-L4,
+#BioCore-Overlay-L5 {
+  visibility: hidden;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: rgba(0, 0, 40, 0.5);
+  display: grid;
+  align-items: CENTER;
+}
+
+/* z-axis of overlays */
+#BioCore-Overlay-L0 {
+  z-index: 1000;
+}
+
+#BioCore-Overlay-L1 {
+  z-index: 1010;
+}
+
+#BioCore-Overlay-L2 {
+  z-index: 1020;
+}
+
+#BioCore-Overlay-L3 {
+  z-index: 1030;
+}
+
+#BioCore-Overlay-L4 {
+  z-index: 1040;
+}
+
+#BioCore-Overlay-L5 {
+  z-index: 1050;
+}
+
+/* style of modal dialogs */
+#BioCore-Capture-Outer,
+#BioCore-Annotation-Outer,
+#BioCore-Decisions-Outer,
+#BioCore-Status-Outer,
+#BioCore-Errors-Outer {
+  background: white;
+  border-radius: 25px;
+  border: 2px solid #078ece;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+}
+
+/* style of titles of modal dialogs */
+#BioCore-Capture-Title,
+#BioCore-Annotation-Title,
+#BioCore-Interaction-Title,
+#BioCore-Exception-Title,
+#BioCore-Status-Title {
+  background: #078ece;
+  border-radius: 15px;
+  padding: 10px;
+  font-family: "Arial";
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  color: white;
+}
+
+/* ==========================================================
+ * Modal Buttons
+ * =========================================================*/
+
+/* default style of all buttons */
+.BioCore-Btn {
+  display: inline-block;
+  padding: 0.2em 1.45em;
+  margin: 0.1em;
+  border: 0.15em solid #cccccc;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Arial";
+  font-weight: 400;
+  color: #000000;
+  background-color: #cccccc;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+/* button style, if mouse is hovering */
+.BioCore-Btn:hover {
+  border-color: #7a7a7a;
+}
+
+/* button style, if button is pressed/active */
+.BioCore-Btn:active {
+  background-color: #999999;
+}
+
+/* button style, if button is not available */
+.BioCore-Btn.hidden {
+  display: none;
+}
+
+.BioCore-BtnPanel {
+  display: inline-block;
+}
+
+/* ==========================================================
+ * Level 0 - Capture / Annotation
+ * =========================================================*/
+
+#BioCore-Capture.hidden,
+#BioCore-Annotation.hidden {
+  display: none;
+}
+
+#BioCore-Preview {
+  display: block;
+}
+
+/* style of active position within capture dialog */
+#BioCore-ActivePosition {
+  background: white;
+  color: #078ece;
+  margin: 5px;
+  font-family: "Arial";
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* sizes of quality indicators within capture dialog */
+#BioCore-QualityIndicator0,
+#BioCore-QualityIndicator1,
+#BioCore-QualityIndicator2,
+#BioCore-QualityIndicator3 {
+  width: 80px;
+}
+#BioCore-QualityIndicator4 {
+  width: 168px;
+}
+
+#BioCore-QualityIndicator0:before,
+#BioCore-QualityIndicator1:before,
+#BioCore-QualityIndicator2:before,
+#BioCore-QualityIndicator3:before,
+#BioCore-QualityIndicator4:before {
+  content: "    ";
+}
+
+/* style of quality indicators within capture dialog */
+#BioCore-QualityIndicators div {
+  color: -internal-light-dark(black, white);
+  display: inline-grid;
+  text-align: center;
+  background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59));
+  font: 400 13.3333px Arial;
+  border-width: 2px;
+  border-style: inset;
+  border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+  height: 16px;
+}
+
+/* ==========================================================
+ * Hands - Paths
+ * =========================================================*/
+
+#Annotation_Hands {
+  display: flex;
+}
+#Annotation_LeftLittle {
+  clip-path: polygon(
+    0% 40%,
+    5% 32%,
+    15% 26%,
+    30% 22%,
+    50% 20%,
+    70% 22%,
+    85% 26%,
+    95% 32%,
+    100% 40%,
+    100% 95%,
+    0% 100%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_LeftRing {
+  clip-path: polygon(
+    0% 25%,
+    5% 17%,
+    15% 11%,
+    30% 7%,
+    50% 5%,
+    70% 7%,
+    85% 11%,
+    95% 17%,
+    100% 25%,
+    100% 90%,
+    0% 95%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_LeftMiddle {
+  clip-path: polygon(
+    0% 20%,
+    5% 12%,
+    15% 6%,
+    30% 2%,
+    50% 0%,
+    70% 2%,
+    85% 6%,
+    95% 12%,
+    100% 20%,
+    100% 90%,
+    0% 90%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_LeftIndex {
+  clip-path: polygon(
+    0% 30%,
+    5% 22%,
+    15% 16%,
+    30% 12%,
+    50% 10%,
+    70% 12%,
+    85% 16%,
+    95% 22%,
+    100% 30%,
+    100% 95%,
+    0% 90%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_LeftFour {
+  display: flex;
+}
+#Annotation_LeftHand {
+  position: relative;
+  margin-right: 110px;
+  margin-bottom: 226px;
+}
+#Annotation_LeftPalm {
+  position: absolute;
+  bottom: -227px;
+}
+#Annotation_LeftUpperPalm {
+  clip-path: polygon(
+    0% 26%,
+    25% 12%,
+    50% 0%,
+    75% 0%,
+    100% 12%,
+    100% 100%,
+    0% 100%
+  );
+  background-color: lightgray;
+  width: 246px;
+  height: 100px;
+  margin-left: 1px;
+}
+#Annotation_LeftLowerPalm {
+  clip-path: polygon(
+    0% 50%,
+    5% 70%,
+    15% 85%,
+    30% 95%,
+    50% 100%,
+    70% 95%,
+    85% 85%,
+    95% 70%,
+    100% 50%,
+    100% 0%,
+    0% 0%
+  );
+  background-color: lightgray;
+  width: 246px;
+  height: 150px;
+  margin: 1px;
+}
+#Annotation_LeftThumb {
+  clip-path: polygon(
+    0% 50%,
+    18% 25%,
+    25% 18%,
+    40% 6%,
+    50% 2%,
+    65% 0%,
+    80% 2%,
+    88% 6%,
+    95% 12%,
+    100% 20%,
+    95% 35%,
+    55% 75%,
+    0% 100%
+  );
+  background-color: lightgray;
+  width: 90px;
+  height: 240px;
+  margin: 1px;
+  position: absolute;
+  bottom: -150px;
+  left: 248px;
+}
+#Annotation_RightLittle {
+  clip-path: polygon(
+    0% 40%,
+    5% 32%,
+    15% 26%,
+    30% 22%,
+    50% 20%,
+    70% 22%,
+    85% 26%,
+    95% 32%,
+    100% 40%,
+    100% 100%,
+    0% 95%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_RightRing {
+  clip-path: polygon(
+    0% 25%,
+    5% 17%,
+    15% 11%,
+    30% 7%,
+    50% 5%,
+    70% 7%,
+    85% 11%,
+    95% 17%,
+    100% 25%,
+    100% 95%,
+    0% 90%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_RightMiddle {
+  clip-path: polygon(
+    0% 20%,
+    5% 12%,
+    15% 6%,
+    30% 2%,
+    50% 0%,
+    70% 2%,
+    85% 6%,
+    95% 12%,
+    100% 20%,
+    100% 90%,
+    0% 90%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_RightIndex {
+  clip-path: polygon(
+    0% 30%,
+    5% 22%,
+    15% 16%,
+    30% 12%,
+    50% 10%,
+    70% 12%,
+    85% 16%,
+    95% 22%,
+    100% 30%,
+    100% 90%,
+    0% 95%
+  );
+  background-color: lightgray;
+  width: 60px;
+  height: 250px;
+  margin: 1px;
+}
+#Annotation_RightFour {
+  display: flex;
+}
+#Annotation_RightHand {
+  position: relative;
+  margin-left: 110px;
+  margin-bottom: 226px;
+}
+#Annotation_RightPalm {
+  position: absolute;
+  bottom: -227px;
+}
+#Annotation_RightUpperPalm {
+  clip-path: polygon(
+    100% 26%,
+    75% 12%,
+    50% 0%,
+    25% 0%,
+    0% 12%,
+    0% 100%,
+    100% 100%
+  );
+  background-color: lightgray;
+  width: 246px;
+  height: 100px;
+  margin: 1px;
+}
+#Annotation_RightLowerPalm {
+  clip-path: polygon(
+    0% 50%,
+    5% 70%,
+    15% 85%,
+    30% 95%,
+    50% 100%,
+    70% 95%,
+    85% 85%,
+    95% 70%,
+    100% 50%,
+    100% 0%,
+    0% 0%
+  );
+  background-color: lightgray;
+  width: 246px;
+  height: 150px;
+  margin: 1px;
+}
+#Annotation_RightThumb {
+  clip-path: polygon(
+    100% 50%,
+    82% 25%,
+    75% 18%,
+    60% 6%,
+    50% 2%,
+    35% 0%,
+    20% 2%,
+    12% 6%,
+    5% 12%,
+    0% 20%,
+    5% 35%,
+    45% 75%,
+    100% 100%
+  );
+  background-color: lightgray;
+  width: 90px;
+  height: 240px;
+  margin: 1px;
+  position: absolute;
+  bottom: -150px;
+  left: -92px;
+}
+
+/* ==========================================================
+ * Annotations
+ * =========================================================*/
+
+/* style of menu to change annotations */
+#BioCore-Annotation-ContextMenu.menu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  padding: 12px 0;
+  width: 240px;
+  background-color: #fff;
+  border: solid 1px #dfdfdf;
+  box-shadow: 1px 1px 2px #cfcfcf;
+}
+#BioCore-Annotation-ContextMenu.menu-active {
+  display: block;
+}
+#BioCore-Annotation-ContextMenu > .menu-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#BioCore-Annotation-ContextMenu .menu-item {
+  display: block;
+  margin-bottom: 4px;
+}
+#BioCore-Annotation-ContextMenu .menu-item:last-child {
+  margin-bottom: 0;
+}
+#BioCore-Annotation-ContextMenu .menu-item-link {
+  display: block;
+  padding: 4px 12px;
+  color: #0066aa;
+  text-decoration: none;
+}
+#BioCore-Annotation-ContextMenu .menu-item-link:hover {
+  color: #fff;
+  background-color: #0066aa;
+}
+
+/* colors of annotated fingers */
+#Annotation_Hands .BioCore-Annotation0 {
+  background-color: darkgreen;
+}
+#Annotation_Hands .BioCore-Annotation1 {
+  background-color: dimray;
+}
+#Annotation_Hands .BioCore-Annotation2 {
+  background-color: darkgray;
+}
+#Annotation_Hands .BioCore-Annotation3 {
+  background-color: lightslategray;
+}
+#Annotation_Hands .BioCore-Annotation4 {
+  background-color: gray;
+}
+
+/* style of annotation label, when hovering */
+#Annotation-Label {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  padding: 12px 0;
+  width: 240px;
+  background-color: #fff;
+  border: solid 1px #dfdfdf;
+  box-shadow: 1px 1px 2px #cfcfcf;
+}
+#Annotation-Label.label-active {
+  display: block;
+}
+.Annotation-Item:hover {
+  opacity: 0.8;
+}
+
+/* ==========================================================
+ * Level 1 - User decision
+ * =========================================================*/
+
+#BioCore-Box-Table {
+  margin: 10px;
+  text-align: left;
+  font-family: "Arial";
+  font-size: 14px;
+}
+
+#BioCore-Content-Step,
+#BioCore-Content-Code {
+  padding: 0.2em 0.8em;
+  min-width: 100px;
+}
+
+#BioCore-UserDecision {
+  cursor: pointer;
+  min-width: 160px;
+}
+
+#BioCore-Box-Actions {
+  position: relative;
+  display: inline-block;
+}
+
+#BioCore-Box-SupportedDecisions {
+  display: contents;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+#BioCore-Box-SupportedDecisions a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+#BioCore-Box-SupportedDecisions a:hover {
+  background-color: #f1f1f1;
+}
+
+#BioCore-Box-Actions:hover #BioCore-Box-SupportedDecisions {
+  display: block;
+}
+
+#BioCore-Box-Actions:hover #Biocore-UserDecision {
+  background-color: #3e8e41;
+}
+
+/* ==========================================================
+ * Status Dialog
+ * =========================================================*/
+
+#BioCore-Status-Table {
+  min-width: 250px;
+  margin: 10px;
+  text-align: left;
+  font-family: "Arial";
+  font-size: 14px;
+}
+
+/* ==========================================================
+ * Exceptions Dialog
+ * =========================================================*/
+
+#BioCore-Exception-Table .hidden,
+#BioCore-Exception-Details.hidden {
+  display: none;
+}
+
+#BioCore-Box-Exception {
+  width: 600px;
+}
+
+.BioCore-Panel-Collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 5px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.BioCore-Panel-Active,
+.BioCore-Panel-Collapsible:hover {
+  background-color: #ccc;
+}
+
+.BioCore-Panel-Content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+#BioCore-Exception-Details {
+  text-align: left;
+  font-family: Courier New, Courier, monospace;
+  font-size: 12px;
+}
+
+#BioCore-Exception-Message {
+  text-align: left;
+  font-family: "Arial";
+  font-size: 14px;
+  margin: 10px;
+}
+
+/* ==========================================================
+ * Loading animation
+ * =========================================================*/
+.BioCore-Loading {
+  width: 100px;
+  height: 100px;
+  margin: 30px auto;
+  position: relative;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div {
+  width: 10px;
+  height: 30px;
+  background: black;
+  position: absolute;
+  top: 35px;
+  left: 45px;
+  opacity: 0.05;
+  -webkit-animation: fadeit 1.1s linear infinite;
+  -moz-animation: fadeit 1.1s linear infinite;
+  animation: fadeit 1.1s linear infinite;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(1) {
+  -webkit-transform: rotate(0deg) translate(0, -30px);
+  -moz-transform: rotate(0deg) translate(0, -30px);
+  transform: rotate(0deg) translate(0, -30px);
+  -webkit-animation-delay: 0.39s;
+  -moz-animation-delay: 0.39s;
+  animation-delay: 0.39s;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(2) {
+  -webkit-transform: rotate(45deg) translate(0, -30px);
+  -moz-transform: rotate(45deg) translate(0, -30px);
+  transform: rotate(45deg) translate(0, -30px);
+  -webkit-animation-delay: 0.52s;
+  -moz-animation-delay: 0.52s;
+  animation-delay: 0.52s;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(3) {
+  -webkit-transform: rotate(90deg) translate(0, -30px);
+  -moz-transform: rotate(90deg) translate(0, -30px);
+  transform: rotate(90deg) translate(0, -30px);
+  -webkit-animation-delay: 0.65s;
+  -moz-animation-delay: 0.65s;
+  animation-delay: 0.65s;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(4) {
+  -webkit-transform: rotate(135deg) translate(0, -30px);
+  -moz-transform: rotate(135deg) translate(0, -30px);
+  transform: rotate(135deg) translate(0, -30px);
+  -webkit-animation-delay: 0.78s;
+  -moz-animation-delay: 0.78s;
+  animation-delay: 0.78s;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(5) {
+  -webkit-transform: rotate(180deg) translate(0, -30px);
+  -moz-transform: rotate(180deg) translate(0, -30px);
+  transform: rotate(180deg) translate(0, -30px);
+  -webkit-animation-delay: 0.91s;
+  -moz-animation-delay: 0.91s;
+  animation-delay: 0.91s;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(6) {
+  -webkit-transform: rotate(225deg) translate(0, -30px);
+  -moz-transform: rotate(225deg) translate(0, -30px);
+  transform: rotate(225deg) translate(0, -30px);
+  -webkit-animation-delay: 1.04s;
+  -moz-animation-delay: 1.04s;
+  animation-delay: 1.04s;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(7) {
+  -webkit-transform: rotate(270deg) translate(0, -30px);
+  -moz-transform: rotate(270deg) translate(0, -30px);
+  transform: rotate(270deg) translate(0, -30px);
+  -webkit-animation-delay: 1.17s;
+  -moz-animation-delay: 1.17s;
+  animation-delay: 1.17s;
+}
+
+.BioCore-Loading.BioCore-Loading-Bar div:nth-child(8) {
+  -webkit-transform: rotate(315deg) translate(0, -30px);
+  -moz-transform: rotate(315deg) translate(0, -30px);
+  transform: rotate(315deg) translate(0, -30px);
+  -webkit-animation-delay: 1.3s;
+  -moz-animation-delay: 1.3s;
+  animation-delay: 1.3s;
+}
+
+@-webkit-keyframes fadeit {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes fadeit {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeit {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

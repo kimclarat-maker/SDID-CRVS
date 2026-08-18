@@ -1,0 +1,18 @@
+.notificationCount {
+  background-color: var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 8px;
+  padding: 8px 5px;
+  border-radius: 50%;
+  height: 15px;
+  border: 2px solid var(--light);
+}
+
+.notificationCount span {
+  color: var(--light);
+  font-size: 10px;
+}

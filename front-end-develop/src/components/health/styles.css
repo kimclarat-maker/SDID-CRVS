@@ -1,0 +1,15 @@
+.health-main {
+  background-color: var(--rs-primary-300);
+}
+
+.health-network-main {
+  height: 5px;
+}
+
+.health-network-main.online {
+  background-color: var(--rs-primary-500);
+}
+
+.health-network-main.offline {
+  background-color: var(--danger);
+}

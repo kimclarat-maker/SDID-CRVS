@@ -1,0 +1,24 @@
+.notFoundContainer {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notFoundDescription {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.notFoundImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notFoundImage img {
+  aspect-ratio: 3/2;
+  object-fit: contain;
+}

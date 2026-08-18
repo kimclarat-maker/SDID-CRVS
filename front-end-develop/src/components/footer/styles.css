@@ -1,0 +1,38 @@
+.footer {
+  padding: 4px 1.5rem;
+  background-color: var(--rs-primary-500);
+  color: var(--rs-primary-5);
+}
+
+.footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: "1rem";
+  min-height: 2.5rem;
+}
+
+.footer .logoContainer {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer .logoContainer img {
+  width: 100%;
+  aspect-ratio: 3/2;
+  object-fit: contain;
+}
+
+/* .footer .right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+} */
+
+.footer .right a:hover {
+  text-decoration: underline;
+}

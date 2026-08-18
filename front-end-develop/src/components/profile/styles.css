@@ -1,0 +1,11 @@
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userPhoto img {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}

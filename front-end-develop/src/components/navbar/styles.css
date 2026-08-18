@@ -1,0 +1,85 @@
+.appNavbar {
+  box-shadow: var(--navbar-shadow);
+  background-color: var(--light) !important;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 999;
+}
+
+.appNavbar a:hover {
+  text-decoration: none;
+}
+
+.navbar-menus-container {
+  min-height: 70px;
+  padding: 0 1.5rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .navbar-menus-container {
+    padding: 0 1rem;
+  }
+}
+
+.rs-navbar-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbarLogo {
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  display: flex;
+  gap: 8px;
+}
+
+.navbarLogo img {
+  aspect-ratio: contain;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.navbarLogo .appName {
+  color: var(--text-color);
+}
+
+.navbarList {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+}
+
+.appNavbar .dropdown-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.appNavbar .dropdown-list-item img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.navbarFixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbarItem {
+  cursor: pointer;
+}
+
+.navbarItem:hover {
+  opacity: 1;
+  color: var(--primary-color);
+}
+
+@media only screen and (max-width: 600px) {
+}

@@ -1,0 +1,82 @@
+/*
+  Public-site token layer. Scoped to .public-app but no longer a separate
+  palette from the internal app shell — every --brand-*, --surface-*, --text-*
+  name here resolves onto the same brand-primary-* scale defined once in
+  common/styles/tokens.css (the login-page blue), so public and
+  authenticated pages share one design system per the redesign spec.
+*/
+.public-app {
+  --brand-primary: var(--brand-primary-500);
+  --brand-primary-strong: var(--brand-primary-600);
+  --brand-secondary: var(--brand-primary-900);
+  --brand-secondary-strong: var(--brand-primary-900);
+
+  /*
+    surface-page, surface-card, text-primary, text-secondary, border-default,
+    border-strong, focus-ring, radius-*, shadow-card are already declared
+    once on :root in tokens.css and inherit here unchanged — redeclaring a
+    custom property as var(--same-name) is self-referential and invalid,
+    so only genuinely public-specific names are added below.
+  */
+  --surface-sunken: var(--brand-primary-50);
+  --text-on-brand: #ffffff;
+
+  --status-success-surface: var(--status-success-bg);
+  --status-warning-surface: var(--status-warning-bg);
+  --status-danger-surface: var(--status-danger-bg);
+  --status-info-surface: var(--status-info-bg);
+
+  font-family: var(--font-family-sans);
+  background-color: #ffffff;
+  color: var(--text-primary);
+}
+
+.public-app :focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.public-app a {
+  color: var(--brand-primary-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-app *,
+  .public-app *::before,
+  .public-app *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.public-app .skip-to-content-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10000;
+  background: var(--brand-primary-900);
+  color: var(--text-on-brand);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 var(--radius-sm) 0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.public-app .skip-to-content-link:focus {
+  left: 0;
+}
+
+.public-app .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

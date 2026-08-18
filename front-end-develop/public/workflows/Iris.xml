@@ -1,0 +1,11 @@
+<Workflow>
+  <Name>IScan2 Iris Capture</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Iris>
+      <Position>BothIrises</Position>
+      <Impression>IrisRegular</Impression>
+    </Iris>
+</Step>
+</Workflow>

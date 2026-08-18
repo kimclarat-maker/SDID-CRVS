@@ -1,0 +1,31 @@
+.preview-img-pdf {
+  position: relative;
+}
+
+.preview-img-pdf .actual-attach {
+  min-height: 100px;
+}
+
+.actual-attach img {
+  aspect-ratio: 2/2;
+  width: 100%;
+  object-fit: contain;
+}
+
+.preview-img-pdf:hover .preview-footer {
+  display: block;
+}
+
+.preview-img-pdf .preview-footer {
+  display: none;
+}
+
+.preview-img-pdf .preview-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 40px;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.5);
+}

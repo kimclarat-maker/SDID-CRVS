@@ -1,0 +1,122 @@
+[
+  {
+    "user": 2,
+    "status": "failed",
+    "duration": "39.91",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 3,
+    "status": "failed",
+    "duration": "42.07",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 1,
+    "status": "failed",
+    "duration": "42.29",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 0,
+    "status": "failed",
+    "duration": "42.30",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 4,
+    "status": "failed",
+    "duration": "42.83",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 5,
+    "status": "failed",
+    "duration": "40.89",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 7,
+    "status": "failed",
+    "duration": "42.15",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 8,
+    "status": "failed",
+    "duration": "42.20",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 9,
+    "status": "failed",
+    "duration": "43.34",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 6,
+    "status": "failed",
+    "duration": "44.60",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 10,
+    "status": "failed",
+    "duration": "42.25",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 12,
+    "status": "failed",
+    "duration": "43.34",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 11,
+    "status": "failed",
+    "duration": "43.48",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 14,
+    "status": "failed",
+    "duration": "43.63",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 13,
+    "status": "failed",
+    "duration": "43.93",
+    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 19,
+    "status": "failed",
+    "duration": "19.62",
+    "error": "locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 18,
+    "status": "failed",
+    "duration": "20.25",
+    "error": "locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 16,
+    "status": "failed",
+    "duration": "20.25",
+    "error": "locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 17,
+    "status": "failed",
+    "duration": "20.25",
+    "error": "locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  },
+  {
+    "user": 15,
+    "status": "failed",
+    "duration": "20.25",
+    "error": "locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Take Photo' })\u001b[22m\n"
+  }
+]

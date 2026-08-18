@@ -1,0 +1,23 @@
+<Workflow>
+  <Name>Consent Fingerprint; 02 or 06</Name>
+  <GlobalSettings>
+    <DefaultAnnotationText>Consent Fingerprint</DefaultAnnotationText>
+    <AutoStopCount>1</AutoStopCount>
+  </GlobalSettings>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightIndex</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Fingerprint>
+      <Position>LeftIndex</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

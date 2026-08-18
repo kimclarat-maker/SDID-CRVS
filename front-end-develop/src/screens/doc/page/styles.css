@@ -1,0 +1,21 @@
+.tuto-image {
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+.tuto-image img {
+  aspect-ratio: 3/2;
+  object-fit: contain;
+  width: 70%;
+}
+
+.doc-item-link {
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.doc-item-link a {
+  font-weight: 600;
+}

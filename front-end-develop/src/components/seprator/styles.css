@@ -1,0 +1,6 @@
+.seprator-container {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,298 @@
+/*
+  Self-hosted Public Sans (@fontsource/public-sans files copied into
+  /public/fonts). Aliased onto the legacy "font-regular"/"font-bold"/etc.
+  family names so the ~100+ components already using those names, plus the
+  "second-font-*" (former Montagu Slab) aliases, repaint to Public Sans
+  without call-site changes.
+*/
+@font-face {
+  font-family: font-regular;
+  src: url("/fonts/PublicSans-400.woff2") format("woff2"),
+    url("/fonts/PublicSans-400.woff") format("woff");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: font-medium;
+  src: url("/fonts/PublicSans-500.woff2") format("woff2"),
+    url("/fonts/PublicSans-500.woff") format("woff");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: font-light;
+  src: url("/fonts/PublicSans-400.woff2") format("woff2"),
+    url("/fonts/PublicSans-400.woff") format("woff");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: font-bold;
+  src: url("/fonts/PublicSans-700.woff2") format("woff2"),
+    url("/fonts/PublicSans-700.woff") format("woff");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: second-font-bold;
+  src: url("/fonts/PublicSans-700.woff2") format("woff2"),
+    url("/fonts/PublicSans-700.woff") format("woff");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: second-font-regular;
+  src: url("/fonts/PublicSans-400.woff2") format("woff2"),
+    url("/fonts/PublicSans-400.woff") format("woff");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Public Sans";
+  src: url("/fonts/PublicSans-400.woff2") format("woff2"),
+    url("/fonts/PublicSans-400.woff") format("woff");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Public Sans";
+  src: url("/fonts/PublicSans-500.woff2") format("woff2"),
+    url("/fonts/PublicSans-500.woff") format("woff");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Public Sans";
+  src: url("/fonts/PublicSans-600.woff2") format("woff2"),
+    url("/fonts/PublicSans-600.woff") format("woff");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Public Sans";
+  src: url("/fonts/PublicSans-700.woff2") format("woff2"),
+    url("/fonts/PublicSans-700.woff") format("woff");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/MaterialIcons-Regular.ttf") format("truetype");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  /* overflow-y: hidden; */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-sans);
+  font-size: clamp(0.875rem, 1vw + 0.5rem, 1rem); /* Responsive, clean */
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: var(--line-height-body);
+  /* overflow-y: hidden; */
+}
+
+.appWrapper {
+  height: 100vh;
+  /* padding-bottom: 10rem; */
+  overflow-y: auto;
+}
+
+.appWrapperContent {
+  overflow-y: auto;
+  padding-bottom: 10rem;
+}
+
+.rs-table-cell-header .rs-table-cell-content {
+  font-size: 0.9rem;
+  font-size: clamp(1rem, 0.5153846153846153rem + 1.641025641025641vw, 1rem);
+}
+
+h1,
+h2,
+h3 {
+  font-size: 1.5rem;
+  font-size: clamp(1.5rem, -0.9230769230769231rem + 8.205128205128204vw, 3rem);
+  font-family: "font-bold", var(--font-family-sans);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 0;
+  line-height: var(--line-height-heading) !important;
+}
+
+h3 {
+  font-size: 1rem;
+  font-size: clamp(1rem, -0.9230769230769231rem + 8.205128205128204vw, 2rem);
+}
+
+p {
+  font-family: "font-regular", var(--font-family-sans);
+  margin-bottom: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+label {
+  color: var(--text-color);
+}
+
+.textPrimary {
+  color: var(--primaryColor);
+}
+
+.textBold {
+  font-family: "font-bold", sans-serif;
+}
+
+.textLight {
+  font-family: "font-light", sans-serif;
+}
+
+.textMedium {
+  font-family: "font-medium", sans-serif;
+}
+
+.textSecondFontBold {
+  font-family: "second-font-bold", sans-serif;
+}
+
+.textSecondFontRegular {
+  font-family: "second-font-regular", sans-serif;
+}
+
+.fontSize18 {
+  font-size: 1rem;
+  font-size: clamp(1rem, -0.9230769230769231rem + 8.205128205128204vw, 1rem);
+}
+
+.textDanger {
+  color: var(--danger);
+}
+
+.muted {
+  opacity: 0.8;
+}
+
+.rs-table-cell-content {
+  color: var(--text-color);
+}
+
+.rs-nav-item.rs-nav-item-active {
+  border-radius: 0;
+}
+
+.rs-heading {
+  color: var(--text-color);
+}
+
+.card-body {
+  background-color: transparent !important;
+}
+
+.rs-picker-default .rs-btn,
+.rs-picker-default .rs-picker-toggle,
+.rs-picker-input .rs-btn,
+.rs-picker-input .rs-picker-toggle {
+  background-color: transparent !important;
+}
+
+.hover {
+  cursor: pointer;
+}
+
+.textDecoration:hover {
+  text-decoration: underline;
+}
+
+.rs-tabs {
+  width: auto !important;
+}
+
+.centerBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.imageContainer {
+  width: 100px;
+  height: 100px;
+  display: flex;
+}
+
+.imageContainer img {
+  aspect-ratio: 3/2;
+  object-fit: contain;
+  width: 80%;
+}
+
+.rs-panel {
+  border-radius: 14px;
+  /* z-index: 1; */
+}
+
+.uppercase-input {
+  text-transform: uppercase;
+}
+
+.border-primary {
+  border: 1px solid var(--primaryColor) !important;
+}
+
+.bg-primary,
+.bg-primary:hover {
+  background-color: var(--primaryColor) !important;
+  color: var(--light);
+}
+
+@media print {
+  html,
+  body {
+    height: 100vh; /* Use 100% here to support printing more than a single page*/
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .noPrint {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  h1 {
+    font-size: 2rem;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+}

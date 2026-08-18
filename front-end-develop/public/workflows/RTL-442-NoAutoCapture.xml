@@ -1,0 +1,27 @@
+<Workflow>
+  <Name>Right To Left; 442; No Auto Capture</Name>
+  <Step>
+    <UseAutoCapture>false</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>false</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Fingerprint>
+      <Position>LeftFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>false</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Fingerprint>
+      <Position>BothThumbs</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

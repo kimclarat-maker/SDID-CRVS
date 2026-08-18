@@ -1,0 +1,19 @@
+<Workflow>
+  <Name>Face Capture with auto contrast (HDR)</Name>
+  <Step>
+    <UseAutoCapture>false</UseAutoCapture>
+    <UseAutoContrast>false</UseAutoContrast>
+    <Face>
+      <Pose>UnknownFacePose</Pose>
+      <Impression>FaceSingleVideoDigitalVideoCamera</Impression>
+    </Face>
+  </Step>
+  <Step>
+    <UseAutoCapture>false</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Face>
+      <Pose>UnknownFacePose</Pose>
+      <Impression>FaceSingleVideoDigitalVideoCamera</Impression>
+    </Face>
+  </Step>
+</Workflow>

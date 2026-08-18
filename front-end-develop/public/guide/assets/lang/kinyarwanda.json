@@ -1,0 +1,60 @@
+{
+  "pageTitle": "Enrollment",
+  "pageIntro": "Everything you need to get started Enrollment.",
+  "sections": [
+    {
+      "title": "Introduction",
+      "icon": "fas fa-map-signs",
+      "description": "Overview of the project and how to get started.",
+      "link": "docs-page.html#section-1"
+    },
+    {
+      "title": "Installation",
+      "icon": "fas fa-arrow-down",
+      "description": "How to set up and install the project.",
+      "link": "docs-page.html#section-2"
+    },
+    {
+      "title": "APIs",
+      "icon": "fas fa-box fa-fw",
+      "description": "API documentation and usage examples.",
+      "link": "docs-page.html#section-3"
+    },
+    {
+      "title": "Integrations",
+      "icon": "fas fa-cogs fa-fw",
+      "description": "Available integrations and setup guides.",
+      "link": "docs-page.html#section-4"
+    },
+    {
+      "title": "Utilities",
+      "icon": "fas fa-tools",
+      "description": "Helper functions and utilities reference.",
+      "link": "docs-page.html#section-5"
+    },
+    {
+      "title": "Web",
+      "icon": "fas fa-laptop-code",
+      "description": "Guides for building web applications.",
+      "link": "docs-page.html#section-6"
+    },
+    {
+      "title": "Mobile",
+      "icon": "fas fa-tablet-alt",
+      "description": "Documentation for mobile development.",
+      "link": "docs-page.html#section-7"
+    },
+    {
+      "title": "Resources",
+      "icon": "fas fa-book-reader",
+      "description": "External resources and references.",
+      "link": "docs-page.html#section-8"
+    },
+    {
+      "title": "FAQs",
+      "icon": "fas fa-lightbulb",
+      "description": "Frequently asked questions and answers.",
+      "link": "docs-page.html#section-9"
+    }
+  ]
+}

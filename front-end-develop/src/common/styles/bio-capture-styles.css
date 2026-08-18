@@ -1,0 +1,127 @@
+.selfie-area-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  overflow-y: auto;
+}
+
+.selfie-area-container .image-preview img {
+  border-radius: 16px;
+}
+
+.fingerprint-area-container .image-preview {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  width: 100%;
+  position: relative;
+  border: 1px solid var(--rs-border-primary);
+  border-radius: 16px;
+}
+
+.fingerprint-area-container img {
+  aspect-ratio: 3/2;
+  object-fit: contain;
+  width: 100%;
+}
+
+.quality-item-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+}
+
+.quality-item-container .indicator-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quality-item-container .indicator-item-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--status-warning);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--light);
+}
+
+.quality-item-container .indicator-item-icon.active {
+  background-color: var(--status-success);
+}
+
+.iris-image-container {
+}
+
+.iris-image-container .iris-image-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.iris-image-container .iris-image-preview img {
+  aspect-ratio: 3/2;
+  width: 100%;
+  object-fit: contain;
+}
+
+.iris-image-container .card-header {
+  min-height: 50px !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  display: flex;
+  align-items: center;
+}
+
+.signature-area-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  overflow-y: auto;
+  border: 1px solid var(--rs-gray-300);
+}
+
+.signature-area-container .image-preview img {
+  border-radius: 16px;
+}
+
+.face-selfie-feed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 30vh;
+  margin: 0 auto;
+  position: relative;
+  aspect-ratio: 3 / 4;
+}
+
+.face-selfie-feed-container canvas {
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-default);
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.face-selfie-feed-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(15, 23, 42, 0.35);
+  z-index: 999;
+}

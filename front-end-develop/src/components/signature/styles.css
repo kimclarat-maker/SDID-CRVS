@@ -1,0 +1,10 @@
+#signatureCaptureWindow {
+  height: 300px;
+  background-color: var(--surface-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+#signatureImageWrapper {
+  height: 300px;
+}

@@ -1,0 +1,42 @@
+export type CenterType = {
+  _id?: string;
+  name: string;
+  province?: any;
+  district?: any;
+  sector?: any;
+  cell?: any;
+  village?: any;
+  latitude: any; //number | null;
+  longitude: any;
+  shortName?: string;
+  status?: string;
+  country?: any;
+  contactNumber?: string;
+  provinceDetail?: any;
+  countryDetail?: any;
+  cellDetail?: any;
+  villageDetail?: any;
+  sectorDetail?: any;
+  label?: string;
+  value?: string;
+  [key: string]: any;
+};
+
+export type GETParameters = {
+  offset: number;
+  limit: number;
+  id?: string;
+  center?: string;
+  country?: string;
+  province?: string;
+  sector?: string;
+  cell?: string;
+  district?: string;
+  capacity?: string;
+  village?: string;
+  search?: string;
+  foreignAddress?: string;
+  status?: string;
+  centerLevel?: string;
+  centerType?: string;
+};

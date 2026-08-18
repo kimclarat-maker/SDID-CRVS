@@ -1,0 +1,60 @@
+{
+  "pageTitle": "Enrollment",
+  "pageIntro": "All the information you need to get started with the Enrollment system.",
+  "sections": [
+    {
+      "title": "Introduction",
+      "icon": "fas fa-info-circle",
+      "description": "A clear overview of the project and how to get started using the Enrollment system.",
+      "link": "docs-page.html#introduction"
+    },
+    {
+      "title": "Installation",
+      "icon": "fas fa-download",
+      "description": "Step-by-step guide on installing and setting up the Enrollment packages.",
+      "link": "docs-page.html#installation"
+    },
+    {
+      "title": "Authentication",
+      "icon": "fas fa-user-lock",
+      "description": "Instructions on managing user accounts and authentication methods.",
+      "link": "docs-page.html#authentication"
+    },
+    {
+      "title": "Start Biometric Capture",
+      "icon": "fas fa-fingerprint",
+      "description": "Guides on how to capture and process biometric data for users.",
+      "link": "docs-page.html#bioetric_capture"
+    },
+    {
+      "title": "Facial Verification",
+      "icon": "fas fa-camera",
+      "description": "Instructions for verifying user identity through face recognition.",
+      "link": "docs-page.html#facial_verification"
+    },
+    {
+      "title": "Approving Requests",
+      "icon": "fas fa-check-circle",
+      "description": "Guides on how to review and approve enrollment requests efficiently.",
+      "link": "docs-page.html#approve_request"
+    },
+    {
+      "title": "Appointments Management",
+      "icon": "fas fa-calendar-alt",
+      "description": "Managing, scheduling, and tracking appointments for enrollment.",
+      "link": "docs-page.html#appointments_management"
+    },
+    {
+      "title": "Centers Management",
+      "icon": "fas fa-building",
+      "description": "Managing enrollment centers, locations, and their details.",
+      "link": "docs-page.html#centers_management"
+    },
+    {
+      "title": "Device Management",
+      "icon": "fas fa-microchip",
+      "description": "Managing biometric devices, their setup, and configurations.",
+      "link": "docs-page.html#device_management"
+    }
+  ]
+}

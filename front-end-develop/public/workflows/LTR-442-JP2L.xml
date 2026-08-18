@@ -1,0 +1,36 @@
+<Workflow>
+  <Name>Left To Right; 442; Jpeg 2000 Lossless</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>JP2L</ImageCompressionMethod>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>LeftFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>JP2L</ImageCompressionMethod>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <ImageCompressionSettings>
+      <ImageCompressionMethod>JP2L</ImageCompressionMethod>
+    </ImageCompressionSettings>
+    <Fingerprint>
+      <Position>BothThumbs</Position>
+      <Impression>LivescanPlain</Impression>
+    </Fingerprint>
+  </Step>
+</Workflow>

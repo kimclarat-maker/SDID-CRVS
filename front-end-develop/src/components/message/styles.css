@@ -1,0 +1,25 @@
+.app-already-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.app-already-open .content {
+  text-align: center;
+}
+
+.app-already-open .content img {
+  aspect-ratio: 3/2;
+  width: 100px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.app-already-open .content h2 {
+  font-size: 18px;
+}
+
+.app-already-open .content p {
+  opacity: 0.8;
+}

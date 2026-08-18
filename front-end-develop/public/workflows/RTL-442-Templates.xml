@@ -1,0 +1,30 @@
+<Workflow>
+  <Name>Right To Left; 442; minutiae extraction</Name>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>RightFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+      <MinutiaeFormat>FingerMinutiaeAnsiIncits378v2004</MinutiaeFormat>      
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>LeftFourFingers</Position>
+      <Impression>LivescanPlain</Impression>
+      <MinutiaeFormat>FingerMinutiaeAnsiIncits378v2004</MinutiaeFormat>
+    </Fingerprint>
+  </Step>
+  <Step>
+    <UseAutoCapture>true</UseAutoCapture>
+    <UseAutoContrast>true</UseAutoContrast>
+    <Fingerprint>
+      <Position>BothThumbs</Position>
+      <Impression>LivescanPlain</Impression>
+      <MinutiaeFormat>FingerMinutiaeAnsiIncits378v2004</MinutiaeFormat>
+    </Fingerprint>
+  </Step>
+</Workflow>

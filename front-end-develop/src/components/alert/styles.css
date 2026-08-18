@@ -1,0 +1,21 @@
+.alert {
+  padding: 0.5rem;
+}
+
+.alert-info {
+  background-color: var(--infoColor);
+  color: var(--status-info);
+}
+.alert .container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-info .icon {
+  color: var(--status-info);
+}
