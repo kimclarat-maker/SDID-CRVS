@@ -1,0 +1,251 @@
+.loginScreenWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  background-color: var(--surface-page);
+  padding: 4rem 1.5rem;
+}
+
+.loginCard {
+  display: flex;
+  width: 100%;
+  max-width: 1040px;
+  min-height: 620px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.loginIcon {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* ---- Brand panel ---- */
+
+.loginBrandPanel {
+  position: relative;
+  flex: 0 0 44%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 40px 40px 36px;
+  overflow: hidden;
+  background: linear-gradient(
+    155deg,
+    var(--color-primary-900, #0d4665) 0%,
+    var(--color-primary-800, #0c5478) 42%,
+    var(--color-primary-600, #067db6) 100%
+  );
+  color: #ffffff;
+}
+
+.loginDotGrid {
+  position: absolute;
+  right: -90px;
+  top: -90px;
+  width: 320px;
+  height: 320px;
+  opacity: 0.3;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.9) 1.4px, transparent 1.4px);
+  background-size: 22px 22px;
+}
+
+.loginRings {
+  position: absolute;
+  left: -180px;
+  bottom: -180px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 60px rgba(255, 255, 255, 0.05) inset;
+}
+
+.loginBrandBadge {
+  position: relative;
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #eaf7fc;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+}
+
+.loginBrandMain {
+  position: relative;
+  max-width: 380px;
+}
+
+.loginBrandMain h1 {
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 14px;
+}
+
+.loginBrandMain p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0;
+}
+
+.loginBrandTags {
+  display: flex;
+  gap: 8px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.loginTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 11px;
+  border-radius: var(--radius-pill);
+}
+
+.loginBrandStat {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+
+.loginBrandStatIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.loginBrandStatIcon .loginIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.loginBrandStatNumber {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.loginBrandStatLabel {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---- Form panel ---- */
+
+.loginFormPanel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px;
+}
+
+.loginFormInner {
+  width: 100%;
+  max-width: 360px;
+}
+
+.loginFormLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.loginFormLogo img {
+  width: 30px;
+  height: 30px;
+}
+
+.loginFormLogoLight {
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.loginFormTitle {
+  margin: 0 0 6px !important;
+}
+
+.loginFormSubtitle {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.loginTrustNote {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 12px 14px;
+  background: var(--surface-hover);
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.loginTrustNote .loginIcon {
+  stroke: var(--color-primary-700, #086493);
+}
+
+@media (max-width: 900px) {
+  .loginCard {
+    flex-direction: column;
+    max-width: 480px;
+  }
+
+  .loginBrandPanel {
+    flex: none;
+    padding: 32px;
+  }
+
+  .loginFormPanel {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .loginScreenWrap {
+    padding: 1.5rem;
+  }
+}

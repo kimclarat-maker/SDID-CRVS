@@ -1,22 +1,14 @@
-﻿import { defineConfig, loadEnv } from "vite";
+﻿import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { createRequire } from "node:module";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import viteWasm from "vite-plugin-wasm";
 import { VitePWA } from "vite-plugin-pwa";
 
-export default defineConfig(({ command, mode }) => {
-  // Load all env vars
-  const env = loadEnv(mode, process.cwd(), ["VITE_", "NODE_", "APP_"]);
+const require = createRequire(import.meta.url);
 
-  // Validate required env vars
-  const requiredVars = ["VITE_API_KEY", "VITE_API_SECRET_KEY", "VITE_NODE_ENV"];
-  requiredVars.forEach((varName) => {
-    if (!env[varName]) {
-      console.warn(`Missing required environment variable: ${varName}`);
-    }
-  });
-
+export default defineConfig(() => {
   return {
     plugins: [
       react(),

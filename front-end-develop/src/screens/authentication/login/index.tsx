@@ -2,19 +2,17 @@ import { LanguageContext } from "@/context/LanguageContext";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import { LoginType } from "@/types/LoginType";
-import FormLayout from "@/layout/form/formLayout";
 import LoginForm from "@/components/forms/login";
 import { userLoginApi, userSendOTPByEmail } from "@/api/login";
 import toastMessage from "@/utils/common/toastMessage";
 import { clearStorage, getStorage, setStorage } from "@/utils/storage";
-import { isTokenExpired } from "@/utils/common/isTokenExpired";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/Modal";
 import OTPCode from "../code";
 import { loginValidationSchema } from "@/validation/login.validation";
 import FacialVerification from "@/screens/authentication/facial";
 import errors from "@/constants/errors";
-import { Heading, Panel, PanelGroup, Text } from "rsuite";
+import { Heading, Text } from "rsuite";
 import Button from "@/components/button";
 import AddressStep from "../facial/address";
 import { AddressType } from "@/types/OTP";
@@ -25,6 +23,8 @@ import { apiHandler } from "@/api";
 import Alert from "@/components/alert";
 import { cfg } from "@/constants/cfg";
 import axios from "axios";
+import logoImage from "@/assets/logo.png";
+import "./styles.css";
 
 interface Address {
   province?: AddressType | null;
@@ -150,12 +150,9 @@ export default function Login({
 
   useEffect(() => {
     const handleUserInfo = async () => {
-      const user = await getStorage();
       const address = await getStorage("applicantAddress", "local");
 
-      if (user?.token && !isTokenExpired(user.token)) {
-        navigate("/dashboard/admin");
-      }
+      navigate("/dashboard/admin");
 
       if (address) {
         setAddress(address);
@@ -307,32 +304,112 @@ export default function Login({
 
   return (
     <>
-      <FormLayout size={4}>
-        {offlineErrorMessage !== "" && (
-          <div className="mb-3">
-            <Alert type="error">{offlineErrorMessage}</Alert>
-          </div>
-        )}
-        <Heading level={4}>
-          <Text className="textPrimary">{translation.login}</Text>
-        </Heading>
+      <div className="loginScreenWrap">
+        <div className="loginCard">
+          <div className="loginBrandPanel">
+            <div className="loginDotGrid" aria-hidden="true"></div>
+            <div className="loginRings" aria-hidden="true"></div>
 
-        <br />
-        <form
-          onSubmit={formik.handleSubmit}
-          className="formBody"
-          data-testid="login-form"
-        >
-          <LoginForm {...formik} enableLogin={enableLogin} />
-        </form>
-        <Button
-          text={translation.forgot_password}
-          onClick={() => navigate("/authentication/forgotPassword")}
-          block
-          testId="forgot_password"
-          appearance="ghost"
-        />
-      </FormLayout>
+            <div className="loginBrandBadge">
+              <svg viewBox="0 0 24 24" className="loginIcon">
+                <path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"></path>
+              </svg>
+              National Identity Directorate
+            </div>
+
+            <div className="loginBrandMain">
+              <h1>One secure identity platform for every Rwandan.</h1>
+              <p>
+                Staff console for civil registration and biometric
+                enrollment &mdash; online or offline, at every service
+                centre in the country.
+              </p>
+              <div className="loginBrandTags">
+                <span className="loginTag">
+                  <svg viewBox="0 0 24 24" className="loginIcon">
+                    <rect x="3" y="10" width="18" height="6" rx="2"></rect>
+                    <circle cx="8" cy="13" r="1.4" fill="#ffffff" stroke="none"></circle>
+                    <path d="M13 13h5"></path>
+                  </svg>
+                  Biometric-grade security
+                </span>
+                <span className="loginTag">
+                  <svg viewBox="0 0 24 24" className="loginIcon">
+                    <path d="M4 15V6a2 2 0 0 1 2-2h9l5 5v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path>
+                    <path d="M4 15l4-4 3 3 5-6 4 4"></path>
+                  </svg>
+                  Offline-ready capture
+                </span>
+              </div>
+            </div>
+
+            <div className="loginBrandStat">
+              <div className="loginBrandStatIcon">
+                <svg viewBox="0 0 24 24" className="loginIcon">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="10" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div>
+                <div className="loginBrandStatNumber">128,400+</div>
+                <div className="loginBrandStatLabel">
+                  citizens enrolled nationwide this year
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="loginFormPanel">
+            <div className="loginFormInner">
+              <div className="loginFormLogo">
+                <img src={logoImage} alt="SDID" />
+                <span>
+                  SDID <span className="loginFormLogoLight">Enrollment</span>
+                </span>
+              </div>
+
+              <Heading level={3} className="loginFormTitle">
+                Welcome back
+              </Heading>
+              <Text className="loginFormSubtitle">
+                Sign in to the staff enrollment console.
+              </Text>
+
+              {offlineErrorMessage !== "" && (
+                <div className="mb-3">
+                  <Alert type="error">{offlineErrorMessage}</Alert>
+                </div>
+              )}
+
+              <form
+                onSubmit={formik.handleSubmit}
+                className="formBody"
+                data-testid="login-form"
+              >
+                <LoginForm {...formik} enableLogin={enableLogin} />
+              </form>
+              <Button
+                text={translation.forgot_password}
+                onClick={() => navigate("/authentication/forgotPassword")}
+                block
+                testId="forgot_password"
+                appearance="ghost"
+              />
+
+              <div className="loginTrustNote">
+                <svg viewBox="0 0 24 24" className="loginIcon">
+                  <path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"></path>
+                  <path d="M9 12l2 2 4-4"></path>
+                </svg>
+                Your session is protected with device-bound multi-factor
+                verification.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Modal
         show={openModal}

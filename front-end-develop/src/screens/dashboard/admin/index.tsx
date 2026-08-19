@@ -9,6 +9,7 @@ import { Suspense, useEffect } from "react";
 import { clearStorage, getStorage } from "@/utils/storage";
 import { Stack } from "rsuite";
 import Analytics from "./analyticsV2";
+import Overview from "./overview";
 import Reports from "./reports";
 import Enrollments from "./enrollments";
 import Prenrollment from "./prenrollement";
@@ -36,14 +37,18 @@ const withSuspense = (Component: React.ComponentType) => (
 export const routes: NavigationType[] = [
   {
     path: "/",
-    element: withSuspense(Analytics)
+    element: withSuspense(Overview)
   },
   {
     path: "/home",
-    element: withSuspense(Analytics)
+    element: withSuspense(Overview)
   },
   {
     path: "/dashboard",
+    element: withSuspense(Overview)
+  },
+  {
+    path: "/analytics",
     element: withSuspense(Analytics)
   },
   {

@@ -14,6 +14,9 @@ node_modules/
 /dist-ssr
 *.local
 
+# Generated mock backend data (rebuilt from mock-server/mock-data-entry.ts)
+mock-server/.generated/
+
 # Environment variables
 .env
 .env.*

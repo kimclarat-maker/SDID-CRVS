@@ -3,6 +3,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import { LocalServiceProvider } from "./context/LocalServiceContext";
+import { seedMockSession } from "./mockSession";
+
+seedMockSession();
 
 const rootElement = document.getElementById("root");
 if (rootElement) {

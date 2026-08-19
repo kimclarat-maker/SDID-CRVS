@@ -75,6 +75,11 @@ const Chart: React.FC<ChartType> = ({
       borderColor?: string | string[];
       borderRadius?: number;
       barPercentage?: number;
+      tension?: number;
+      fill?: boolean;
+      pointRadius?: number;
+      pointHoverRadius?: number;
+      borderWidth?: number;
     }[];
   }>({
     labels: [],
@@ -86,6 +91,11 @@ const Chart: React.FC<ChartType> = ({
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
     scales: {
       x: {
         display: true,
@@ -139,10 +149,19 @@ const Chart: React.FC<ChartType> = ({
           borderColor,
           borderRadius: 15,
           barPercentage: 0.4,
+          ...(type === "line"
+            ? {
+                tension: 0.35,
+                fill: true,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                borderWidth: 2.5,
+              }
+            : {}),
         },
       ],
     });
-  }, [loading, labels, chartData, backgroundColor, borderColor]);
+  }, [loading, labels, chartData, backgroundColor, borderColor, type]);
 
   return (
     <>

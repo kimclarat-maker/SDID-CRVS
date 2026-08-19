@@ -10,7 +10,6 @@ import Loading from "@/components/loader";
 import RevalidateAccount from "@/components/revalidateAccount";
 import { useLocalService } from "@/context/LocalServiceContext";
 import Health from "@/components/health";
-import { clearStorage, getStorage } from "@/utils/storage";
 import { POST_LOGIN_REDIRECT_KEY } from "@/navigation/guards/RequireAuth";
 
 export const routes: NavigationType[] = [
@@ -36,13 +35,6 @@ export default () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const userLoggedIn = await getStorage();
-      if (!userLoggedIn?.token) {
-        clearStorage();
-        navigate(`/staff/sign-in`);
-        return;
-      }
-
       // If the guard redirected here from a protected deep link, honour it
       // once and clear it so refreshing this page doesn't loop.
       const savedDestination = sessionStorage.getItem(POST_LOGIN_REDIRECT_KEY);

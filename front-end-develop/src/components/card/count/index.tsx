@@ -11,6 +11,7 @@ const CardCount: React.FC<CardCountType> = ({
   icon,
   loading,
   name,
+  trend,
 }) => {
   return (
     <div
@@ -30,6 +31,18 @@ const CardCount: React.FC<CardCountType> = ({
               <TitleLoader />
             ) : (
               <>
+                {trend && (
+                  <span className={`card-count-trend ${trend.direction}`}>
+                    <Icon
+                      name={
+                        trend.direction === "up"
+                          ? "trending_up"
+                          : "trending_down"
+                      }
+                    />
+                    {trend.value}
+                  </span>
+                )}
                 <Heading level={3} className="count">
                   {count}
                 </Heading>

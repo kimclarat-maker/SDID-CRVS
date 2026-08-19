@@ -5,4 +5,5 @@ export type CardCountType = {
   loading?: boolean;
   icon?: string;
   name: string;
+  trend?: { value: string; direction: "up" | "down" };
 };

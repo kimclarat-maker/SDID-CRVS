@@ -19,6 +19,7 @@ import {
 import "./styles.css";
 import { LanguageContext } from "@/context/LanguageContext";
 import Button from "../button";
+import Icon from "../icon";
 import { getStorage } from "@/utils/storage";
 import { syncAccountData } from "@/api/accounts";
 import { fetchAPIServiceInfo } from "@/api/health";
@@ -106,26 +107,46 @@ const Health: React.FC<Props> = ({
     }
   }, []);
 
+  const isRunningLocal = loginType === '"local"' || loginType === "local";
+
   return (
     <div>
-      <Panel>
-        <Stack>
-          <Stack.Item grow={1}>Current Login Type: </Stack.Item>
+      <Panel className="healthStripPanel">
+        <Stack className="healthStripRow">
+          <Stack.Item grow={1}>
+            <div className="healthStripStatus">
+              <div
+                className={`healthStripIcon ${isOnline ? "online" : "offline"}`}
+              >
+                <Icon name={isOnline ? "cloud_done" : "cloud_off"} />
+              </div>
+              <div>
+                <div className="healthStripLabelRow">
+                  <span className="healthStripLabel">
+                    {isRunningLocal
+                      ? `Running Local ${
+                          offlineEnvironment?.env
+                            ? `(${offlineEnvironment?.env} - v${offlineEnvironment?.version})`
+                            : ""
+                        }`
+                      : "Running Remote"}
+                  </span>
+                  <span
+                    className={`healthStripPill ${isOnline ? "online" : "offline"}`}
+                  >
+                    {isOnline ? "Connected" : "Offline"}
+                  </span>
+                </div>
+                <div className="healthStripSubtext">
+                  {isRunningLocal
+                    ? "Requests are served from the local capture service on this device"
+                    : "Requests are served from the cloud API · local capture service not active"}
+                </div>
+              </div>
+            </div>
+          </Stack.Item>
           <Stack.Item>
             <ButtonToolbar>
-              <Button
-                text={
-                  loginType === '"local"' || loginType === "local"
-                    ? `Running Local ${
-                        offlineEnvironment?.env
-                          ? `(${offlineEnvironment?.env} - v${offlineEnvironment?.version})`
-                          : ""
-                      }`
-                    : "Running Remote"
-                }
-                appearance="default"
-                disabled
-              />
               <Button
                 text={
                   loginType === "remote" || loginType === '"remote"'
@@ -134,7 +155,7 @@ const Health: React.FC<Props> = ({
                           ? `(${offlineEnvironment?.env} - v${offlineEnvironment?.version})`
                           : ""
                       }`
-                    : "Switch Remote"
+                    : "Switch to Remote"
                 }
                 onClick={switchLocalService}
                 appearance="ghost"
@@ -144,11 +165,7 @@ const Health: React.FC<Props> = ({
                 onClick={() =>
                   openInNewTab(cfg.VITE_OFFLINE_PACKAGE_DOWNLOAD_URL)
                 }
-                text={
-                  loginType === '"local"' || loginType === "local"
-                    ? "Update Local Service"
-                    : "Download Local Service"
-                }
+                text={isRunningLocal ? "Update Local Service" : "Download Local Service"}
               />
             </ButtonToolbar>
           </Stack.Item>

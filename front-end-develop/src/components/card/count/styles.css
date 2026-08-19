@@ -50,3 +50,30 @@
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
   border-color: var(--border-strong);
 }
+
+.card-count-container .card-body {
+  position: relative;
+}
+
+.card-count-trend {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.card-count-trend span {
+  font-size: 14px !important;
+}
+
+.card-count-trend.up {
+  color: var(--status-success);
+}
+
+.card-count-trend.down {
+  color: var(--status-danger);
+}
