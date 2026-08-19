@@ -18,6 +18,8 @@ import AccessRights from "../accessRoles/accessRights";
 import { defineAccess } from "@/utils/common/permissions";
 import StackItem from "rsuite/esm/Stack/StackItem";
 import Card from "@/components/card";
+import { isDemoMode } from "@/demo/config";
+import DemoResetControl from "@/components/demoResetControl";
 
 type NavTypes = {
   active: string;
@@ -249,6 +251,11 @@ function Settings() {
             title: translation.holidays,
             key: "holidays",
             data: tab === "holidays" ? <Holidays /> : <></>,
+          },
+          isDemoMode() && {
+            title: "Demo data",
+            key: "demo",
+            data: tab === "demo" ? <DemoResetControl /> : <></>,
           },
         ].filter(Boolean)}
       />

@@ -113,6 +113,8 @@ function InfoCard({
   };
 
   const renderPhotoReview = () => {
+    // `nida` is the legacy backend response field for the identity-authority
+    // record snapshot; kept as-is for backend compatibility, only the label shown below is neutral.
     if (preHistoricalInfo?.nida?.photo) {
       const photo = preHistoricalInfo?.nida?.photo;
       return (
@@ -126,7 +128,7 @@ function InfoCard({
           </StackItem>
           {photo && (
             <StackItem style={{ marginBottom: "1rem", width: "100%" }}>
-              <Panel bordered header="NIDA">
+              <Panel bordered header="Identity record">
                 <div className="userPhoto">
                   <img src={photo} />
                 </div>

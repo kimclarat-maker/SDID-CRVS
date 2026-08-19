@@ -3,6 +3,7 @@ import { EXCLUDED_MESSAGES } from "@/constants/errors";
 import { defineAccess } from "@/utils/common/permissions";
 import toastMessage from "@/utils/common/toastMessage";
 import { clearStorage, getStorage, setStorage } from "@/utils/storage";
+import { isDemoMode } from "@/demo/config";
 import axios from "axios";
 
 // FIXED retry mechanism for localStorage access
@@ -372,6 +373,19 @@ type CONFIG = {
 };
 
 const api = async (config: CONFIG) => {
+  // Hard safety boundary: in demo mode, real backend calls are never made.
+  // Resources wired into the demo data layer (src/demo/services) short-circuit
+  // before reaching this function; anything else fails loudly here instead of
+  // silently hitting a real endpoint with a demo session token.
+  if (isDemoMode()) {
+    console.error(
+      `[demo mode] blocked a real network request to "${config.url}" — this resource isn't wired to the demo data layer yet.`
+    );
+    throw new Error(
+      "This action isn't available in the demo environment yet."
+    );
+  }
+
   const userLoggedIn = await getStorage();
   const tempToken = await getStorage("tempToken");
 

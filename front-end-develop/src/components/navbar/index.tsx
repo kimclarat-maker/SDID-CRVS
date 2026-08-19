@@ -29,6 +29,7 @@ import { SidebarContext } from "@/context/SidebarContext";
 import Modal from "../Modal";
 import LogoutConfirm from "./LogoutConfirm";
 import Health from "../health";
+import DemoBadge from "../demoBadge";
 
 export default function Navbar({
   containerType,
@@ -218,6 +219,11 @@ export default function Navbar({
                 <Logo />
               </LibNavbar.Brand>
             </Stack.Item>
+            {user?.token && (
+              <Stack.Item>
+                <DemoBadge />
+              </Stack.Item>
+            )}
             <Stack.Item grow={1} />
             <>{!isPhone && !isTablet && user?.token && renderPublicMenus()}</>
 

@@ -1,23 +1,23 @@
 import {
-  fetchAccountNIDLogs,
+  fetchAccountIdentityLogs,
   fetchSessionActivityLogs,
   fetchAccountActivityLogs,
   fetchAccountActivityLogsBySessionId,
-} from "@/api/applogs/accountNIDLogs";
-import { GETAccountNIDLogsParameters } from "@/types/LogsType";
+} from "@/api/applogs/accountIdentityLogs";
+import { GETAccountIdentityLogsParameters } from "@/types/LogsType";
 import { useState } from "react";
 
-export const useFetchAccountNIDLogs = () => {
+export const useFetchAccountIdentityLogs = () => {
   const [loadingLogs, setLoading] = useState(false);
   const [totalPages, setTotal] = useState<number>();
   const [logs, setData] = useState<any[]>([]);
 
   const fetchAccountIDLogsData = async (
-    params: GETAccountNIDLogsParameters
+    params: GETAccountIdentityLogsParameters
   ) => {
     setLoading(true);
     try {
-      const data = await fetchAccountNIDLogs(params);
+      const data = await fetchAccountIdentityLogs(params);
 
       if (data && data.data) {
         setData([]);

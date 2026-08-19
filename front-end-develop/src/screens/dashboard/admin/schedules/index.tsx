@@ -3,6 +3,7 @@ import { LanguageContext } from "@/context/LanguageContext";
 import React, { useContext, useState } from "react";
 import ScheduleTable from "./table";
 import Calendar from "./calendar";
+import PageHeader from "@/components/pageHeader";
 
 interface Props {}
 
@@ -11,6 +12,7 @@ const Schedules: React.FC<Props> = ({}) => {
   const [tab, setTab] = useState("table");
   return (
     <div>
+      <PageHeader title={translation.schedules} />
       <CustomTabs
         getTab={setTab}
         options={[

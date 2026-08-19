@@ -15,6 +15,11 @@ import { EnrollmentType } from "@/types/Enrollment";
 import { ImageCell } from "@/components/table/image";
 import { LinkCell } from "@/components/table/linkCell";
 import { CheckboxCell } from "@/components/table/checkboxCell";
+import { isDemoMode } from "@/demo/config";
+import { demoSyncOfflineApplication } from "@/demo/services/applications";
+import { getStorage } from "@/utils/storage";
+import Button from "@/components/button";
+import toastMessage from "@/utils/common/toastMessage";
 
 const { Column, HeaderCell, Cell } = LibTable;
 
@@ -140,6 +145,40 @@ function List({ data, totalPages, loading, setFilters }: ListProps) {
           <HeaderCell>{translation.synced}</HeaderCell>
           <CheckboxCell dataKey="syncedToCentral" />
         </Column>
+
+        {isDemoMode() && (
+          <Column resizable minWidth={150}>
+            <HeaderCell>Demo sync</HeaderCell>
+            <Cell>
+              {(rowData: any) =>
+                rowData.syncedToCentral ? (
+                  <span>Synced</span>
+                ) : (
+                  <Button
+                    text="Simulate sync"
+                    size="xs"
+                    appearance="ghost"
+                    type="button"
+                    onClick={async () => {
+                      const user = await getStorage();
+                      const outcome = await demoSyncOfflineApplication(
+                        rowData._id,
+                        `${user?.firstName} ${user?.lastName}`
+                      );
+                      toastMessage(
+                        outcome === "synced" ? "success" : "error",
+                        outcome === "synced"
+                          ? "Offline application synchronised (demo)."
+                          : "Simulated sync failure — retry."
+                      );
+                      setFilters((prev: any) => ({ ...prev }));
+                    }}
+                  />
+                )
+              }
+            </Cell>
+          </Column>
+        )}
 
         <Column resizable minWidth={80}>
           <HeaderCell>{translation.action}</HeaderCell>

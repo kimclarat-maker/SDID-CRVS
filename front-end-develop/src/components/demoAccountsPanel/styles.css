@@ -1,0 +1,45 @@
+.demo-accounts-panel {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.demo-accounts-panel-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.demo-accounts-panel-hint {
+  font-size: var(--font-size-caption);
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+.demo-account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.demo-account-row:first-of-type {
+  border-top: none;
+}
+
+.demo-account-role {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  font-size: var(--font-size-body-sm);
+}
+
+.demo-account-email,
+.demo-account-password {
+  font-size: var(--font-size-caption);
+  color: var(--text-muted);
+  font-family: monospace;
+}

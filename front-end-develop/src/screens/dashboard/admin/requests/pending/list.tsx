@@ -14,6 +14,14 @@ import Modal from "@/components/Modal";
 import Enrollment from "../../biometrics/biometricCapture/enrollmentStatus";
 import { LinkCell } from "@/components/table/linkCell";
 import { calculateAge } from "@/utils/common/age";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoApproveApplication,
+  demoRejectApplication,
+} from "@/demo/services/applications";
+import { getStorage } from "@/utils/storage";
+import Button from "@/components/button";
+import toastMessage from "@/utils/common/toastMessage";
 
 const { Column, HeaderCell, Cell } = LibTable;
 
@@ -141,6 +149,49 @@ function List({ data, totalPages, loading, fetchData }: ListProps) {
           <HeaderCell>{translation.enrollment_officer}</HeaderCell>
           <ConcatNameCell dataKey={["officer.firstName", "officer.lastName"]} />
         </Column>
+
+        {isDemoMode() && (
+          <Column resizable minWidth={190}>
+            <HeaderCell>Demo review</HeaderCell>
+            <Cell>
+              {(rowData: any) => (
+                <div style={{ display: "flex", gap: 6 }}>
+                  <Button
+                    text="Approve"
+                    size="xs"
+                    appearance="primary"
+                    type="button"
+                    onClick={async () => {
+                      const user = await getStorage();
+                      await demoApproveApplication(
+                        rowData._id,
+                        `${user?.firstName} ${user?.lastName}`
+                      );
+                      toastMessage("success", "Application approved (demo).");
+                      fetchData({});
+                    }}
+                  />
+                  <Button
+                    text="Reject"
+                    size="xs"
+                    appearance="ghost"
+                    color="red"
+                    type="button"
+                    onClick={async () => {
+                      const user = await getStorage();
+                      await demoRejectApplication(
+                        rowData._id,
+                        `${user?.firstName} ${user?.lastName}`
+                      );
+                      toastMessage("success", "Application rejected (demo).");
+                      fetchData({});
+                    }}
+                  />
+                </div>
+              )}
+            </Cell>
+          </Column>
+        )}
 
         <Column resizable minWidth={80}>
           <HeaderCell>{translation.action}</HeaderCell>

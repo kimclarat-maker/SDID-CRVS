@@ -4,6 +4,7 @@ import CustomTabs from "@/components/tabs";
 import ExceptionsPrenrollment from "../exceptions/prenrollment";
 import ExceptionsPairValidator from "../exceptions/approver";
 import SearchCitizen from "../../search/citizen";
+import PageHeader from "@/components/pageHeader";
 
 function Exceptions() {
   const { translation } = useContext(LanguageContext);
@@ -11,6 +12,13 @@ function Exceptions() {
 
   return (
     <>
+      <PageHeader
+        title={translation.exceptions}
+        breadcrumb={[
+          { label: translation.requests },
+          { label: translation.exceptions },
+        ]}
+      />
       <CustomTabs
         getTab={setTab}
         options={[

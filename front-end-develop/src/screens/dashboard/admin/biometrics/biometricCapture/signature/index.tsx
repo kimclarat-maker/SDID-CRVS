@@ -18,6 +18,7 @@ import Upload from "@/components/supportingDocuments/upload";
 import { EnrollmentType } from "@/types/Enrollment";
 import Comment from "@/components/comment";
 import ViewComment from "@/components/comment/viewComment";
+import { platformConfig } from "@/config/platform.config";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Empty from "@/components/empty";
@@ -194,7 +195,7 @@ function Signature({
         method: "POST",
         data: {
           who,
-          why: "NIDA Single Digitial ID Enrollment",
+          why: `${platformConfig.platformShortName} Single Digital ID Enrollment`,
         },
       };
       const response = await axios(options);

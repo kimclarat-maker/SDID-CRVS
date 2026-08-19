@@ -593,7 +593,8 @@ export const mapBackendErrors: any = {
     "Consent verified successfully":
       "Gutanga uburenganzira bwo gukomeza n'umwirondoro wavuguruwe byemejwe",
     "Data not found": "Ntamakuru abashije kuboneka",
-    "Selfie does not match": "Ifoto wafashe ntago ihuye niri muri NIDA",
+    "Selfie does not match":
+      "Ifoto wafashe ntago ihuye n'iyo iri mu bubiko bw'irangamuntu",
     "Phone number is required for skip selfie verification":
       "Numero ya telefoni irakeneye kugirango ukomeze hadafashwe ifoto (selfie)",
     "Review started successfully": "Gutangira kugenzura umwirondoro...",

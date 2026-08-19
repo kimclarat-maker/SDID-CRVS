@@ -7,6 +7,14 @@ import Sectors from "./sector";
 import Cells from "./cell";
 import Villages from "./village";
 import Countries from "./country";
+import { platformConfig } from "@/config/platform.config";
+import PageHeader from "@/components/pageHeader";
+
+// Underlying data/routes stay province/district/sector/cell/village (real
+// backend contract); only the tab labels below come from the deployment's
+// administrativeAreaHierarchy so the UI can read as country-neutral.
+const [level1, level2, level3, level4, level5] =
+  platformConfig.administrativeAreaHierarchy;
 
 function Geography() {
   const { translation } = useContext(LanguageContext);
@@ -14,6 +22,7 @@ function Geography() {
 
   return (
     <div>
+      <PageHeader title={translation.locations} />
       <CustomTabs
         activeTab={tab}
         getTab={(t: string) => setTab(t)}
@@ -24,27 +33,27 @@ function Geography() {
             data: tab === "countries" ? <Countries /> : <></>,
           },
           {
-            title: translation.provinces,
+            title: level1?.label || translation.provinces,
             key: "provinces",
             data: tab === "provinces" ? <Provinces /> : <></>,
           },
           {
-            title: translation.districts,
+            title: level2?.label || translation.districts,
             key: "districts",
             data: tab === "districts" ? <Districts /> : <></>,
           },
           {
-            title: translation.sectors,
+            title: level3?.label || translation.sectors,
             key: "sectors",
             data: tab === "sectors" ? <Sectors /> : <></>,
           },
           {
-            title: translation.cells,
+            title: level4?.label || translation.cells,
             key: "cells",
             data: tab === "cells" ? <Cells /> : <></>,
           },
           {
-            title: translation.villages,
+            title: level5?.label || translation.villages,
             key: "villages",
             data: tab === "villages" ? <Villages /> : <></>,
           },

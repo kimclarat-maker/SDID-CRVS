@@ -17,12 +17,12 @@ export type GETModuleLogsParameters = {
   search: string;
 };
 
-export type GETAccountNIDLogsParameters = {
+export type GETAccountIdentityLogsParameters = {
   offset: number;
   limit: number;
   fromDay: string;
   toDay: string;
-  nid: string;
+  identityNumber: string;
   "data.method"?: string;
   // module: string;
   accountAction?: string;

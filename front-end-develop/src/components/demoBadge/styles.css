@@ -1,0 +1,13 @@
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid var(--status-warning);
+  white-space: nowrap;
+}

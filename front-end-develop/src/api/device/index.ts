@@ -2,6 +2,8 @@ import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters } from "@/types/Device";
 import api from "..";
 import axios from "axios";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchDevices } from "@/demo/services/administration";
 
 interface Device {
   name: string;
@@ -34,6 +36,8 @@ export const registerDevice = async (params: Device) => {
 };
 
 export const fetchDevices = async (params: GETParameters) => {
+  if (isDemoMode()) return demoFetchDevices(params as any);
+
   try {
     const options = {
       method: "GET",

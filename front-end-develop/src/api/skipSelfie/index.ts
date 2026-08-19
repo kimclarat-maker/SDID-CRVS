@@ -1,6 +1,8 @@
 import { GETParameters, EnrollmentType } from "@/types/Enrollment";
 import api from "..";
 import { defineAccess } from "@/utils/common/permissions";
+import { isDemoMode } from "@/demo/config";
+import { demoListExceptions } from "@/demo/services/applications";
 
 interface ApiResponse {
   data: EnrollmentType[];
@@ -11,6 +13,8 @@ export const fetchPrenrollmentSkipSelfie = async (
   params: GETParameters,
   isStartedOnline?: boolean
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoListExceptions(params as any);
+
   try {
     let updatedBody = { ...params };
     if (

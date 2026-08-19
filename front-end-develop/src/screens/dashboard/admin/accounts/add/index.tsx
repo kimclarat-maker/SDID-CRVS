@@ -7,6 +7,9 @@ import { AccountType } from "@/types/Account";
 import AccountForm from "@/components/forms/account";
 import api from "@/api";
 import { useUploadMedia } from "@/hooks/useUploadMedia";
+import { isDemoMode } from "@/demo/config";
+import { demoSaveAccount } from "@/demo/services/administration";
+import { DemoRole } from "@/demo/types";
 
 type SupportingDocumentType = {
   name: string;
@@ -80,6 +83,31 @@ export default function AddAccount({
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
+        if (isDemoMode()) {
+          const roleValue = (values.accessRole?.level || values.accessRole?.value || "")
+            .toString()
+            .toUpperCase();
+          const role: DemoRole =
+            roleValue === "SUPERADMIN"
+              ? "administrator"
+              : (["enrolment_officer", "reviewer", "supervisor"].find(
+                  (r) => r.toUpperCase() === roleValue
+                ) as DemoRole) || "enrolment_officer";
+
+          const data = await demoSaveAccount({
+            _id: selectedData?._id,
+            firstName: values.firstName || "",
+            lastName: values.lastName || "",
+            email: values.email || "",
+            phoneNumber: values.phoneNumber,
+            role,
+            centerId: values.center?.value,
+            status: values.status as "active" | "inactive",
+          });
+          onSuccess(data);
+          return;
+        }
+
         let method = "POST",
           url = `/accounts`,
           body: any = {

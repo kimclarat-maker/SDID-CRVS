@@ -3,6 +3,11 @@ import { GETParameters } from "@/types/Draft";
 import api from "..";
 import drafts from "@/mocks/drafts";
 import { Draft } from "@/types/Draft";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoListApplications,
+  demoGetApplicationById,
+} from "@/demo/services/applications";
 
 interface ApiResponse {
   data: Draft[];
@@ -12,6 +17,8 @@ interface ApiResponse {
 export const fetchDrafts = async (
   params: GETParameters
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoListApplications(params as any) as any;
+
   try {
     if (params.search === "" || params.search === undefined) {
       delete params.search;
@@ -41,6 +48,11 @@ export const fetchDrafts = async (
 };
 
 export const fetchDraftById = async (id: string) => {
+  if (isDemoMode()) {
+    const result = await demoGetApplicationById(id);
+    return result.data;
+  }
+
   try {
     // const options = {
     //   method: "GET",

@@ -25,6 +25,11 @@ import { apiHandler } from "@/api";
 import Alert from "@/components/alert";
 import { cfg } from "@/constants/cfg";
 import axios from "axios";
+import { isDemoMode } from "@/demo/config";
+import { demoCredentials, findDemoCredential } from "@/demo/credentials";
+import { startDemoSession } from "@/demo/session";
+import DemoAccountsPanel from "@/components/demoAccountsPanel";
+import DemoBadge from "@/components/demoBadge";
 
 interface Address {
   province?: AddressType | null;
@@ -69,6 +74,20 @@ export default function Login({
     },
     validationSchema,
     onSubmit: async (values) => {
+      if (isDemoMode()) {
+        const credential = findDemoCredential(values.email, values.password);
+        if (!credential) {
+          toastMessage(
+            "error",
+            "Invalid demo credentials. Use one of the accounts listed below."
+          );
+          return;
+        }
+        await startDemoSession(credential);
+        navigate("/dashboard/admin");
+        return;
+      }
+
       try {
         await localStorage.removeItem("loginType");
         const data = await userLoginApi(
@@ -316,6 +335,7 @@ export default function Login({
         <Heading level={4}>
           <Text className="textPrimary">{translation.login}</Text>
         </Heading>
+        <DemoBadge />
 
         <br />
         <form
@@ -332,6 +352,17 @@ export default function Login({
           testId="forgot_password"
           appearance="ghost"
         />
+        {isDemoMode() && (
+          <DemoAccountsPanel
+            accounts={demoCredentials}
+            onUseAccount={(credential) => {
+              formik.setValues({
+                email: credential.email,
+                password: credential.password,
+              });
+            }}
+          />
+        )}
       </FormLayout>
 
       <Modal

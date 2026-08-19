@@ -55,6 +55,8 @@ export interface PlatformConfig {
   platformName: string;
   platformShortName: string;
   countryName: string;
+  identitySystemName: string;
+  civilRegistrationSystemName: string;
   authorities: AuthorityNames;
   logo: {
     src: string;

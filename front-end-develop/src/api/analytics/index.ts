@@ -3,6 +3,8 @@ import api, { apiHandler } from "..";
 import { customFilter } from "@/utils/common/customFilter";
 import axios from "axios";
 import { cfg } from "@/constants/cfg";
+import { isDemoMode } from "@/demo/config";
+import { demoGetAggregates } from "@/demo/services/analytics";
 
 const API_BASE_URL =
   cfg.VITE_NODE_ENV === "production"
@@ -84,6 +86,14 @@ const getAnalyticsToken = () => {
 };
 
 analyticsAPI.interceptors.request.use((config: any) => {
+  // Same hard safety boundary as src/api/index.ts: this instance bypasses the
+  // shared api() client, so it needs its own demo-mode guard.
+  if (isDemoMode()) {
+    throw new Error(
+      "This action isn't available in the demo environment yet."
+    );
+  }
+
   const token = getAnalyticsToken();
 
   if (token) {
@@ -143,6 +153,8 @@ export const getAggregates = async (
   fromHour: any = null,
   toHour: any = null
 ) => {
+  if (isDemoMode()) return demoGetAggregates();
+
   const params: any = { date };
   if (hour !== null) params.hour = hour;
   if (fromHour !== null) params.from_hour = fromHour;

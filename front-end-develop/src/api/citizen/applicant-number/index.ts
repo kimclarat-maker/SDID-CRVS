@@ -5,6 +5,7 @@ export const fetchApplicantByApplicantNumber = async (
   applicantNumber: string
 ) => {
   try {
+    // "nida" is a legacy backend route segment, not a display term — kept for backend compatibility.
     const options = {
       method: "GET",
       url: `/citizen-info/nida/applicant-number/${applicantNumber}`,

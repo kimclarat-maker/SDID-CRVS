@@ -5,6 +5,9 @@ import Section from "@/components/public/Section";
 import Notice from "@/components/public/Notice";
 import Icon from "@/components/icon";
 import { platformConfig } from "@/config/platform.config";
+import { isDemoMode } from "@/demo/config";
+import { demoVerifyDocument } from "@/demo/services/public";
+import DemoBadge from "@/components/demoBadge";
 
 interface VerifyFormErrors {
   documentNumber?: string;
@@ -70,6 +73,32 @@ export default function Verify() {
       setResult(null);
       return;
     }
+
+    if (isDemoMode()) {
+      const found = demoVerifyDocument(
+        documentNumber.trim(),
+        verificationCode.trim()
+      );
+      setResult(
+        found
+          ? {
+              isValid: found.valid,
+              issuingAuthority: found.issuingAuthority,
+              documentType: found.documentType,
+              documentStatus: found.status,
+              holderMatch: `${found.maskedHolderName} (masked)`,
+            }
+          : {
+              isValid: false,
+              issuingAuthority: "Not applicable",
+              documentType: "Not applicable",
+              documentStatus: "Not found",
+              holderMatch: "Not applicable",
+            }
+      );
+      return;
+    }
+
     setResult(buildMockResult(documentNumber.trim(), verificationCode.trim()));
   };
 
@@ -88,6 +117,12 @@ export default function Verify() {
         <Notice type="info" title="What this shows">
           {page.disclosureNote}
         </Notice>
+        {isDemoMode() && (
+          <p style={{ marginTop: "0.75rem" }}>
+            <DemoBadge /> Try it: document{" "}
+            <code>CERT-DEMO-2026-0001</code>, code <code>135790</code>
+          </p>
+        )}
 
         <div
           className="public-grid public-grid-2"

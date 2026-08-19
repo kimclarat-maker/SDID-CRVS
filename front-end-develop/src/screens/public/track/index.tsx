@@ -4,6 +4,9 @@ import PageHeader from "@/components/public/PageHeader";
 import Section from "@/components/public/Section";
 import Notice from "@/components/public/Notice";
 import StatusTimeline from "@/components/public/StatusTimeline";
+import { isDemoMode } from "@/demo/config";
+import { demoTrackApplication, DemoTrackingResult } from "@/demo/services/public";
+import DemoBadge from "@/components/demoBadge";
 
 interface TrackFormErrors {
   reference?: string;
@@ -18,6 +21,9 @@ export default function Track() {
   const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<TrackFormErrors>({});
   const [result, setResult] = useState<{ stageIndex: number } | null>(null);
+  const [demoResult, setDemoResult] = useState<DemoTrackingResult | null>(
+    null
+  );
 
   const validate = (): boolean => {
     const nextErrors: TrackFormErrors = {};
@@ -37,6 +43,19 @@ export default function Track() {
     event.preventDefault();
     if (!validate()) {
       setResult(null);
+      setDemoResult(null);
+      return;
+    }
+
+    if (isDemoMode()) {
+      const found = demoTrackApplication(reference, otp);
+      if (found) {
+        setDemoResult(found);
+        setResult({ stageIndex: found.currentStageIndex });
+        return;
+      }
+      setDemoResult(null);
+      setResult(null);
       return;
     }
 
@@ -44,6 +63,7 @@ export default function Track() {
     // never needs a live backend to demonstrate the tracking experience.
     const mockStageIndex =
       reference.trim().length % page.statusStages.length;
+    setDemoResult(null);
     setResult({ stageIndex: mockStageIndex });
   };
 
@@ -118,19 +138,59 @@ export default function Track() {
           </button>
         </form>
 
+        {isDemoMode() && (
+          <p style={{ marginTop: "1rem" }}>
+            <DemoBadge /> Try it: reference{" "}
+            <code>APP-DEMO-2026-0001</code>, code <code>246810</code>
+          </p>
+        )}
+
         <div
-          style={{ marginTop: "2rem", maxWidth: 560 }}
+          style={{ marginTop: "1rem", maxWidth: 560 }}
           role="status"
           aria-live="polite"
         >
           {result ? (
-            <StatusTimeline
-              stages={page.statusStages}
-              currentIndex={result.stageIndex}
-            />
+            <>
+              {demoResult && (
+                <dl className="public-form-hint" style={{ marginBottom: "1rem" }}>
+                  <div>
+                    <strong>Application type:</strong> {demoResult.applicationType}
+                  </div>
+                  <div>
+                    <strong>Submitted:</strong>{" "}
+                    {new Date(demoResult.submittedAt).toLocaleDateString()}
+                  </div>
+                  {demoResult.centerName && (
+                    <div>
+                      <strong>Service centre:</strong> {demoResult.centerName}
+                    </div>
+                  )}
+                  {demoResult.outstandingAction && (
+                    <div>
+                      <strong>Outstanding action:</strong>{" "}
+                      {demoResult.outstandingAction}
+                    </div>
+                  )}
+                  {demoResult.nextAppointment && (
+                    <div>
+                      <strong>Next appointment:</strong>{" "}
+                      {demoResult.nextAppointment.date} at{" "}
+                      {demoResult.nextAppointment.time}
+                    </div>
+                  )}
+                </dl>
+              )}
+              <StatusTimeline
+                stages={page.statusStages}
+                currentIndex={result.stageIndex}
+              />
+            </>
           ) : (
             <Notice type="info" title="No status yet">
-              {page.emptyStateHint}
+              {isDemoMode()
+                ? "No demo application matches that reference and code."
+                : page.emptyStateHint}
             </Notice>
           )}
         </div>

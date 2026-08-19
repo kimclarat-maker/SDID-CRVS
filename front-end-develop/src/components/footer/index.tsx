@@ -4,6 +4,7 @@ import { LanguageContext } from "@/context/LanguageContext";
 import LOGO from "@/assets/logo.png";
 import Icon from "../icon";
 import useScreenSize from "@/hooks/useScreenSize";
+import { platformConfig } from "@/config/platform.config";
 
 const Footer = () => {
   const { translation } = useContext(LanguageContext);
@@ -19,7 +20,10 @@ const Footer = () => {
                 {new Date().getFullYear()}
               </>
             ) : (
-              <>&copy; SDID NIDA {new Date().getFullYear()}</>
+              <>
+                &copy; {platformConfig.platformShortName}{" "}
+                {new Date().getFullYear()}
+              </>
             )}
           </small>
         </div>
@@ -32,19 +36,26 @@ const Footer = () => {
               <img src={LOGO} />
             </div>
             {(!isPhone || !isTablet) && (
-              <span className="textBold">NIDA SDID</span>
+              <span className="textBold">
+                {platformConfig.platformShortName}
+              </span>
             )}
           </center>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Icon
-            name="call"
-            styles={{ fontSize: 16, color: "var(--rs-primary)" }}
-          />{" "}
-          <small className="textBold">
-            {(!isTablet || !isPhone) && translation.call_center} 3500
-          </small>
-        </div>
+        {platformConfig.contact.callCenterNumber && (
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+          >
+            <Icon
+              name="call"
+              styles={{ fontSize: 16, color: "var(--rs-primary)" }}
+            />{" "}
+            <small className="textBold">
+              {(!isTablet || !isPhone) && translation.call_center}{" "}
+              {platformConfig.contact.callCenterNumber}
+            </small>
+          </div>
+        )}
       </div>
     </div>
   );

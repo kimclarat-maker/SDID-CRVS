@@ -5,15 +5,18 @@ import { LanguageContext } from "@/context/LanguageContext";
 import DailyReports from "./daily";
 import WeeklyReports from "./weekly";
 import MonthlyReports from "./monthly";
+import PageHeader from "@/components/pageHeader";
 
 function ReportEntry() {
   const { translation } = useContext(LanguageContext);
   const [tab, setTab] = useState("1");
   return (
-    <CustomTabs
-      getTab={setTab}
-      activeTab={tab}
-      options={[
+    <>
+      <PageHeader title={translation.reports} />
+      <CustomTabs
+        getTab={setTab}
+        activeTab={tab}
+        options={[
         {
           title: translation.all,
           data: <Reports tab={tab} />,
@@ -34,8 +37,9 @@ function ReportEntry() {
           data: <MonthlyReports tab={tab} />,
           key: "4",
         },
-      ]}
-    />
+        ]}
+      />
+    </>
   );
 }
 

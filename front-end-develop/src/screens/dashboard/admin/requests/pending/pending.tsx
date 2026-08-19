@@ -1,10 +1,13 @@
 import List from "./list";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ReportFilters from "./filters";
 import { useFetchEnrollments } from "@/hooks/useFetchEnrollments";
 import { getDefaultDates } from "@/constants/DEFAULTFILTERS";
+import PageHeader from "@/components/pageHeader";
+import { LanguageContext } from "@/context/LanguageContext";
 
 function Pending() {
+  const { translation } = useContext(LanguageContext);
   const DEFAULT_FILTERS = {
     ...getDefaultDates(2),
     offset: 0,
@@ -34,6 +37,13 @@ function Pending() {
 
   return (
     <>
+      <PageHeader
+        title={translation.pending}
+        breadcrumb={[
+          { label: translation.requests },
+          { label: translation.pending },
+        ]}
+      />
       <ReportFilters filters={filters} setFilters={setFilters} />
       <br />
       <List

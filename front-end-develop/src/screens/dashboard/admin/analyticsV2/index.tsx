@@ -9,6 +9,7 @@ import Card from "@/components/card";
 import capitalizeText from "@/utils/common/capitalizeText";
 import { Text } from "rsuite";
 import { LanguageContext } from "@/context/LanguageContext";
+import PageHeader from "@/components/pageHeader";
 
 interface Props {}
 
@@ -45,6 +46,7 @@ const Analytics: React.FC<Props> = () => {
 
   return (
     <div>
+      <PageHeader title={translation.dashboard} />
       <Filters
         fetchData={fetchData}
         loading={loading}

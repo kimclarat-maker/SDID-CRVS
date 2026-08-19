@@ -1,6 +1,8 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters, ScheduleType } from "@/types/Schedule";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchSchedules } from "@/demo/services/appointments";
 
 interface ApiResponse {
   data: ScheduleType[];
@@ -10,6 +12,8 @@ interface ApiResponse {
 export const fetchSchedules = async (
   params: GETParameters
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoFetchSchedules(params as any) as any;
+
   try {
     if (params.search === "" || params.search === undefined) {
       delete params.search;

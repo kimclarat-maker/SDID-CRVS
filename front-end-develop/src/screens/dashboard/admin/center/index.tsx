@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import Modal from "@/components/Modal";
 import Add from "./add";
-import { ButtonToolbar, Heading, Stack } from "rsuite";
 import Button from "@/components/button";
 import { LanguageContext } from "@/context/LanguageContext";
 import CustomTabs from "@/components/tabs";
 import DataCenters from "./data";
+import PageHeader from "@/components/pageHeader";
 
 function Centers() {
   const { translation } = useContext(LanguageContext);
@@ -14,32 +14,16 @@ function Centers() {
 
   return (
     <>
-      <Stack>
-        <Stack.Item grow={1}>
-          <Heading level={5}>{translation.centers}</Heading>
-        </Stack.Item>
-        <Stack.Item>
-          <ButtonToolbar>
-            {/* <Button
-              text={translation.import}
-              startIcon="attach_file"
-              onClick={() => alert("Coming soon")}
-              appearance="ghost"
-            />
-            <Button
-              text={translation.export}
-              startIcon="download"
-              onClick={() => alert("Coming soon")}
-              appearance="ghost"
-            /> */}
-            <Button
-              text={translation.add}
-              startIcon="add"
-              onClick={() => setOpen(true)}
-            />
-          </ButtonToolbar>
-        </Stack.Item>
-      </Stack>
+      <PageHeader
+        title={translation.centers}
+        action={
+          <Button
+            text={translation.add}
+            startIcon="add"
+            onClick={() => setOpen(true)}
+          />
+        }
+      />
 
       <CustomTabs
         options={[

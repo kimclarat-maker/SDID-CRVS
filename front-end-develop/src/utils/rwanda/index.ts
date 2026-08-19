@@ -1,3 +1,5 @@
+// Rwanda-deployment-specific: static province/district/sector/cell/village
+// dataset with Kinyarwanda label aliases. Not used by the generic deployment.
 import rwandaLocations from "@/constants/local-locations.json";
 
 // Define the type of the location entries

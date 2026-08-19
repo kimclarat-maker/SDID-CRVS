@@ -4,10 +4,8 @@ import { NavigationType } from "@/types/Navigation";
 import useCurrentPath from "@/hooks/useCurrentPath";
 import Sidebar from "@/components/sidebar";
 import Home from "./home";
-import useScreenSize from "@/hooks/useScreenSize";
 import { Suspense, useEffect } from "react";
 import { clearStorage, getStorage } from "@/utils/storage";
-import { Stack } from "rsuite";
 import Analytics from "./analyticsV2";
 import Reports from "./reports";
 import Enrollments from "./enrollments";
@@ -125,7 +123,6 @@ export const routes: NavigationType[] = [
 ];
 
 export default () => {
-  const { isPhone, isTablet } = useScreenSize();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -148,28 +145,16 @@ export default () => {
   if (!PATH.exist) return <></>;
 
   return (
-    <Stack alignItems="flex-start">
-      <Stack.Item>
-        <Sidebar />
-      </Stack.Item>
-      <Stack.Item
-        grow={1}
-        style={{
-          padding: isPhone || isTablet ? "1.2rem" : "16px 18px",
-          overflowY: "auto",
-          position: "relative",
-          height: "100vh",
-          paddingBottom: "5rem",
-          overflowX: "hidden"
-        }}
-      >
+    <div className="dashboard-shell">
+      <Sidebar />
+      <main className="dashboard-main">
         <Routes>
           {routes.map((route, index) => (
             <Route key={index} path={route.path} element={route.element} />
           ))}
         </Routes>
         <Outlet />
-      </Stack.Item>
-    </Stack>
+      </main>
+    </div>
   );
 };

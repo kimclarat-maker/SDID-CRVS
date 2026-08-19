@@ -8,6 +8,7 @@ import { ButtonToolbar } from "rsuite";
 import Button from "@/components/button";
 import Modal from "@/components/Modal";
 import NewTransfer from "./add";
+import PageHeader from "@/components/pageHeader";
 
 function Transfers() {
   const { filters } = useContext(FilterContext);
@@ -33,6 +34,7 @@ function Transfers() {
 
   return (
     <>
+      <PageHeader title={translation.transfer_appointment || "Appointment transfers"} />
       <ButtonToolbar>
         <Button
           text={translation.new_transfer}

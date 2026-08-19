@@ -7,6 +7,8 @@ export const genericDeploymentConfig: PlatformConfig = {
   platformName: "Legal Identity Services Platform",
   platformShortName: "LISP",
   countryName: "Configured Country",
+  identitySystemName: "Digital Identity",
+  civilRegistrationSystemName: "Civil Registration",
   authorities: {
     platformAuthority: "Configured Platform Authority",
     civilRegistrationAuthority:
@@ -20,10 +22,15 @@ export const genericDeploymentConfig: PlatformConfig = {
   languages: [{ code: "en", label: "English", translationKey: "en" }],
   defaultLanguage: "en",
   identityNumberLabel: "National Identity Number",
+  // 5 levels to match the underlying administrative-area data model
+  // (currently implemented end-to-end as province/district/sector/cell/village);
+  // only the display labels are neutral here, not the data structure.
   administrativeAreaHierarchy: [
     { key: "level1", label: "Region" },
     { key: "level2", label: "District" },
-    { key: "level3", label: "Locality" },
+    { key: "level3", label: "Sub-district" },
+    { key: "level4", label: "Ward" },
+    { key: "level5", label: "Locality" },
   ],
   contact: {
     callCenterNumber: "Defined by the responsible authority",

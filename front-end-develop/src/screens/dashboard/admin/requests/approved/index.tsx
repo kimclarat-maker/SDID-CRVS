@@ -3,6 +3,7 @@ import { LanguageContext } from "@/context/LanguageContext";
 import SearchCitizen from "../../search/citizen";
 import CustomTabs from "@/components/tabs";
 import Approved from "./list";
+import PageHeader from "@/components/pageHeader";
 
 function ApprovedApplications() {
   const { translation } = useContext(LanguageContext);
@@ -21,7 +22,18 @@ function ApprovedApplications() {
     },
   ];
 
-  return <CustomTabs options={tabs} getTab={setTab} />;
+  return (
+    <>
+      <PageHeader
+        title={translation.approved}
+        breadcrumb={[
+          { label: translation.requests },
+          { label: translation.approved },
+        ]}
+      />
+      <CustomTabs options={tabs} getTab={setTab} />
+    </>
+  );
 }
 
 export default ApprovedApplications;

@@ -8,6 +8,8 @@ import { DeviceType } from "@/types/Device";
 import { deviceValidationSchema } from "@/validation/device.validation";
 import { AccountType } from "@/types/Account";
 import { getStorage } from "@/utils/storage";
+import { isDemoMode } from "@/demo/config";
+import { demoSaveDevice } from "@/demo/services/administration";
 
 export default function AddDevices({
   handleClose,
@@ -50,6 +52,21 @@ export default function AddDevices({
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
+        if (isDemoMode()) {
+          const data = await demoSaveDevice({
+            _id: selectedData?._id,
+            serialNumber:
+              values.serialNumber?.value || `DEMO-DEVICE-${Date.now()}`,
+            type: (values.deviceType?.value || "laptop") as any,
+            centerId: values.centerId?.value,
+            status: (typeof values.status === "string"
+              ? values.status
+              : values.status?.value) as any,
+          });
+          onSuccess(data);
+          return;
+        }
+
         let method = "POST",
           url = `/devices`,
           body: any = {

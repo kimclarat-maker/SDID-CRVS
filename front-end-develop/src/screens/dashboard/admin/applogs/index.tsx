@@ -5,12 +5,14 @@ import LogCode from "./logCode";
 // import AccountIDLogs from "./accountNID";
 import RequestIDLogs from "./request";
 // import SessionLogs from "./sessionLogs";
+import PageHeader from "@/components/pageHeader";
 
 function Logs() {
   const { translation } = useContext(LanguageContext);
 
   return (
     <>
+      <PageHeader title={translation.logs} />
       <CustomTabs
         options={[
           // {

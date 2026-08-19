@@ -4,7 +4,7 @@ import Empty from "@/components/empty";
 import Loading from "@/components/loader";
 import Modal from "@/components/Modal";
 import { LanguageContext } from "@/context/LanguageContext";
-import { useFetchAccountNIDLogs } from "@/hooks/useFetchAccountNIDLogs";
+import { useFetchAccountIdentityLogs } from "@/hooks/useFetchAccountIdentityLogs";
 import capitalizeText from "@/utils/common/capitalizeText";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
@@ -25,13 +25,13 @@ function Logs({ idNumber, fromMenu }: { idNumber: string; fromMenu: boolean }) {
   const [open, setOpenModal] = useState(false);
   const [selectedData, setSelectedData] = useState<any>({});
   const { loadingLogs, logs, fetchAccountIDLogsData } =
-    useFetchAccountNIDLogs();
+    useFetchAccountIdentityLogs();
 
   useEffect(() => {
     fetchAccountIDLogsData({
       fromDay: moment().subtract("d", 365).format("YYYY-MM-DD"),
       toDay: moment().format("YYYY-MM-DD"),
-      nid: idNumber,
+      identityNumber: idNumber,
       offset: 0,
       limit: 50,
       // "data.method": "string";

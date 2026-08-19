@@ -44,6 +44,7 @@ export interface ServiceCard {
   description: string;
   href: string;
   icon: string;
+  meta?: string;
 }
 
 export interface HeroSlide {

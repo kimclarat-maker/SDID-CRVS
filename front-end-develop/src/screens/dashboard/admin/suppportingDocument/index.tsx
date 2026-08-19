@@ -6,8 +6,8 @@ import { useParams } from "react-router-dom";
 import Modal from "@/components/Modal";
 import Add from "./add";
 import { LanguageContext } from "@/context/LanguageContext";
-import { Heading, Stack } from "rsuite";
 import Button from "@/components/button";
+import PageHeader from "@/components/pageHeader";
 
 function SupportingDocuments() {
   const { translation } = useContext(LanguageContext);
@@ -31,20 +31,16 @@ function SupportingDocuments() {
 
   return (
     <div className="row">
-      <Stack className="mb-3">
-        <Stack.Item grow={1}>
-          <Heading level={5}>{translation.supporting_documents}</Heading>
-        </Stack.Item>
-        <Stack.Item>
+      <PageHeader
+        title={translation.supporting_documents}
+        action={
           <Button
             startIcon="add"
             text={translation.add}
             onClick={() => setOpen(true)}
           />
-        </Stack.Item>
-      </Stack>
-
-      <br />
+        }
+      />
 
       <div data-testid="sDocument-list">
         <List

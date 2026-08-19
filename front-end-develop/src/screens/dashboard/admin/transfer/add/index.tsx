@@ -10,6 +10,8 @@ import { replaceDialCode } from "@/utils/common/replaceDialCode";
 import { transferValidationSchema } from "@/validation/transfer.validation";
 import { AddTransferType, TransferType } from "@/types/Transfers";
 import TransferForm from "@/components/forms/transfer";
+import { isDemoMode } from "@/demo/config";
+import { demoTransferAppointment } from "@/demo/services/appointments";
 
 export default function NewTransfer({
   handleClose,
@@ -37,6 +39,10 @@ export default function NewTransfer({
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
+        if (isDemoMode() && selectedData?._id) {
+          await demoTransferAppointment(selectedData._id, values.destination);
+          toastMessage("success", "Appointment transferred (demo).");
+        }
         handleClose && handleClose();
         fetchData && fetchData();
       } catch (error: any) {

@@ -140,6 +140,8 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     server: {
+      port: 5190,
+      strictPort: true,
       allowedHosts: ["sdid.enrollment.ui"],
       fs: {
         allow: [".."] // Allow serving files from node_modules

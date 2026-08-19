@@ -8,6 +8,7 @@ import { Breadcrumb, Text } from "rsuite";
 import { Link, useSearchParams } from "react-router-dom";
 import { getFiltersFromSearchParams } from "@/utils/common/convertObjectIntoUrlParams";
 import { useFetchEnrollments } from "@/hooks/useFetchEnrollments";
+import PageHeader from "@/components/pageHeader";
 
 function Offline() {
   const [filters, setFilters] = useState({});
@@ -36,6 +37,13 @@ function Offline() {
 
   return (
     <>
+      <PageHeader
+        title={translation.offline}
+        breadcrumb={[
+          { label: translation.requests },
+          { label: translation.offline },
+        ]}
+      />
       <ReportFilters setFilters={setFilters} filters={filters} />
       <br />
       <List

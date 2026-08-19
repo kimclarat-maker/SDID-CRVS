@@ -1,3 +1,6 @@
+// Rwanda-deployment-specific: encodes Rwanda's national ID digit format
+// (nationality/gender digit positions). A generic deployment targeting a
+// different national ID scheme will need its own validator.
 function validateIDNumber(idNumber: string) {
   // Check if ID length is valid (assuming the ID has at least 5 digits)
   if (idNumber.length < 16) {

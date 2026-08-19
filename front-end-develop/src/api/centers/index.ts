@@ -1,5 +1,7 @@
 import { GETParameters, CenterType } from "@/types/Center";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchCenters } from "@/demo/services/administration";
 
 interface ApiResponse {
   data: CenterType[];
@@ -9,6 +11,8 @@ interface ApiResponse {
 export const fetchCenters = async (
   params: GETParameters
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoFetchCenters(params as any) as any;
+
   try {
     const options = {
       method: "GET",

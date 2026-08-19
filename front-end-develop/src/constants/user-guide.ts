@@ -51,7 +51,7 @@ export const userGuideData: any = {
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730813472/sdid-guide/8033410b-9958-49cd-9701-70ac2965aa01.png",
         },
         {
-          title: "Agree SIDID NIDA consent",
+          title: "Agree to identity verification consent",
           imageUrl:
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730814046/sdid-guide/image_36.png",
         },
@@ -130,7 +130,7 @@ export const userGuideData: any = {
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730825982/sdid-guide/image_27.png",
         },
         {
-          title: "Agree SIDID NIDA consent",
+          title: "Agree to identity verification consent",
           imageUrl:
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730814046/sdid-guide/image_36.png",
         },
@@ -200,7 +200,7 @@ export const userGuideData: any = {
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730825982/sdid-guide/image_27.png",
         },
         {
-          title: "Agree SIDID NIDA consent",
+          title: "Agree to identity verification consent",
           imageUrl:
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730814046/sdid-guide/image_36.png",
         },
@@ -229,7 +229,7 @@ export const userGuideData: any = {
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730825982/sdid-guide/image_27.png",
         },
         {
-          title: "Agree SIDID NIDA consent",
+          title: "Agree to identity verification consent",
           imageUrl:
             "https://res.cloudinary.com/dwqhmch33/image/upload/v1730814046/sdid-guide/image_36.png",
         },

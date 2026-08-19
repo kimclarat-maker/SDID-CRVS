@@ -29,8 +29,12 @@ export default function ServiceCardGrid({
           </div>
           <h3>{item.title}</h3>
           <p>{item.description}</p>
+          {item.meta && <div className="public-card-meta">{item.meta}</div>}
           <Link className="public-card-link" to={item.href}>
-            {content.common.common.learnMore} →
+            <span className="public-card-link-icon" aria-hidden="true">
+              <Icon name="chevron_right" />
+            </span>
+            {content.common.common.readMore}
           </Link>
         </Reveal>
       ))}

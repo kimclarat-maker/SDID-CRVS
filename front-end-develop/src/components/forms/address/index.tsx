@@ -8,6 +8,13 @@ import { useFetchSectorsByDistrict } from "@/hooks/geography/useSector";
 import { useFetchVillagesByCell } from "@/hooks/geography/useVillage";
 import React, { useCallback, useContext, useEffect } from "react";
 import { Stack } from "rsuite";
+import { platformConfig } from "@/config/platform.config";
+
+// Underlying fields/routes stay province/district/sector/cell/village (real
+// backend contract); only the labels below come from the deployment's
+// administrativeAreaHierarchy so the UI can read as country-neutral.
+const [provinceLevel, districtLevel, sectorLevel, cellLevel, villageLevel] =
+  platformConfig.administrativeAreaHierarchy;
 
 type FormTypes = {
   errors: any;
@@ -61,14 +68,14 @@ const Address = ({
     const setDefaultCountry = () => {
       // Only set default if no country is selected and countries are loaded
       if (countries.length > 0 && !values.country) {
-        const rwanda = countries.find(
+        const configuredCountry = countries.find(
           (el: any) =>
-            el.name?.toUpperCase() === "RWANDA" ||
-            el.name?.toLowerCase() === "rwanda"
+            el.name?.toUpperCase() ===
+            platformConfig.countryName?.toUpperCase()
         );
 
-        // Fallback: use first country if Rwanda not found
-        const defaultCountry = rwanda || countries[0];
+        // Fallback: use first country if the deployment's configured country isn't found
+        const defaultCountry = configuredCountry || countries[0];
 
         if (defaultCountry) {
           setFieldValue("country", defaultCountry);
@@ -126,7 +133,7 @@ const Address = ({
           loading={loadingProvinces}
           onChange={(e) => setFieldValue("province", e)}
           error={errors.province}
-          label={translation.province}
+          label={provinceLevel?.label || translation.province}
           type="object"
           disabled={disabled}
           required={requiredFields?.includes("province")}
@@ -140,7 +147,7 @@ const Address = ({
           loading={loadingDistricts}
           onChange={(e) => setFieldValue("district", e)}
           error={errors.district}
-          label={translation.district}
+          label={districtLevel?.label || translation.district}
           type="object"
           disabled={disabled}
           required={requiredFields?.includes("district")}
@@ -154,7 +161,7 @@ const Address = ({
           loading={loadingSectors}
           onChange={(e) => setFieldValue("sector", e)}
           error={errors.sector}
-          label={translation.sector}
+          label={sectorLevel?.label || translation.sector}
           type="object"
           disabled={disabled}
           required={requiredFields?.includes("sector")}
@@ -168,7 +175,7 @@ const Address = ({
           loading={loadingCells}
           onChange={(e) => setFieldValue("cell", e)}
           error={errors.cell}
-          label={translation.cell}
+          label={cellLevel?.label || translation.cell}
           type="object"
           disabled={disabled}
           required={requiredFields?.includes("cell")}
@@ -182,7 +189,7 @@ const Address = ({
           loading={loadingVillages}
           onChange={(e) => setFieldValue("village", e)}
           error={errors.village}
-          label={translation.village}
+          label={villageLevel?.label || translation.village}
           type="object"
           disabled={disabled}
           required={requiredFields?.includes("village")}

@@ -3,11 +3,13 @@ import { LanguageContext } from "@/context/LanguageContext";
 import { useContext } from "react";
 import TopLevelHolidays from "./holidays";
 import OffDays from "./offdays";
+import PageHeader from "@/components/pageHeader";
 
 function Holidays() {
   const { translation } = useContext(LanguageContext);
   return (
     <div>
+      <PageHeader title={translation.holidays} />
       <CustomTabs
         options={[
           {

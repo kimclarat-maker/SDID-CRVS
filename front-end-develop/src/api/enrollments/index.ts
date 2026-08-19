@@ -2,6 +2,11 @@ import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters, EnrollmentType } from "@/types/Enrollment";
 import api from "..";
 import enrollments from "@/mocks/enrollments";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoListApplications,
+  demoGetApplicationById,
+} from "@/demo/services/applications";
 
 interface ApiResponse {
   data: EnrollmentType[];
@@ -12,6 +17,12 @@ export const fetchEnrollments = async (
   params: GETParameters,
   type?: string
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode())
+    return demoListApplications({
+      ...params,
+      status: type === "OFFLINE" ? "OFFLINE" : (params as any).status,
+    } as any);
+
   if (params.search === "" || params.search === undefined) {
     delete params.search;
   } else {
@@ -56,6 +67,8 @@ export const fetchEnrollmentById = async (
   id: string,
   isStartedOnline?: boolean
 ) => {
+  if (isDemoMode()) return demoGetApplicationById(id);
+
   try {
     const options = {
       method: "GET",

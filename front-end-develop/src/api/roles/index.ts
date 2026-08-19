@@ -2,6 +2,8 @@ import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters, GETMenusParameters } from "@/types/ROLE";
 import api from "..";
 import { defineAccess } from "@/utils/common/permissions";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchRoles } from "@/demo/services/administration";
 
 export const fetchRoles = async (params?: GETParameters) => {
   try {
@@ -9,6 +11,8 @@ export const fetchRoles = async (params?: GETParameters) => {
     const hasAccess = defineAccess({ method: "get", module: "roles" });
 
     if (!hasAccess) return;
+
+    if (isDemoMode()) return demoFetchRoles();
 
     let url = `/configuration/roles`;
 

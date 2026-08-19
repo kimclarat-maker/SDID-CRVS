@@ -2,6 +2,8 @@ import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters, TransferType } from "@/types/Transfers";
 import api from "..";
 import transfers from "@/mocks/transfer";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchTransfers } from "@/demo/services/appointments";
 
 interface ApiResponse {
   data: TransferType[];
@@ -13,6 +15,8 @@ let copyData = transfers.slice(0);
 export const fetchTransferredSchedules = async (
   params: GETParameters
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoFetchTransfers(params as any) as any;
+
   try {
     // const options = {
     //   method: "GET",

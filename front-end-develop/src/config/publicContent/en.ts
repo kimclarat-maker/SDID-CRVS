@@ -5,6 +5,7 @@ const authority = platformConfig.authorities.civilRegistrationAuthority;
 const idAuthority = platformConfig.authorities.identityAuthority;
 const FEE_NOTE = "Defined by the responsible authority.";
 const TIME_NOTE = "Defined by the responsible authority.";
+const CARD_META = "Fee & processing time: defined by the responsible authority";
 
 function buildServicePage(params: {
   id: string;
@@ -227,6 +228,7 @@ export const en: PublicContent = {
           description: "Begin your digital identity application online.",
           href: "/digital-identity",
           icon: "fingerprint",
+          meta: CARD_META,
         },
         {
           id: "register-birth",
@@ -234,6 +236,7 @@ export const en: PublicContent = {
           description: "Report and register a birth with the civil registry.",
           href: "/civil-registration/birth",
           icon: "child_care",
+          meta: CARD_META,
         },
         {
           id: "register-death",
@@ -241,6 +244,7 @@ export const en: PublicContent = {
           description: "Report and register a death with the civil registry.",
           href: "/civil-registration/death",
           icon: "sentiment_neutral",
+          meta: CARD_META,
         },
         {
           id: "register-marriage",
@@ -248,6 +252,7 @@ export const en: PublicContent = {
           description: "Apply to register a marriage or partnership.",
           href: "/civil-registration/marriage",
           icon: "favorite",
+          meta: CARD_META,
         },
         {
           id: "request-certificate",
@@ -255,6 +260,7 @@ export const en: PublicContent = {
           description: "Request an official certificate for a registered record.",
           href: "/certificates",
           icon: "workspace_premium",
+          meta: CARD_META,
         },
         {
           id: "correct-record",
@@ -262,6 +268,7 @@ export const en: PublicContent = {
           description: "Request a correction or amendment to a civil record.",
           href: "/civil-registration",
           icon: "edit_document",
+          meta: CARD_META,
         },
         {
           id: "track-application",

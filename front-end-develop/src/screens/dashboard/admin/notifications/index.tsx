@@ -1,9 +1,12 @@
 import List from "./list";
 import NotificationFilters from "./filters";
 import { useFetchNotifications } from "@/hooks/useNotification";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import PageHeader from "@/components/pageHeader";
+import { LanguageContext } from "@/context/LanguageContext";
 
 function Notifications() {
+  const { translation } = useContext(LanguageContext);
   const { data, loadingNotifications, fetchNotificationsData, totalPages } =
     useFetchNotifications();
 
@@ -17,6 +20,7 @@ function Notifications() {
 
   return (
     <div>
+      <PageHeader title={translation.notifications} />
       <NotificationFilters page="notifications" />
       <br />
       <List

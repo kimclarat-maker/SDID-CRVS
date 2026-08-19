@@ -161,7 +161,7 @@ export const translations: TranslationType = {
     parent_id_required: "Parent Id is required",
     settings: "Settings",
     logout: "Logout",
-    alert_message_take_action: `Please review your information and ensure it matches the details provided by NIDA. If corrections are needed, click on check box where information are incorrect and then click "Request Edit" button. If all information is correct,Â clickÂ "Submit"`,
+    alert_message_take_action: `Please review your information and ensure it matches the details on record with the Identity Authority. If corrections are needed, click on check box where information are incorrect and then click "Request Edit" button. If all information is correct,Â clickÂ "Submit"`,
     major_deviation: "Major Deviation",
     result_found: "Results found",
     filter_institution: "Filter by institution",
@@ -573,13 +573,13 @@ export const translations: TranslationType = {
     terms_title:
       "Consent Agreement for Digital Identity Pre-Enrollment Solution",
     terms_one_title:
-      "Consent Statement for Citizens for Submission of Information to NIDA:",
-    terms_one_description: `I, hereby declare that the information provided by me to the National Identification Agency (NIDA) is true, accurate, and complete to the best of my knowledge and belief. I understand that it is my responsibility to ensure the accuracy and correctness of the information submitted. I accept full responsibility for any errors, omissions, or false statements provided.
-Furthermore, I acknowledge that providing false or misleading information may result in legal consequences in accordance with applicable laws and regulations. I confirm that I have read and understood the contents of this statement and provide my consent for the use of the information for official purposes as per NIDA's policies.`,
+      "Consent Statement for Citizens for Submission of Information to the Identity Authority:",
+    terms_one_description: `I, hereby declare that the information provided by me to the Identity Authority is true, accurate, and complete to the best of my knowledge and belief. I understand that it is my responsibility to ensure the accuracy and correctness of the information submitted. I accept full responsibility for any errors, omissions, or false statements provided.
+Furthermore, I acknowledge that providing false or misleading information may result in legal consequences in accordance with applicable laws and regulations. I confirm that I have read and understood the contents of this statement and provide my consent for the use of the information for official purposes as per the Identity Authority's policies.`,
     terms_two_title:
-      "Consent Statement for Submission of Information to NIDA (By Legal Guardian):",
-    terms_two_description: `I affirm that the information provided on behalf of the individual to the National Identification Agency (NIDA) is true, accurate, and complete to the best of my knowledge and belief. I accept full responsibility for the accuracy and correctness of the information submitted and understand that any errors, omissions, or false statements are my responsibility as the legal guardian.
-Furthermore, I acknowledge that providing false or misleading information may result in legal consequences in accordance with applicable laws and regulations. By signing this consent, I authorize NIDA to process the individual's information in compliance with national laws and policies.`,
+      "Consent Statement for Submission of Information to the Identity Authority (By Legal Guardian):",
+    terms_two_description: `I affirm that the information provided on behalf of the individual to the Identity Authority is true, accurate, and complete to the best of my knowledge and belief. I accept full responsibility for the accuracy and correctness of the information submitted and understand that any errors, omissions, or false statements are my responsibility as the legal guardian.
+Furthermore, I acknowledge that providing false or misleading information may result in legal consequences in accordance with applicable laws and regulations. By signing this consent, I authorize the Identity Authority to process the individual's information in compliance with national laws and policies.`,
     applicant_information_missing:
       "The application information is missing, please go back or check if you have passed all the process",
     resend_code_success: "Resend new code successfully to",
@@ -735,7 +735,7 @@ Furthermore, I acknowledge that providing false or misleading information may re
     logs: "Logs",
     edit_manually: "Edit manually",
     invalid_nid:
-      "Invalid Rwanda National ID number and not found in the NIDA database",
+      "Invalid national ID number and not found in the identity registry",
     confirmed: "Confirmed",
     should_be_different_mother_id_number:
       "Mother id number must not be the same as the father Id number",
@@ -855,7 +855,7 @@ Furthermore, I acknowledge that providing false or misleading information may re
     password_reset_link_may_be_invalid_or_expired:
       "Password reset link is invalid or expired",
     selfie_skip_verification_sent_success:
-      "Your request to skip face verification has been submitted for NIDA's review. You'll receive an SMS with a code to continue your application after approval.",
+      "Your request to skip face verification has been submitted for identity authority review. You'll receive an SMS with a code to continue your application after approval.",
     start_with: "Start with",
     invalid_document_number:
       "Number you have entered is not matching with a selected document type",
@@ -1683,7 +1683,7 @@ assistance.`,
     parent_id_required: "L'identification du parent est requise",
     settings: "ParamÃ¨tres",
     logout: "Se dÃ©connecter",
-    alert_message_take_action: `Veuillez vÃ©rifier vos informations et vous assurer qu'elles correspondent aux dÃ©tails fournis par NIDA. Si des corrections sont nÃ©cessaires, cliquez sur la case oÃ¹ les informations sont incorrectes, puis cliquez sur le bouton "Demander une modification". Si toutes les informations sont correctes, cliquez sur "Soumettre"`,
+    alert_message_take_action: `Veuillez vÃ©rifier vos informations et vous assurer qu'elles correspondent aux dÃ©tails fournis par l'Autorité d'identité. Si des corrections sont nÃ©cessaires, cliquez sur la case oÃ¹ les informations sont incorrectes, puis cliquez sur le bouton "Demander une modification". Si toutes les informations sont correctes, cliquez sur "Soumettre"`,
     major_deviation: "DÃ©viation majeure",
     result_found: "RÃ©sultats trouvÃ©s",
     filter_institution: "Filtrer par institution",
@@ -2104,13 +2104,13 @@ assistance.`,
     terms_title:
       "Accord de consentement pour la solution de prÃ©-inscription Ã  l'identitÃ© numÃ©rique",
     terms_one_title:
-      "DÃ©claration de consentement des citoyens pour la soumission d'informations Ã  la NIDA :",
-    terms_one_description: `Je, soussignÃ©(e), dÃ©clare par la prÃ©sente que les informations fournies par moi Ã  l'Agence Nationale d'Identification (NIDA) sont vraies, exactes et complÃ¨tes Ã  ma connaissance et selon ma conviction. Je comprends qu'il est de ma responsabilitÃ© de garantir l'exactitude et la justesse des informations soumises. J'accepte l'entiÃ¨re responsabilitÃ© pour toute erreur, omission ou dÃ©claration fausse fournie.
-En outre, je reconnais que fournir des informations fausses ou trompeuses peut entraÃ®ner des consÃ©quences lÃ©gales conformÃ©ment aux lois et rÃ©glementations applicables. Je confirme avoir lu et compris le contenu de cette dÃ©claration et donne mon consentement pour l'utilisation des informations Ã  des fins officielles conformÃ©ment aux politiques de la NIDA.`,
+      "DÃ©claration de consentement des citoyens pour la soumission d'informations à l'Autorité d'identité :",
+    terms_one_description: `Je, soussignÃ©(e), dÃ©clare par la prÃ©sente que les informations fournies par moi Ã  l'Autorité d'identité sont vraies, exactes et complÃ¨tes Ã  ma connaissance et selon ma conviction. Je comprends qu'il est de ma responsabilitÃ© de garantir l'exactitude et la justesse des informations soumises. J'accepte l'entiÃ¨re responsabilitÃ© pour toute erreur, omission ou dÃ©claration fausse fournie.
+En outre, je reconnais que fournir des informations fausses ou trompeuses peut entraÃ®ner des consÃ©quences lÃ©gales conformÃ©ment aux lois et rÃ©glementations applicables. Je confirme avoir lu et compris le contenu de cette dÃ©claration et donne mon consentement pour l'utilisation des informations Ã  des fins officielles conformÃ©ment aux politiques de l'Autorité d'identité.`,
     terms_two_title:
-      "DÃ©claration de consentement pour la soumission d'informations Ã  la NIDA (par le tuteur lÃ©gal) :",
-    terms_two_description: `Je dÃ©clare que les informations fournies au nom de l'individu Ã  l'Agence Nationale d'Identification (NIDA) sont vraies, exactes et complÃ¨tes Ã  ma connaissance et selon ma conviction. J'accepte l'entiÃ¨re responsabilitÃ© pour l'exactitude et la justesse des informations soumises et comprends que toute erreur, omission ou dÃ©claration fausse relÃ¨ve de ma responsabilitÃ© en tant que tuteur lÃ©gal.
-En outre, je reconnais que fournir des informations fausses ou trompeuses peut entraÃ®ner des consÃ©quences lÃ©gales conformÃ©ment aux lois et rÃ©glementations applicables. En signant ce consentement, j'autorise la NIDA Ã  traiter les informations de l'individu conformÃ©ment aux lois et politiques nationales.`,
+      "DÃ©claration de consentement pour la soumission d'informations à l'Autorité d'identité (par le tuteur lÃ©gal) :",
+    terms_two_description: `Je dÃ©clare que les informations fournies au nom de l'individu Ã  l'Autorité d'identité sont vraies, exactes et complÃ¨tes Ã  ma connaissance et selon ma conviction. J'accepte l'entiÃ¨re responsabilitÃ© pour l'exactitude et la justesse des informations soumises et comprends que toute erreur, omission ou dÃ©claration fausse relÃ¨ve de ma responsabilitÃ© en tant que tuteur lÃ©gal.
+En outre, je reconnais que fournir des informations fausses ou trompeuses peut entraÃ®ner des consÃ©quences lÃ©gales conformÃ©ment aux lois et rÃ©glementations applicables. En signant ce consentement, j'autorise l'Autorité d'identité à traiter les informations de l'individu conformÃ©ment aux lois et politiques nationales.`,
     applicant_information_missing:
       "Les informations de candidature sont manquantes, veuillez revenir en arriÃ¨re ou vÃ©rifier si vous avez passÃ© tout le processus",
     resend_code_success: "Nouveau code renvoyÃ© avec succÃ¨s Ã ",
@@ -2270,7 +2270,7 @@ En outre, je reconnais que fournir des informations fausses ou trompeuses peut e
     logs: "Journaux",
     edit_manually: "Modifier manuellement",
     invalid_nid:
-      "NumÃ©ro d'identification national rwandais invalide et non trouvÃ© dans la base de donnÃ©es NIDA",
+      "NumÃ©ro d'identification national rwandais invalide et non trouvÃ© dans le registre d'identité",
     confirmed: "ConfirmÃ©",
     should_be_different_mother_id_number:
       "Le numÃ©ro d'identification de la mÃ¨re ne doit pas Ãªtre le mÃªme que le numÃ©ro d'identification du pÃ¨re",
@@ -2396,7 +2396,7 @@ En outre, je reconnais que fournir des informations fausses ou trompeuses peut e
     password_reset_link_may_be_invalid_or_expired:
       "Le lien de rÃ©initialisation du mot de passe est invalide ou a expirÃ©",
     selfie_skip_verification_sent_success:
-      "Votre demande d'ignorer la vÃ©rification faciale a Ã©tÃ© soumise pour examen par la NIDA. Vous recevrez un SMS avec un code pour continuer votre demande aprÃ¨s approbation.",
+      "Votre demande d'ignorer la vÃ©rification faciale a Ã©tÃ© soumise pour examen par l'Autorité d'identité. Vous recevrez un SMS avec un code pour continuer votre demande aprÃ¨s approbation.",
     start_with: "Commence par",
     invalid_document_number:
       "Le numÃ©ro que vous avez entrÃ© ne correspond pas au type de document sÃ©lectionnÃ©",
@@ -3217,7 +3217,7 @@ En outre, je reconnais que fournir des informations fausses ou trompeuses peut e
     parent_id_required: "Indangamuntu y'umubyeyi irakenewe",
     settings: "Igenamiterere",
     logout: "Sohoka",
-    alert_message_take_action: `Nyamuneka suzuma amakuru yawe kandi urebe neza ko ahuye n'amakuru atangwa na NIDA. Niba hakenewe gukosorwa, kanda ku kibazo aho amakuru atariyo hanyuma ukande buto "Saba Guhindura". Niba amakuru yose ari yo, kanda "Ohereza"`,
+    alert_message_take_action: `Nyamuneka suzuma amakuru yawe kandi urebe neza ko ahuye n'amakuru atangwa na Urwego rw'Irangamuntu. Niba hakenewe gukosorwa, kanda ku kibazo aho amakuru atariyo hanyuma ukande buto "Saba Guhindura". Niba amakuru yose ari yo, kanda "Ohereza"`,
     major_deviation: "Guhinduka rwihariye",
     result_found: "Amakuru abonetse",
     filter_institution: "Shiraho ikigo",
@@ -3632,13 +3632,13 @@ En outre, je reconnais que fournir des informations fausses ou trompeuses peut e
     terms_title:
       "Amasezerano yo Kwemera kugirango Ugire Indangamuntu y'ikoranabuhanga Mbere yo Kwiyandikisha",
     terms_one_title:
-      "Icyemezo cyo Kwemera kwa Baturage kugirango Batange Amakuru kuri NIDA:",
-    terms_one_description: `Jewe, ndahamya ko amakuru natanze kuri Kigo cy'Igihugu cy'Indangamuntu (NIDA) ari ukuri, kandi yuzuye nk'uko mbizi kandi nk'uko nizeye. Ndabizi ko ari inshingano zanjye kureba neza ko amakuru natanze ari yo kandi atarimo amakosa. Nemera inshingano zuzuye kuri amakosa ayo ari yo yose, ibitagenze neza, cyangwa ibinyoma byatanzwe.
-Byongeye kandi, ndemera ko gutanga amakuru y'ikinyoma cyangwa ataziguye bishobora gutuma habaho ingaruka z'amategeko bikurikije amategeko n'amabwiriza akurikizwa. Ndahamya ko nasomye kandi neza ibiri muri iki cyemezo, kandi ndemera ko amakuru yanjye akoreshwa mu bikorwa bya leta nk'uko NIDA ibikora.`,
+      "Icyemezo cyo Kwemera kwa Baturage kugirango Batange Amakuru kuri Urwego rw'Irangamuntu:",
+    terms_one_description: `Jewe, ndahamya ko amakuru natanze kuri Urwego rw'Irangamuntu ari ukuri, kandi yuzuye nk'uko mbizi kandi nk'uko nizeye. Ndabizi ko ari inshingano zanjye kureba neza ko amakuru natanze ari yo kandi atarimo amakosa. Nemera inshingano zuzuye kuri amakosa ayo ari yo yose, ibitagenze neza, cyangwa ibinyoma byatanzwe.
+Byongeye kandi, ndemera ko gutanga amakuru y'ikinyoma cyangwa ataziguye bishobora gutuma habaho ingaruka z'amategeko bikurikije amategeko n'amabwiriza akurikizwa. Ndahamya ko nasomye kandi neza ibiri muri iki cyemezo, kandi ndemera ko amakuru yanjye akoreshwa mu bikorwa bya leta nk'uko Urwego rw'Irangamuntu ibikora.`,
     terms_two_title:
-      "Icyemezo cyo Kwemera kugirango Utange Amakuru kuri NIDA (Nawe Wishingiza):",
-    terms_two_description: `Ndahamya ko amakuru natanze ku giti cye kuri Kigo cy'Igihugu cy'Indangamuntu (NIDA) ari ukuri, kandi yuzuye nk'uko mbizi kandi nk'uko nizeye. Nemera inshingano zuzuye kuri ukuri n'ubutungane bw'amakuru yatanzwe kandi ndabizi ko amakosa ayo ari yo yose, ibitagenze neza, cyangwa ibinyoma byose ari inshingano zanjye nk'umwishingiza.
-Byongeye kandi, ndemera ko gutanga amakuru y'ikinyoma cyangwa ataziguye bishobora gutuma habaho ingaruka z'amategeko bikurikije amategeko n'amabwiriza akurikizwa. Ndamaza ko NIDA ikoresha amakuru y'uwo muntu bikurikije amategeko n'amabwiriza y'Igihugu.`,
+      "Icyemezo cyo Kwemera kugirango Utange Amakuru kuri Urwego rw'Irangamuntu (Nawe Wishingiza):",
+    terms_two_description: `Ndahamya ko amakuru natanze ku giti cye kuri Urwego rw'Irangamuntu ari ukuri, kandi yuzuye nk'uko mbizi kandi nk'uko nizeye. Nemera inshingano zuzuye kuri ukuri n'ubutungane bw'amakuru yatanzwe kandi ndabizi ko amakosa ayo ari yo yose, ibitagenze neza, cyangwa ibinyoma byose ari inshingano zanjye nk'umwishingiza.
+Byongeye kandi, ndemera ko gutanga amakuru y'ikinyoma cyangwa ataziguye bishobora gutuma habaho ingaruka z'amategeko bikurikije amategeko n'amabwiriza akurikizwa. Ndamaza ko Urwego rw'Irangamuntu ikoresha amakuru y'uwo muntu bikurikije amategeko n'amabwiriza y'Igihugu.`,
     applicant_information_missing:
       "Amakuru yo gusaba ahari, nyamuneka subira inyuma cyangwa suzuma niba warangiye uburyo bwose",
     resend_code_success: "Kode nshya yoherejwe neza kuri",
@@ -3792,7 +3792,7 @@ Byongeye kandi, ndemera ko gutanga amakuru y'ikinyoma cyangwa ataziguye bishobor
     logs: "Inyandiko",
     edit_manually: "Hindura",
     invalid_nid:
-      "Numero y'irangamuntu ya Rwanda ntabwo ariyo kandi ntabwo yabonetse mu makuru ya NIDA",
+      "Numero y'irangamuntu ya Rwanda ntabwo ariyo kandi ntabwo yabonetse mu makuru ya Urwego rw'Irangamuntu",
     confirmed: "Byemejwe",
     should_be_different_mother_id_number:
       "Numero y'irangamuntu ya nyina ntigomba kuba imwe na numero ya se",
@@ -3911,7 +3911,7 @@ Byongeye kandi, ndemera ko gutanga amakuru y'ikinyoma cyangwa ataziguye bishobor
     password_reset_link_may_be_invalid_or_expired:
       "Umuyoboro wo gusubiza ijambo ry'ibanga ntabwo ariwo cyangwa warangiye",
     selfie_skip_verification_sent_success:
-      "Ubusabe bwawe bwo gusimbuka kwemeza Face ID bwoherejwe NIDA kugirango basuzume. Uzahabwa SMS ifite kode kugirango ukomeze ugusaba nyuma y'uko byemewe.",
+      "Ubusabe bwawe bwo gusimbuka kwemeza Face ID bwoherejwe Urwego rw'Irangamuntu kugirango basuzume. Uzahabwa SMS ifite kode kugirango ukomeze ugusaba nyuma y'uko byemewe.",
     start_with: "Tangira na",
     invalid_document_number:
       "Numero wanditse ntabwo ihuye n'ubwoko bw'icyangombwa wahisemo",

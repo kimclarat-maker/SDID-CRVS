@@ -3,11 +3,15 @@ import { AccountType, GETParameters } from "@/types/Account";
 import api from "..";
 import { cfg } from "@/constants/cfg";
 import { fetchDeviceByID, fetchDevices } from "../device";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchAccounts } from "@/demo/services/administration";
 
 export const fetchAccounts = async (
   params: GETParameters,
   isRemoteFetchForceEnabled?: boolean
 ) => {
+  if (isDemoMode()) return demoFetchAccounts(params as any);
+
   try {
     const env = cfg.VITE_NODE_ENV;
 

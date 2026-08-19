@@ -1,9 +1,9 @@
 import toastMessage from "@/utils/common/toastMessage";
-import { GETAccountNIDLogsParameters } from "@/types/LogsType";
+import { GETAccountIdentityLogsParameters } from "@/types/LogsType";
 import api from "../..";
 
-export const fetchAccountNIDLogs = async (
-  params: GETAccountNIDLogsParameters
+export const fetchAccountIdentityLogs = async (
+  params: GETAccountIdentityLogsParameters
 ) => {
   try {
     return {

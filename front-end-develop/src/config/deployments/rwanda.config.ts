@@ -9,6 +9,8 @@ export const rwandaDeploymentConfig: PlatformConfig = {
   platformName: "SDID-CRVS",
   platformShortName: "SDID",
   countryName: "Rwanda",
+  identitySystemName: "Digital Identity",
+  civilRegistrationSystemName: "Civil Registration",
   authorities: {
     platformAuthority: "National Identification Agency (NIDA)",
     civilRegistrationAuthority:

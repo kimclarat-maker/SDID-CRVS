@@ -1,3 +1,5 @@
+// Rwanda-deployment-specific: hardcodes the +250 country code and Rwanda's
+// national number length. A generic deployment will need its own validator.
 export const validateRwandaPhoneNumber = (phoneNumber: string) => {
   // Remove all non-numeric characters (except + for country code)
   const cleanedNumber = phoneNumber.replace(/[^\d+]/g, "");

@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./styles.css";
 import logoImage from "@/assets/logo.png";
 import toastMessage from "@/utils/common/toastMessage";
+import { platformConfig } from "@/config/platform.config";
 
 function SplashScreen({ firstLoad }: { firstLoad?: boolean }) {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ function SplashScreen({ firstLoad }: { firstLoad?: boolean }) {
       <div className="logoLoading">
         <img src={logoImage} />
         <span>
-          <span className="textBold">NIDA</span> SDID
+          <span className="textBold">{platformConfig.platformShortName}</span>
         </span>
       </div>
     </div>

@@ -1,26 +1,29 @@
+import { platformConfig } from "@/config/platform.config";
+
 const LIMIT = 1500;
+const DEVICE_PREFIX = platformConfig.platformShortName;
 
 export const laptops = Array.from({ length: LIMIT }, (_, i) => ({
-  label: `NIDA/LAPT/IT/${(i + 1).toString().padStart(4, "0")}`,
-  value: `NIDA/LAPT/IT/${(i + 1).toString().padStart(4, "0")}`,
+  label: `${DEVICE_PREFIX}/LAPT/IT/${(i + 1).toString().padStart(4, "0")}`,
+  value: `${DEVICE_PREFIX}/LAPT/IT/${(i + 1).toString().padStart(4, "0")}`,
 }));
 
 export const fingerprints = Array.from({ length: LIMIT }, (_, i) => ({
-  label: `NIDA/FINGP/IT/${(i + 1).toString().padStart(4, "0")}`,
-  value: `NIDA/FINGP/IT/${(i + 1).toString().padStart(4, "0")}`,
+  label: `${DEVICE_PREFIX}/FINGP/IT/${(i + 1).toString().padStart(4, "0")}`,
+  value: `${DEVICE_PREFIX}/FINGP/IT/${(i + 1).toString().padStart(4, "0")}`,
 }));
 
 export const irisDevices = Array.from({ length: LIMIT }, (_, i) => ({
-  label: `NIDA/IRIS/IT/${(i + 1).toString().padStart(4, "0")}`,
-  value: `NIDA/IRIS/IT/${(i + 1).toString().padStart(4, "0")}`,
+  label: `${DEVICE_PREFIX}/IRIS/IT/${(i + 1).toString().padStart(4, "0")}`,
+  value: `${DEVICE_PREFIX}/IRIS/IT/${(i + 1).toString().padStart(4, "0")}`,
 }));
 
 export const cameras = Array.from({ length: LIMIT }, (_, i) => ({
-  label: `NIDA/CAME/IT/${(i + 1).toString().padStart(4, "0")}`,
-  value: `NIDA/CAME/IT/${(i + 1).toString().padStart(4, "0")}`,
+  label: `${DEVICE_PREFIX}/CAME/IT/${(i + 1).toString().padStart(4, "0")}`,
+  value: `${DEVICE_PREFIX}/CAME/IT/${(i + 1).toString().padStart(4, "0")}`,
 }));
 
 export const signaturePads = Array.from({ length: LIMIT }, (_, i) => ({
-  label: `NIDA/SIGNP/IT/${(i + 1).toString().padStart(4, "0")}`,
-  value: `NIDA/SIGNP/IT/${(i + 1).toString().padStart(4, "0")}`,
+  label: `${DEVICE_PREFIX}/SIGNP/IT/${(i + 1).toString().padStart(4, "0")}`,
+  value: `${DEVICE_PREFIX}/SIGNP/IT/${(i + 1).toString().padStart(4, "0")}`,
 }));

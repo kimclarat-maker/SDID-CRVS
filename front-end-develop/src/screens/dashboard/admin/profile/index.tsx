@@ -1,6 +1,6 @@
 import Icon from "@/components/icon";
 import Loading from "@/components/loader";
-import { useFetchCitizenInfoPerInstitution } from "@/hooks/nida/useCitizenInfo";
+import { useFetchCitizenInfoPerInstitution } from "@/hooks/identityRegistry/useCitizenInfo";
 import FormLayout from "@/layout/form/formLayout";
 import { goBack } from "@/utils/common/goBack";
 import { useEffect } from "react";
