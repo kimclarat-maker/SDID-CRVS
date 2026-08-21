@@ -65,6 +65,19 @@ export default defineConfig(({ command, mode }) => {
       globals: true,
       environment: "jsdom",
       setupFiles: "./tests/setupTests.ts",
+      exclude: [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/cypress/**",
+        "**/.{idea,git,cache,output,temp}/**",
+        "**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*",
+        "tests/e2e/**",
+        // Legacy Playwright specs (test.describe against a live server) that
+        // predate src/tests/vitest/** — they were never meant to run under
+        // vitest and fail immediately when it collects them.
+        "src/tests/*.test.{ts,tsx}",
+        "src/tests/exceptions/**"
+      ],
       coverage: {
         reporter: ["cobertura", "text-summary", "html"]
       }

@@ -18,7 +18,10 @@ export const seedAccounts = (centers: DemoCenter[]): DemoAccount[] => {
       firstName: firstName || cred.roleLabel,
       lastName: lastName || "Demo",
       email: cred.email,
-      role: cred.role,
+      // demoCredentials (unlike allStaffDemoCredentials) only ever contains
+      // the 4 SDID roles, so this narrowing reflects DemoCredential.role's
+      // actual runtime shape here.
+      role: cred.role as DemoRole,
       centerId: centers[i % centers.length].id,
       status: "active",
       phoneNumber: demoPhoneNumber(i),

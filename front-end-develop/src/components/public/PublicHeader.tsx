@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { platformConfig } from "@/config/platform.config";
 import { usePublicLanguage } from "@/context/PublicLanguageContext";
 import LanguageSelector from "./LanguageSelector";
 
-export default function PublicHeader({ overlay }: { overlay?: boolean }) {
+export default function PublicHeader() {
   const { content } = usePublicLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const menuToggleRef = useRef<HTMLButtonElement | null>(null);
+  const mobileNavRef = useRef<HTMLElement | null>(null);
   const nav = content.common.nav;
 
   const links = [
@@ -20,10 +23,63 @@ export default function PublicHeader({ overlay }: { overlay?: boolean }) {
     { label: nav.help, href: "/help" },
   ];
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Lock background scroll, trap focus, close on Escape, and return focus
+  // to the toggle button when the mobile panel closes.
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const getFocusable = () =>
+      mobileNavRef.current
+        ? Array.from(
+            mobileNavRef.current.querySelectorAll<HTMLElement>(
+              'a[href], button:not([disabled])'
+            )
+          )
+        : [];
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMobileOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = getFocusable();
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    const focusable = getFocusable();
+    focusable[0]?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      menuToggleRef.current?.focus();
+    };
+  }, [mobileOpen]);
+
   return (
-    <header
-      className={`public-header ${overlay ? "public-header-overlay" : ""}`}
-    >
+    <header className={`public-header ${scrolled ? "is-scrolled" : ""}`.trim()}>
       <div className="public-header-inner">
         <Link to="/" className="public-logo-link">
           <img src={platformConfig.logo.src} alt={platformConfig.logo.alt} />
@@ -52,10 +108,8 @@ export default function PublicHeader({ overlay }: { overlay?: boolean }) {
               {nav.staffSignIn}
             </Link>
           )}
-          <Link to="/track" className="public-header-cta">
-            {nav.track}
-          </Link>
           <button
+            ref={menuToggleRef}
             type="button"
             className="public-menu-toggle"
             aria-expanded={mobileOpen}
@@ -72,16 +126,41 @@ export default function PublicHeader({ overlay }: { overlay?: boolean }) {
           id="public-mobile-nav"
           className="public-mobile-nav"
           aria-label={nav.menu}
+          ref={mobileNavRef}
         >
           <ul>
             {links.map((link) => (
               <li key={link.href}>
-                <Link to={link.href} onClick={() => setMobileOpen(false)}>
+                <NavLink
+                  to={link.href}
+                  end={link.href === "/"}
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                  onClick={() => setMobileOpen(false)}
+                >
                   {link.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
+          <hr className="public-mobile-nav-divider" />
+          <div className="public-mobile-nav-actions">
+            {platformConfig.featureFlags.enableStaffSignInLink && (
+              <Link
+                to="/staff/sign-in"
+                className="public-btn public-btn-secondary"
+                onClick={() => setMobileOpen(false)}
+              >
+                {nav.staffSignIn}
+              </Link>
+            )}
+            <Link
+              to="/track"
+              className="public-btn public-btn-primary"
+              onClick={() => setMobileOpen(false)}
+            >
+              {nav.track}
+            </Link>
+          </div>
         </nav>
       )}
     </header>

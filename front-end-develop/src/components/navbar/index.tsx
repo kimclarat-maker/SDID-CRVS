@@ -30,6 +30,10 @@ import Modal from "../Modal";
 import LogoutConfirm from "./LogoutConfirm";
 import Health from "../health";
 import DemoBadge from "../demoBadge";
+import {
+  currentWorkspaceHomePath,
+  shouldShowWorkspaceSelector,
+} from "@/utils/workspace";
 
 export default function Navbar({
   containerType,
@@ -307,13 +311,24 @@ export default function Navbar({
                     </Dropdown.Item>
                     <Dropdown.Separator />
                     <Dropdown.Item
-                      onClick={() => navigate("/dashboard/admin/home")}
+                      onClick={() => navigate(currentWorkspaceHomePath())}
                     >
                       <div className="d-flex gap-2">
                         <Icon name="dashboard" />
                         {translation.dashboard}
                       </div>
                     </Dropdown.Item>
+                    {shouldShowWorkspaceSelector() && (
+                      <Dropdown.Item
+                        onClick={() => navigate("/dashboard/workspaces")}
+                        data-testid="switch-workspace"
+                      >
+                        <div className="d-flex gap-2">
+                          <Icon name="swap_horiz" />
+                          Switch workspace
+                        </div>
+                      </Dropdown.Item>
+                    )}
                     <Dropdown.Item onClick={() => setConfirmModal(true)}>
                       <div className="d-flex gap-2">
                         <Icon name="logout" />

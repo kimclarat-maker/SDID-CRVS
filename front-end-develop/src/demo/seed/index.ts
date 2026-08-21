@@ -9,6 +9,8 @@ import { seedAuditEvents } from "./auditEvents";
 import { seedCenters } from "./centers";
 import { seedDevices } from "./devices";
 import { seedNotifications } from "./notifications";
+import { seedCrvsNotifications } from "./crvsNotifications";
+import { seedCrvsRegistrations, seedCrvsFoundationalIdentities } from "./crvsRegistrations";
 
 export const buildDemoDatabase = (): DemoDatabase => {
   const centers = seedCenters();
@@ -25,6 +27,9 @@ export const buildDemoDatabase = (): DemoDatabase => {
   const notifications = seedNotifications();
   const auditEvents = seedAuditEvents(applications, accounts);
   const analytics = seedAnalytics();
+  const crvsNotifications = seedCrvsNotifications();
+  const crvsRegistrations = seedCrvsRegistrations();
+  const crvsFoundationalIdentities = seedCrvsFoundationalIdentities();
 
   return {
     version: DEMO_DATA_VERSION,
@@ -37,5 +42,8 @@ export const buildDemoDatabase = (): DemoDatabase => {
     notifications,
     auditEvents,
     analytics,
+    crvsNotifications,
+    crvsRegistrations,
+    crvsFoundationalIdentities,
   };
 };

@@ -13,6 +13,7 @@ import toastMessage from "@/utils/common/toastMessage";
 import { setStorage } from "@/utils/storage";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { resolvePostLoginRoute } from "@/utils/workspace";
 
 export function useMFAFacialVerification(
   webcamRef: any,
@@ -164,7 +165,7 @@ export function useMFAFacialVerification(
         await syncAccountData(data?.data || data);
       }
 
-      await navigate("/dashboard/admin/prenrollment/search");
+      await navigate(resolvePostLoginRoute());
     } catch (error: any) {
       setVerificationStatus((prev) => ({
         ...prev,

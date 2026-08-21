@@ -40,6 +40,35 @@ To run this project, you will need to add the following environment variables to
 
 **Client:** React, Redux, rsuite, bootstrap
 
+## Staff workspaces (SDID & CRVS)
+
+All staff sign in at one place: `/staff/sign-in`. After authenticating, a staff
+member is routed based on their **workspace assignments**:
+
+- Assigned to SDID only → the existing SDID enrolment dashboard (`/dashboard/sdid`,
+  which forwards into the existing `/dashboard/admin/*` screens — unchanged).
+- Assigned to CRVS only → the CRVS dashboard (`/dashboard/crvs`).
+- Assigned to both → a workspace-selection screen (`/dashboard/workspaces`), also
+  reachable any time afterwards from the header's account menu ("Switch workspace").
+- No valid assignment → `/dashboard/access-denied`.
+
+Accounts without an `assignments` array (every existing/real backend account today)
+are treated as legacy SDID staff by a compatibility adapter
+(`src/utils/workspace/index.ts`) built from their existing `accessRole`/`permissions` —
+no backend change is required for this milestone. `/dashboard/admin/*` keeps working
+for bookmarks/links, gated by SDID workspace membership rather than being open to any
+signed-in user. Route guards (`RequireWorkspace`, `RequirePermission` in
+`src/navigation/guards/`) protect both workspaces at the route level, not just their
+sidebar menus — a legacy `SUPERADMIN` account does **not** gain CRVS approval
+authority, since it only ever has an SDID assignment.
+
+CRVS roles (Birth Notification Officer, CRVS Registration Officer, Civil Registrar,
+CRVS Supervisor) and their dashboards are foundational in this milestone —
+notification/registration/correction queues are read-only demo fixtures
+(`src/demo/seed/crvs.ts`); the birth-registration creation and review workflow itself
+ships in a later milestone (see the "Coming in the next milestone" pages under
+`/dashboard/crvs`).
+
 ## Demo Mode
 
 Demo mode lets you explore the application with realistic fictional data and no live backend. It is off by default and must never be enabled in production.
@@ -60,14 +89,26 @@ A "Demo environment" badge appears on the login screen, the dashboard header, an
 
 Documented in `src/demo/credentials.ts`. All `@demo.identity.local` — fictional, not real people or organizations.
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Administrator | admin@demo.identity.local | DemoAdmin@2026 |
-| Enrolment Officer | officer@demo.identity.local | DemoOfficer@2026 |
-| Reviewer | reviewer@demo.identity.local | DemoReviewer@2026 |
-| Supervisor | supervisor@demo.identity.local | DemoSupervisor@2026 |
+| Workspace | Role | Email | Password |
+| --- | --- | --- | --- |
+| SDID | Administrator | admin@demo.identity.local | DemoAdmin@2026 |
+| SDID | Enrolment Officer | officer@demo.identity.local | DemoOfficer@2026 |
+| SDID | Reviewer | reviewer@demo.identity.local | DemoReviewer@2026 |
+| SDID | Supervisor | supervisor@demo.identity.local | DemoSupervisor@2026 |
+| CRVS | Birth Notification Officer | notifier@demo.identity.local | DemoNotifier@2026 |
+| CRVS | CRVS Registration Officer | crvs.officer@demo.identity.local | DemoCrvsOfficer@2026 |
+| CRVS | Civil Registrar | registrar@demo.identity.local | DemoRegistrar@2026 |
+| CRVS | CRVS Supervisor | crvs.supervisor@demo.identity.local | DemoCrvsSupervisor@2026 |
+| SDID + CRVS | SDID Supervisor + CRVS Registration Officer (dual) | dual.staff@demo.identity.local | DemoDualStaff@2026 |
 
-The login screen also shows a "Demo accounts" panel (demo mode only) with a "Use this account" button per role that fills in the form — you still have to submit it.
+The dual-workspace account opens the workspace-selection screen on sign-in — pick
+either card to continue into that workspace. It is deliberately paired with CRVS
+Registration Officer rather than Civil Registrar, so holding both workspaces never
+implies registration-approval authority on its own.
+
+The login screen also shows a "Demo accounts" panel (demo mode only), grouped into
+SDID staff / CRVS staff / Multi-workspace staff collapsible sections, with a "Use
+this account" button per role that fills in the form — you still have to submit it.
 
 ### What's simulated
 

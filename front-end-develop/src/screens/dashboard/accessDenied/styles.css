@@ -1,0 +1,12 @@
+.access-denied-shell {
+  max-width: 520px;
+  margin: var(--content-gap-xl) auto;
+  padding: 0 var(--content-gap-md);
+}
+
+.access-denied-actions {
+  display: flex;
+  gap: var(--content-gap-sm);
+  justify-content: center;
+  margin-top: var(--content-gap-md);
+}

@@ -14,6 +14,7 @@ import api from "@/api";
 import { defineAccess } from "@/utils/common/permissions";
 import { syncAccountData } from "@/api/accounts";
 import { useLocalService } from "@/context/LocalServiceContext";
+import { resolvePostLoginRoute } from "@/utils/workspace";
 
 export default function OTPCode({
   user,
@@ -152,7 +153,7 @@ export default function OTPCode({
         await syncAccountData(data);
       }
 
-      navigate("/dashboard/admin/prenrollment/search");
+      navigate(resolvePostLoginRoute());
       return;
     }
     toastMessage("error", translation.login_failed);

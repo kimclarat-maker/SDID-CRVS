@@ -26,10 +26,11 @@ import Alert from "@/components/alert";
 import { cfg } from "@/constants/cfg";
 import axios from "axios";
 import { isDemoMode } from "@/demo/config";
-import { demoCredentials, findDemoCredential } from "@/demo/credentials";
+import { allStaffDemoCredentials, findDemoCredential } from "@/demo/credentials";
 import { startDemoSession } from "@/demo/session";
 import DemoAccountsPanel from "@/components/demoAccountsPanel";
 import DemoBadge from "@/components/demoBadge";
+import { resolvePostLoginRoute } from "@/utils/workspace";
 
 interface Address {
   province?: AddressType | null;
@@ -84,7 +85,7 @@ export default function Login({
           return;
         }
         await startDemoSession(credential);
-        navigate("/dashboard/admin");
+        navigate(resolvePostLoginRoute());
         return;
       }
 
@@ -116,6 +117,14 @@ export default function Login({
           if (data.tempToken) {
             await setStorage(data.tempToken, "tempToken");
           }
+        } else {
+          // userLoginApi() swallows its own errors (it's also used by
+          // silent background token-refresh callers that must not toast on
+          // every network blip) and its "Network Error"/connection-refused
+          // messages are deliberately suppressed by toastMessage's
+          // EXCLUDED_MESSAGES. Without this, a direct, user-initiated login
+          // attempt against an unreachable API shows nothing at all.
+          toastMessage("error", errors(translation.default, undefined)["001"]);
         }
       } catch (error) {
         toastMessage("error", errors(translation.default, error)["001"]);
@@ -173,7 +182,7 @@ export default function Login({
       const address = await getStorage("applicantAddress", "local");
 
       if (user?.token && !isTokenExpired(user.token)) {
-        navigate("/dashboard/admin");
+        navigate(resolvePostLoginRoute());
       }
 
       if (address) {
@@ -354,7 +363,7 @@ export default function Login({
         />
         {isDemoMode() && (
           <DemoAccountsPanel
-            accounts={demoCredentials}
+            accounts={allStaffDemoCredentials}
             onUseAccount={(credential) => {
               formik.setValues({
                 email: credential.email,

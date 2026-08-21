@@ -29,6 +29,7 @@ export const fr: DeepPartial<PublicContent> = {
       readMore: "Lire la suite",
       backToHome: "Retour à l'accueil",
       languageSelectorLabel: "Choisir la langue",
+      trustStatementPrefix: "Une initiative de",
     },
   },
   home: {

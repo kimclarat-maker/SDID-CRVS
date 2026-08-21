@@ -46,6 +46,27 @@ function buildMockResult(
   };
 }
 
+type VerifyStatus = "valid" | "expired" | "revoked" | "not-found" | "invalid";
+
+function resolveStatus(result: MockVerificationResult): VerifyStatus {
+  const status = result.documentStatus.toLowerCase();
+  if (status.includes("revoked")) return "revoked";
+  if (status.includes("expired")) return "expired";
+  if (status.includes("not found")) return "not-found";
+  return result.isValid ? "valid" : "invalid";
+}
+
+const STATUS_PRESENTATION: Record<
+  VerifyStatus,
+  { type: "success" | "warning" | "danger"; label: string }
+> = {
+  valid: { type: "success", label: "Valid" },
+  expired: { type: "warning", label: "Expired" },
+  revoked: { type: "danger", label: "Revoked" },
+  "not-found": { type: "warning", label: "Not found" },
+  invalid: { type: "danger", label: "Invalid" },
+};
+
 export default function Verify() {
   const { content } = usePublicLanguage();
   const page = content.verify;
@@ -107,6 +128,7 @@ export default function Verify() {
       <PageHeader
         title={page.heading}
         description={page.intro}
+        eyebrow={content.common.nav.verify}
         breadcrumb={[
           { label: content.common.nav.home, href: "/" },
           { label: content.common.nav.verify },
@@ -221,10 +243,10 @@ export default function Verify() {
             data-testid="verify-result"
           >
             <Notice
-              type={result.isValid ? "success" : "danger"}
+              type={STATUS_PRESENTATION[resolveStatus(result)].type}
               title={page.resultLabels.status}
             >
-              {result.isValid ? "Valid" : "Invalid"}
+              {STATUS_PRESENTATION[resolveStatus(result)].label}
             </Notice>
             <dl className="public-fact-list" style={{ marginTop: "1rem" }}>
               <div>

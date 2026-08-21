@@ -5,10 +5,18 @@ import { usePublicLanguage } from "@/context/PublicLanguageContext";
 export default function PublicFooter() {
   const { content } = usePublicLanguage();
   const footer = content.common.footer;
+  const { contact } = platformConfig;
 
   return (
     <footer className="public-footer">
       <div className="public-container">
+        <div className="public-footer-top">
+          <Link to="/" className="public-footer-logo">
+            <img src={platformConfig.logo.src} alt="" aria-hidden="true" />
+            {platformConfig.platformName}
+          </Link>
+        </div>
+
         <div className="public-footer-grid">
           <div>
             <h2>{footer.aboutHeading}</h2>
@@ -51,6 +59,28 @@ export default function PublicFooter() {
               <li>
                 <Link to="/complaints">{footer.complaints}</Link>
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>{footer.contactHeading}</h3>
+            <ul className="public-footer-contact">
+              {contact.callCenterNumber && (
+                <li>
+                  <a href={`tel:${contact.callCenterNumber}`}>
+                    {contact.callCenterNumber}
+                  </a>
+                </li>
+              )}
+              {contact.email && (
+                <li>
+                  <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                </li>
+              )}
+              {contact.address && <li>{contact.address}</li>}
+              {contact.hoursOfOperation && (
+                <li>{contact.hoursOfOperation}</li>
+              )}
             </ul>
           </div>
         </div>

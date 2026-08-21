@@ -26,9 +26,98 @@
   --status-danger-surface: var(--status-danger-bg);
   --status-info-surface: var(--status-info-bg);
 
-  font-family: var(--font-family-sans);
+  /* Editorial typeface pair — self-hosted, see public-fonts.css. Scoped to
+     .public-app only; the internal staff shell keeps --font-family-sans
+     (Public Sans) untouched. */
+  --font-display: "Manrope", "Inter", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+
+  /* Fluid editorial type scale */
+  --text-display-xl: clamp(3.25rem, 7vw, 7rem);
+  --text-display-lg: clamp(2.75rem, 5.5vw, 5.5rem);
+  --text-display-md: clamp(2.25rem, 4vw, 4rem);
+  --text-heading-lg: clamp(1.875rem, 3vw, 3rem);
+  --text-heading-md: clamp(1.5rem, 2vw, 2.25rem);
+  --text-heading-sm: 1.25rem;
+  --text-body-lg: clamp(1.0625rem, 1.3vw, 1.25rem);
+  --text-body-md: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-label: 0.75rem;
+
+  /* Restrained supporting palette layered over the existing brand blue.
+     --public-brand* intentionally alias the real functional brand colour
+     (brand-primary-600/700/900) rather than introducing a second blue. */
+  --public-canvas: #e9edf1;
+  --public-frame: #f7f9fb;
+  --public-surface: #ffffff;
+  --public-surface-soft: #eef2f5;
+  --public-surface-blue: #e5eff8;
+  --public-surface-aqua: #dfeeee;
+  --public-surface-sand: #ead9d0;
+  --public-surface-warm: #f3ebe6;
+
+  --public-ink: #101722;
+  --public-text: #273241;
+  --public-muted: #657080;
+  --public-border: rgba(16, 23, 34, 0.11);
+  --public-border-strong: rgba(16, 23, 34, 0.2);
+
+  --public-brand: var(--brand-primary-600);
+  --public-brand-hover: var(--brand-primary-700);
+  --public-brand-dark: var(--brand-primary-900);
+
+  /* Container / measure */
+  --public-container: 1280px;
+  --public-reading-width: 760px;
+
+  /* Section rhythm — clamp() steps the same values the spec calls out at
+     desktop/tablet/mobile widths without separate breakpoint rules. */
+  --public-section-space-xl: clamp(64px, 12vw, 128px);
+  --public-section-space-lg: clamp(64px, 9vw, 96px);
+  --public-section-space-md: clamp(48px, 6vw, 64px);
+
+  /* Card system */
+  --card-radius-sm: 16px;
+  --card-radius-md: 22px;
+  --card-radius-lg: 28px;
+  --public-card-shadow: 0 18px 50px rgba(16, 23, 34, 0.08);
+
+  font-family: var(--font-body);
   background-color: #ffffff;
-  color: var(--text-primary);
+  color: var(--public-text);
+}
+
+.public-app h1,
+.public-app h2,
+.public-app h3,
+.public-app .public-font-display {
+  font-family: var(--font-display);
+  color: var(--public-ink);
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+}
+
+.public-app .public-eyebrow-label,
+.public-app .public-label {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.public-app p,
+.public-app li {
+  line-height: 1.7;
+}
+
+.public-app button,
+.public-app .public-nav a,
+.public-app .public-btn {
+  font-family: var(--font-body);
+  font-weight: 600;
 }
 
 .public-app :focus-visible {

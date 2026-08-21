@@ -35,6 +35,7 @@ export interface PublicCommonContent {
     readMore: string;
     backToHome: string;
     languageSelectorLabel: string;
+    trustStatementPrefix: string;
   };
 }
 
@@ -108,8 +109,13 @@ export interface HomeContent {
     ctaHref: string;
   };
   howSdidCrvsWorkTogether: {
+    eyebrow: string;
     heading: string;
-    body: string[];
+    items: {
+      icon: string;
+      title: string;
+      description: string;
+    }[];
   };
   howItWorks: {
     heading: string;
@@ -132,7 +138,11 @@ export interface HomeContent {
   };
   notices: {
     heading: string;
-    items: { title: string; message: string; type: "info" | "warning" }[];
+    items: {
+      title: string;
+      message: string;
+      type: "info" | "warning" | "success" | "danger";
+    }[];
   };
 }
 

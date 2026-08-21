@@ -7,6 +7,7 @@ export default function Accessibility() {
     <StaticContentSections
       page={content.accessibility}
       breadcrumbLabel={content.common.footer.accessibility}
+      readingLayout
     />
   );
 }

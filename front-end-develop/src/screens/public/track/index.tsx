@@ -5,7 +5,7 @@ import Section from "@/components/public/Section";
 import Notice from "@/components/public/Notice";
 import StatusTimeline from "@/components/public/StatusTimeline";
 import { isDemoMode } from "@/demo/config";
-import { demoTrackApplication, DemoTrackingResult } from "@/demo/services/public";
+import { demoTrackApplication, DemoTrackingResult, demoTrackBirthRegistration, DemoBirthTrackingResult } from "@/demo/services/public";
 import DemoBadge from "@/components/demoBadge";
 
 interface TrackFormErrors {
@@ -24,6 +24,10 @@ export default function Track() {
   const [demoResult, setDemoResult] = useState<DemoTrackingResult | null>(
     null
   );
+  const [birthResult, setBirthResult] = useState<DemoBirthTrackingResult | null>(
+    null
+  );
+  const [submitting, setSubmitting] = useState(false);
 
   const validate = (): boolean => {
     const nextErrors: TrackFormErrors = {};
@@ -47,24 +51,43 @@ export default function Track() {
       return;
     }
 
-    if (isDemoMode()) {
-      const found = demoTrackApplication(reference, otp);
-      if (found) {
-        setDemoResult(found);
-        setResult({ stageIndex: found.currentStageIndex });
+    setSubmitting(true);
+    window.setTimeout(() => {
+      if (isDemoMode()) {
+        const found = demoTrackApplication(reference, otp);
+        if (found) {
+          setDemoResult(found);
+          setBirthResult(null);
+          setResult({ stageIndex: found.currentStageIndex });
+          setSubmitting(false);
+          return;
+        }
+
+        const foundBirth = demoTrackBirthRegistration(reference, otp);
+        if (foundBirth) {
+          setBirthResult(foundBirth);
+          setDemoResult(null);
+          setResult({ stageIndex: foundBirth.currentStageIndex });
+          setSubmitting(false);
+          return;
+        }
+
+        setDemoResult(null);
+        setBirthResult(null);
+        setResult(null);
+        setSubmitting(false);
         return;
       }
-      setDemoResult(null);
-      setResult(null);
-      return;
-    }
 
-    // Deterministic mock status derived from the reference so this page
-    // never needs a live backend to demonstrate the tracking experience.
-    const mockStageIndex =
-      reference.trim().length % page.statusStages.length;
-    setDemoResult(null);
-    setResult({ stageIndex: mockStageIndex });
+      // Deterministic mock status derived from the reference so this page
+      // never needs a live backend to demonstrate the tracking experience.
+      const mockStageIndex =
+        reference.trim().length % page.statusStages.length;
+      setDemoResult(null);
+      setBirthResult(null);
+      setResult({ stageIndex: mockStageIndex });
+      setSubmitting(false);
+    }, 400);
   };
 
   return (
@@ -72,6 +95,7 @@ export default function Track() {
       <PageHeader
         title={page.heading}
         description={page.intro}
+        eyebrow={content.common.nav.track}
         breadcrumb={[
           { label: content.common.nav.home, href: "/" },
           { label: content.common.nav.track },
@@ -133,15 +157,19 @@ export default function Track() {
             type="submit"
             className="public-btn public-btn-primary"
             data-testid="track-submit"
+            disabled={submitting}
+            aria-busy={submitting}
           >
-            {page.submitLabel}
+            {submitting ? "Checking…" : page.submitLabel}
           </button>
         </form>
 
         {isDemoMode() && (
           <p style={{ marginTop: "1rem" }}>
             <DemoBadge /> Try it: reference{" "}
-            <code>APP-DEMO-2026-0001</code>, code <code>246810</code>
+            <code>APP-DEMO-2026-0001</code>, code <code>246810</code> — or a
+            birth registration, reference <code>BR-DEMO-2026-0002</code>,
+            code <code>135791</code>
           </p>
         )}
 
@@ -150,7 +178,11 @@ export default function Track() {
           role="status"
           aria-live="polite"
         >
-          {result ? (
+          {submitting ? (
+            <Notice type="info" title="Checking">
+              Looking up your application status…
+            </Notice>
+          ) : result ? (
             <>
               {demoResult && (
                 <dl className="public-form-hint" style={{ marginBottom: "1rem" }}>
@@ -181,8 +213,32 @@ export default function Track() {
                   )}
                 </dl>
               )}
+              {birthResult && (
+                <dl className="public-form-hint" style={{ marginBottom: "1rem" }}>
+                  <div>
+                    <strong>Application reference:</strong> {birthResult.reference}
+                  </div>
+                  {birthResult.submittedAt && (
+                    <div>
+                      <strong>Submitted:</strong>{" "}
+                      {new Date(birthResult.submittedAt).toLocaleDateString()}
+                    </div>
+                  )}
+                  {birthResult.processingOffice && (
+                    <div>
+                      <strong>Processing office:</strong> {birthResult.processingOffice}
+                    </div>
+                  )}
+                  {birthResult.outstandingAction && (
+                    <div>
+                      <strong>Outstanding action:</strong>{" "}
+                      {birthResult.outstandingAction}
+                    </div>
+                  )}
+                </dl>
+              )}
               <StatusTimeline
-                stages={page.statusStages}
+                stages={birthResult ? birthResult.stages : page.statusStages}
                 currentIndex={result.stageIndex}
               />
             </>

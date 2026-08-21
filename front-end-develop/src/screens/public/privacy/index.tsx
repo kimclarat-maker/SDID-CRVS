@@ -7,6 +7,7 @@ export default function Privacy() {
     <StaticContentSections
       page={content.privacy}
       breadcrumbLabel={content.common.footer.privacy}
+      readingLayout
     />
   );
 }

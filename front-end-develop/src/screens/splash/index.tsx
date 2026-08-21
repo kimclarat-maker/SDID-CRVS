@@ -5,6 +5,7 @@ import "./styles.css";
 import logoImage from "@/assets/logo.png";
 import toastMessage from "@/utils/common/toastMessage";
 import { platformConfig } from "@/config/platform.config";
+import { resolvePostLoginRoute } from "@/utils/workspace";
 
 function SplashScreen({ firstLoad }: { firstLoad?: boolean }) {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function SplashScreen({ firstLoad }: { firstLoad?: boolean }) {
           return;
         }
 
-        navigate("/dashboard/admin");
+        navigate(resolvePostLoginRoute());
       } catch (error) {
         toastMessage("error", error);
       }

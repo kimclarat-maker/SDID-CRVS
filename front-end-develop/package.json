@@ -18,6 +18,8 @@
   "dependencies": {
     "@ebay/nice-modal-react": "^1.2.13",
     "@emotion/react": "^11.13.3",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
     "@fontsource/public-sans": "^5.3.0",
     "@rsuite/interactions": "^2.3.1",
     "@rsuite/responsive-nav": "^5.0.2",

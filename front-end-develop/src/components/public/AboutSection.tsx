@@ -1,18 +1,23 @@
 import { HomeContent } from "@/types/PublicContent";
 import Reveal from "./Reveal";
 
-export default function AboutSection({ about }: { about: HomeContent["about"] }) {
+export default function AboutSection({
+  about,
+  platformIntro,
+}: {
+  about: HomeContent["about"];
+  platformIntro: string;
+}) {
   return (
-    <section className="public-about">
+    <section className="public-about public-section-xl">
       <Reveal className="public-container">
+        <p className="public-eyebrow-label public-about-index">
+          {about.index} — {about.eyebrow}
+        </p>
+
         <div className="public-about-top">
-          <div className="public-section-eyebrow">
-            <span>{about.eyebrow}</span>
-            <small>
-              ({about.index}-08)
-            </small>
-          </div>
           <h2 className="public-about-heading">{about.heading}</h2>
+          <p className="public-about-intro">{platformIntro}</p>
         </div>
 
         <div className="public-about-stats">

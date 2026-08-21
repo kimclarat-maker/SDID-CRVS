@@ -108,6 +108,7 @@ export const en: PublicContent = {
       readMore: "Read more",
       backToHome: "Back to home",
       languageSelectorLabel: "Choose language",
+      trustStatementPrefix: "An initiative of",
     },
   },
 
@@ -301,11 +302,25 @@ export const en: PublicContent = {
       ctaHref: "/verify",
     },
     howSdidCrvsWorkTogether: {
+      eyebrow: "How it connects",
       heading: "How digital identity and civil registration work together",
-      body: [
-        `Civil registration creates the official record of a life event — a birth, death, marriage, or other vital event recognised by ${authority}.`,
-        `Digital identity, managed by ${idAuthority}, uses trusted civil registration records to verify who you are, so identity documents and civil records stay consistent.`,
-        "Together, they let you register a life event and use that record to support identity enrolment, certificate requests, and other government services — without submitting the same information twice.",
+      items: [
+        {
+          icon: "history_edu",
+          title: "Civil registration",
+          description: `Creates the official record of a life event — a birth, death, marriage, or other vital event recognised by ${authority}.`,
+        },
+        {
+          icon: "fingerprint",
+          title: "Digital identity",
+          description: `Managed by ${idAuthority}, uses trusted civil registration records to verify who you are, so identity documents and civil records stay consistent.`,
+        },
+        {
+          icon: "handshake",
+          title: "Working together",
+          description:
+            "Register a life event and use that record to support identity enrolment, certificate requests, and other government services — without submitting the same information twice.",
+        },
       ],
     },
     howItWorks: {

@@ -1,3 +1,7 @@
+import type { BirthNotification, BirthRegistrationCase, FoundationalIdentity } from "@/domain/crvs/types";
+
+export type { BirthNotification, BirthRegistrationCase, FoundationalIdentity };
+
 export type DemoRole =
   | "administrator"
   | "enrolment_officer"
@@ -192,4 +196,7 @@ export type DemoDatabase = {
   notifications: DemoNotification[];
   auditEvents: DemoAuditEvent[];
   analytics: DemoAnalyticsMonth[];
+  crvsNotifications: BirthNotification[];
+  crvsRegistrations: BirthRegistrationCase[];
+  crvsFoundationalIdentities: FoundationalIdentity[];
 };

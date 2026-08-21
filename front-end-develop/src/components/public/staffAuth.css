@@ -1,0 +1,230 @@
+.staff-auth-page {
+  padding-block: var(--section-space-mobile) var(--content-gap-xl);
+}
+
+@media (min-width: 768px) {
+  .staff-auth-page {
+    padding-block-start: var(--content-gap-xl);
+  }
+}
+
+.staff-auth-panel {
+  max-width: 1180px;
+  min-height: 620px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 44% 56%;
+  border-radius: var(--card-radius-lg, 28px);
+  overflow: hidden;
+  background: var(--public-surface);
+  border: 1px solid var(--public-border);
+  box-shadow: var(--public-card-shadow);
+}
+
+.staff-auth-info {
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--content-gap-sm);
+  background:
+    radial-gradient(circle at 15% 20%, var(--public-surface-blue) 0%, transparent 55%),
+    radial-gradient(circle at 85% 85%, var(--public-surface-aqua) 0%, transparent 55%),
+    var(--brand-primary-50);
+  color: var(--public-ink);
+}
+
+.staff-auth-eyebrow {
+  margin: 0;
+}
+
+.staff-auth-info-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-md);
+  line-height: var(--line-height-heading);
+  letter-spacing: -0.03em;
+  color: var(--public-ink);
+  margin: 0;
+}
+
+.staff-auth-info-copy {
+  font-size: var(--text-body-md);
+  line-height: var(--line-height-body);
+  color: var(--public-text);
+  margin: 0;
+  max-width: 40ch;
+}
+
+.staff-auth-trust-list {
+  list-style: none;
+  margin: var(--content-gap-xs) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.staff-auth-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--public-text);
+}
+
+.staff-auth-trust-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--public-surface);
+  color: var(--public-brand);
+  box-shadow: var(--shadow-xs);
+}
+
+.staff-auth-form-panel {
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.staff-auth-intro {
+  margin-bottom: var(--content-gap-md);
+}
+
+.staff-auth-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-heading);
+  color: var(--public-ink);
+  margin: 0 0 var(--content-gap-xs);
+}
+
+.staff-auth-subtitle {
+  font-size: var(--text-body-md);
+  color: var(--public-muted);
+  margin: 0;
+}
+
+/*
+  FormLayout (the Login screen's existing wrapper) already renders a
+  token-styled card, but it also assumes it owns the full viewport height
+  and centers itself there. Scoped here (rather than editing
+  layout/form/styles.css, which forgot-password/reset-password also use) so
+  it instead flows naturally inside the right-hand panel above.
+*/
+.staff-auth-form-panel .formContainer {
+  min-height: auto;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+}
+
+.staff-auth-form-panel .col-md-4 {
+  width: 100%;
+  max-width: none;
+  margin: 0 !important;
+}
+
+.staff-auth-form-panel .titleContainer:empty {
+  display: none;
+}
+
+.staff-auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--content-gap-lg);
+  color: var(--public-muted);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+}
+
+.staff-auth-back-link:hover,
+.staff-auth-back-link:focus-visible {
+  color: var(--public-brand-hover);
+  text-decoration: underline;
+}
+
+/* --- Responsive --- */
+
+@media (max-width: 899px) {
+  .staff-auth-panel {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  /* Form first for usability — staff coming here want to sign in, not read
+     about the platform first. */
+  .staff-auth-form-panel {
+    order: -1;
+  }
+
+  .staff-auth-info,
+  .staff-auth-form-panel {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 599px) {
+  .staff-auth-page {
+    padding-inline: 20px;
+  }
+
+  .staff-auth-info,
+  .staff-auth-form-panel {
+    padding: 24px;
+  }
+
+  .staff-auth-panel {
+    border-radius: var(--card-radius-md, 22px);
+  }
+
+  /* Decorative background pattern reads as noise at this size. */
+  .staff-auth-info {
+    background: var(--brand-primary-50);
+  }
+
+  .staff-auth-heading {
+    font-size: var(--text-heading-sm);
+  }
+}
+
+/* --- Motion: restrained entrance, no per-keystroke or validation animation --- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .staff-auth-panel {
+    animation: staff-auth-rise 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .staff-auth-form-panel .staff-auth-intro {
+    animation: staff-auth-rise 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .staff-auth-form-panel .formContainer {
+    animation: staff-auth-rise 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 100ms;
+  }
+
+  .staff-auth-form-panel .demo-accounts-panel {
+    animation: staff-auth-rise 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 180ms;
+  }
+}
+
+@keyframes staff-auth-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -4,6 +4,8 @@ import { DemoCredential } from "./credentials";
 import { DEMO_STORAGE_PREFIX } from "./config";
 import { DemoAccount, DemoRole } from "./types";
 import { getDemoData } from "./storage/demoStore";
+import { StaffAssignment } from "@/types/Workspace";
+import { CRVS_ROLES, CRVS_ROLE_PERMISSIONS, CrvsRole } from "@/constants/crvsRoles";
 
 const base64Url = (obj: unknown) =>
   btoa(JSON.stringify(obj))
@@ -83,6 +85,64 @@ const ROLE_ACCESS_VALUE: Record<DemoRole, string> = {
   supervisor: "supervisor",
 };
 
+const isCrvsRole = (role: DemoCredential["role"]): role is CrvsRole =>
+  (Object.values(CRVS_ROLES) as string[]).includes(role as string);
+
+// Fictional facility/jurisdiction shared by the CRVS demo accounts — this
+// milestone doesn't wire CRVS staff to real geography data yet.
+const DEMO_CRVS_FACILITY = {
+  facilityId: "FAC-DEMO-01",
+  jurisdiction: {
+    level: "DISTRICT" as const,
+    id: "dist-demo-01",
+    name: "Demo District",
+  },
+};
+
+const buildAssignments = (
+  credential: DemoCredential,
+  account?: DemoAccount
+): StaffAssignment[] => {
+  if (credential.role === "dual_workspace" && credential.dualRoles) {
+    const { sdid, crvs } = credential.dualRoles;
+    return [
+      {
+        workspace: "SDID",
+        role: ROLE_ACCESS_VALUE[sdid],
+        permissions: ROLE_PERMISSIONS[sdid],
+        centerId: account?.centerId,
+      },
+      {
+        workspace: "CRVS",
+        role: crvs,
+        permissions: CRVS_ROLE_PERMISSIONS[crvs],
+        ...DEMO_CRVS_FACILITY,
+      },
+    ];
+  }
+
+  if (isCrvsRole(credential.role)) {
+    return [
+      {
+        workspace: "CRVS",
+        role: credential.role,
+        permissions: CRVS_ROLE_PERMISSIONS[credential.role],
+        ...DEMO_CRVS_FACILITY,
+      },
+    ];
+  }
+
+  const sdidRole = credential.role as DemoRole;
+  return [
+    {
+      workspace: "SDID",
+      role: ROLE_ACCESS_VALUE[sdidRole],
+      permissions: ROLE_PERMISSIONS[sdidRole],
+      centerId: account?.centerId,
+    },
+  ];
+};
+
 const findAccountForCredential = (
   credential: DemoCredential
 ): DemoAccount | undefined =>
@@ -91,8 +151,13 @@ const findAccountForCredential = (
   );
 
 export const buildDemoSession = (credential: DemoCredential): UserType => {
+  // Only the 4 original SDID demo credentials exist in the seeded
+  // DemoDatabase (src/demo/seed/accounts.ts) — CRVS/dual accounts fall back
+  // to the credential's own fields below, same as this already did before.
   const account = findAccountForCredential(credential);
   const token = createDemoToken(credential.email);
+  const assignments = buildAssignments(credential, account);
+  const sdidAssignment = assignments.find((a) => a.workspace === "SDID");
 
   return {
     email: credential.email,
@@ -103,21 +168,33 @@ export const buildDemoSession = (credential: DemoCredential): UserType => {
     accountType: credential.role,
     phoneNumber: account?.phoneNumber,
     account: {
-      _id: account?.id,
+      // CRVS/dual credentials aren't in the seeded SDID DemoDatabase, so
+      // they have no account.id — fall back to their (unique, stable)
+      // email so per-account identity still works, e.g. for the "can't
+      // approve your own case" rule in the CRVS demo queues.
+      _id: account?.id || credential.email,
       firstName: account?.firstName || credential.roleLabel,
       lastName: account?.lastName || "Demo",
       email: credential.email,
       phoneNumber: account?.phoneNumber,
       centerId: account?.centerId,
-      accessRole: {
-        _id: `role-${credential.role}`,
-        name: credential.roleLabel,
-        value: ROLE_ACCESS_VALUE[credential.role],
-      },
-      permissions: ROLE_PERMISSIONS[credential.role],
+      // Legacy shape kept exactly as before for SDID roles, so every
+      // existing defineAccess()/sidebar check keeps working unmodified.
+      // CRVS-only accounts get a non-superAdmin placeholder here (they have
+      // no SDID assignment, so route/permission guards never let them near
+      // SDID screens regardless of this value).
+      accessRole: sdidAssignment
+        ? {
+            _id: `role-${sdidAssignment.role}`,
+            name: credential.roleLabel,
+            value: sdidAssignment.role,
+          }
+        : { _id: `role-${credential.role}`, name: credential.roleLabel, value: credential.role },
+      permissions: sdidAssignment?.permissions || [],
       status: "active",
       language: "en",
       isDemo: true,
+      assignments,
     },
   } as UserType;
 };

@@ -1,0 +1,80 @@
+/*
+  Self-hosted Manrope (display) + Inter (body/UI) for the public site only
+  (@fontsource files copied into /public/fonts, same pattern as the
+  internal app's Public Sans self-hosting in src/index.css). Scoped to
+  four weights each — 400/500/600/700 — per the public design spec.
+  These families are only referenced via --font-display/--font-body,
+  which are set inside .public-app in public-design-tokens.css, so the
+  internal staff app's Public Sans stack is unaffected.
+*/
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/Manrope-400.woff2") format("woff2"),
+    url("/fonts/Manrope-400.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/Manrope-500.woff2") format("woff2"),
+    url("/fonts/Manrope-500.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/Manrope-600.woff2") format("woff2"),
+    url("/fonts/Manrope-600.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/Manrope-700.woff2") format("woff2"),
+    url("/fonts/Manrope-700.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-400.woff2") format("woff2"),
+    url("/fonts/Inter-400.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-500.woff2") format("woff2"),
+    url("/fonts/Inter-500.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-600.woff2") format("woff2"),
+    url("/fonts/Inter-600.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-700.woff2") format("woff2"),
+    url("/fonts/Inter-700.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

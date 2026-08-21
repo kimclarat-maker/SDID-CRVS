@@ -5,6 +5,7 @@ import Reveal from "./Reveal";
 interface PageHeaderProps {
   title: string;
   description?: string;
+  eyebrow?: string;
   breadcrumb?: { label: string; href?: string }[];
   children?: ReactNode;
 }
@@ -12,6 +13,7 @@ interface PageHeaderProps {
 export default function PageHeader({
   title,
   description,
+  eyebrow,
   breadcrumb,
   children,
 }: PageHeaderProps) {
@@ -33,9 +35,16 @@ export default function PageHeader({
               ))}
             </nav>
           )}
+          {eyebrow && (
+            <p className="public-eyebrow-label public-page-header-eyebrow">
+              {eyebrow}
+            </p>
+          )}
           <h1>{title}</h1>
           {description && <p>{description}</p>}
-          {children}
+          {children && (
+            <div className="public-page-header-actions">{children}</div>
+          )}
         </Reveal>
       </div>
     </div>
