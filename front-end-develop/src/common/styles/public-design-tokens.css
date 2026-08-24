@@ -36,8 +36,8 @@
 
   /* Fluid editorial type scale */
   --text-display-xl: clamp(3.25rem, 7vw, 7rem);
-  --text-display-lg: clamp(2.75rem, 5.5vw, 5.5rem);
-  --text-display-md: clamp(2.25rem, 4vw, 4rem);
+  --text-display-lg: clamp(2.25rem, 4.25vw, 4rem);
+  --text-display-md: clamp(2rem, 3.25vw, 3.25rem);
   --text-heading-lg: clamp(1.875rem, 3vw, 3rem);
   --text-heading-md: clamp(1.5rem, 2vw, 2.25rem);
   --text-heading-sm: 1.25rem;

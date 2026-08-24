@@ -6,7 +6,7 @@
 // fictional NIN. Failure never reverses the CRVS registration itself.
 import { demoDelay } from "../config";
 import { getDemoData, updateDemoData } from "../storage/demoStore";
-import { FoundationalIdentity, ManualReviewAssignment } from "@/domain/crvs/types";
+import { BirthRegistrationCase, FoundationalIdentity, ManualReviewAssignment } from "@/domain/crvs/types";
 import { assertTransitionSync } from "@/domain/crvs/statusMachines";
 import { syncIdempotencyKey } from "@/domain/crvs/idempotency";
 import { logCrvsAudit } from "./crvsAudit";
@@ -145,7 +145,8 @@ export const demoAssignManualReview = (
   caseId: string,
   assignment: Omit<ManualReviewAssignment, "at">,
   actorName: string
-) =>
+): BirthRegistrationCase => {
+  let result: BirthRegistrationCase | undefined;
   updateDemoData((db) => {
     const registrationCase = db.crvsRegistrations.find((c) => c.id === caseId);
     if (!registrationCase) throw new NotFoundError("Birth registration case");
@@ -155,5 +156,8 @@ export const demoAssignManualReview = (
     registrationCase.updatedAt = new Date().toISOString();
     registrationCase.version += 1;
     logCrvsAudit(db, actorName, "assigned manual review", "crvs.sync", registrationCase.reference, assignment.reason);
+    result = registrationCase;
     return db;
   });
+  return result!;
+};

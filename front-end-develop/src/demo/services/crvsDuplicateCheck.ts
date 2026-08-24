@@ -1,7 +1,7 @@
 import { demoDelay } from "../config";
 import { getDemoData, updateDemoData } from "../storage/demoStore";
 import { DuplicateCandidateInput, findDuplicateCandidates, overallMatchLevel } from "@/domain/crvs/duplicateDetection";
-import { DuplicateCheckResult, DuplicateResolution } from "@/domain/crvs/types";
+import { BirthRegistrationCase, DuplicateCheckResult, DuplicateResolution } from "@/domain/crvs/types";
 import { logCrvsAudit } from "./crvsAudit";
 import { NotFoundError } from "./crvsErrors";
 
@@ -41,7 +41,8 @@ export const demoResolveDuplicate = (
   caseId: string,
   resolution: Omit<DuplicateResolution, "resolvedBy" | "resolvedAt">,
   actorName: string
-) =>
+): BirthRegistrationCase => {
+  let result: BirthRegistrationCase | undefined;
   updateDemoData((db) => {
     const registrationCase = db.crvsRegistrations.find((c) => c.id === caseId);
     if (!registrationCase) throw new NotFoundError("Birth registration case");
@@ -54,5 +55,8 @@ export const demoResolveDuplicate = (
     registrationCase.updatedAt = new Date().toISOString();
     registrationCase.version += 1;
     logCrvsAudit(db, actorName, "resolved duplicate", "crvs.duplicate_check", registrationCase.reference, `${resolution.type}: ${resolution.reason}`);
+    result = registrationCase;
     return db;
   });
+  return result!;
+};

@@ -1,0 +1,119 @@
+/* Styling scoped to the Civil Registrar review queue + workspace. Builds on
+   top of ../shared.css's existing crvs-* primitives rather than duplicating
+   them — only the layout this slice needs on top is defined here. */
+
+.review-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--status-neutral-bg);
+  color: var(--status-neutral);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+}
+
+.crvs-tab.is-active .review-tab-count {
+  background: var(--status-info);
+  color: #fff;
+}
+
+.review-case-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--content-gap-md);
+}
+
+.review-case-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--content-gap-md);
+  margin-top: 8px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-body-sm);
+}
+
+.review-section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: var(--content-gap-md);
+}
+
+.review-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: var(--content-gap-lg);
+  align-items: start;
+}
+
+.review-main {
+  min-width: 0;
+}
+
+.review-action-rail {
+  position: sticky;
+  top: var(--content-gap-md);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--content-gap-md);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-action-rail h3 {
+  margin: 0 0 4px;
+  font-size: var(--font-size-h4);
+}
+
+.review-readonly-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px 16px;
+  font-size: var(--font-size-body-sm);
+}
+
+.review-readonly-fields dt {
+  color: var(--text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.review-readonly-fields dd {
+  margin: 2px 0 0;
+  color: var(--text-primary);
+}
+
+.review-audit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: var(--font-size-body-sm);
+}
+
+.review-audit-item {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.review-audit-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .review-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .review-action-rail {
+    position: static;
+  }
+}

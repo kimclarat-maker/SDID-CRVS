@@ -20,7 +20,10 @@ export const demoListNotifications = async (params: NotificationListParams) => {
   const db = getDemoData();
   let results = db.crvsNotifications;
 
-  if (params.status) results = results.filter((n) => n.status === params.status.toUpperCase());
+  if (params.status) {
+    const wantedStatus = params.status.toUpperCase();
+    results = results.filter((n) => n.status === wantedStatus);
+  }
   if (params.facilityId) results = results.filter((n) => n.facilityId === params.facilityId);
   if (params.dateFrom) results = results.filter((n) => n.child.dateOfBirth >= params.dateFrom!);
   if (params.dateTo) results = results.filter((n) => n.child.dateOfBirth <= params.dateTo!);

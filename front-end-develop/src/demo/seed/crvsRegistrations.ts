@@ -518,6 +518,26 @@ export const seedCrvsRegistrations = (): BirthRegistrationCase[] => [
     child: child("Zion", "Eze", "MALE", 5, { birthOrder: 2, totalBirths: 2 }),
     mother: mother("Zainab", "Eze", "DEMO-ID-000217"),
   }),
+  // 19. Under review, no conflict of any kind — the clean "someone else's
+  // case, approvable" fixture. Every other UNDER_REVIEW case above
+  // deliberately demonstrates one conflict-of-interest/jurisdiction
+  // scenario or another, so this one exists purely to have a positive
+  // control for "the registrar CAN approve this".
+  baseCase({
+    id: "BR-19",
+    reference: "BR-DEMO-2026-0019",
+    status: "UNDER_REVIEW",
+    submittedAt: isoDaysAgo(2),
+    reviewerId: CIVIL_REGISTRAR_DEMO_ID,
+    reviewerName: CIVIL_REGISTRAR_DEMO_NAME,
+    child: child("Marco", "Ibori", "MALE", 10),
+    mother: mother("Maya", "Ibori", "DEMO-ID-000219"),
+    statusHistory: [
+      { status: "DRAFT", at: isoDaysAgo(3), by: REGISTRATION_OFFICER_DEMO_NAME },
+      { status: "SUBMITTED", at: isoDaysAgo(2), by: REGISTRATION_OFFICER_DEMO_NAME },
+      { status: "UNDER_REVIEW", at: isoDaysAgo(2), by: CIVIL_REGISTRAR_DEMO_NAME },
+    ],
+  }),
 ];
 
 export const seedCrvsFoundationalIdentities = (): FoundationalIdentity[] => [

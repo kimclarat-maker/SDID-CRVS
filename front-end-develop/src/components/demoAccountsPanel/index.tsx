@@ -1,5 +1,7 @@
+import { Fragment } from "react";
+import { Dropdown } from "rsuite";
 import { DemoCredential } from "@/demo/credentials";
-import Button from "@/components/button";
+import DropdownButton from "@/components/button/dropdownButton";
 import "./styles.css";
 
 type Props = {
@@ -37,44 +39,44 @@ export default function DemoAccountsPanel({ accounts, onUseAccount }: Props) {
 
   return (
     <div className="demo-accounts-panel">
-      <div className="demo-accounts-panel-title">Demo accounts</div>
-      <p className="demo-accounts-panel-hint">
-        This environment uses fictional data and does not connect to
-        production services. Pick a role to fill in the form, then sign in.
-      </p>
-      {groups.map((group) => (
-        <details key={group.key} className="demo-account-group" open>
-          <summary className="demo-account-group-summary">
-            {group.label}
-            <span className="demo-account-group-count">{group.accounts.length}</span>
-          </summary>
-          <div className="demo-account-group-body">
+      <DropdownButton
+        title="Demo accounts"
+        appearance="ghost"
+        placement="topStart"
+        minWidth="340px"
+        startIcon="badge"
+        className="demo-accounts-dropdown"
+      >
+        <Dropdown.Item panel className="demo-accounts-dropdown-hint">
+          This environment uses fictional data and does not connect to
+          production services. Pick a role to fill in the form, then sign in.
+        </Dropdown.Item>
+        {groups.map((group, i) => (
+          <Fragment key={group.key}>
+            {i > 0 && <Dropdown.Separator />}
+            <Dropdown.Item panel className="demo-account-group-label">
+              {group.label}
+            </Dropdown.Item>
             {group.accounts.map((account) => (
-              <div key={account.email} className="demo-account-row">
-                <div>
-                  <div className="demo-account-role">
-                    {account.roleLabel}
-                    {account.workspaces?.map((workspace) => (
-                      <span key={workspace} className="demo-account-workspace-tag">
-                        {workspace}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="demo-account-email">{account.email}</div>
-                  <div className="demo-account-password">{account.password}</div>
+              <Dropdown.Item
+                key={account.email}
+                onSelect={() => onUseAccount(account)}
+                data-testid={`demo-account-${account.email}`}
+              >
+                <div className="demo-account-role">
+                  {account.roleLabel}
+                  {account.workspaces?.map((workspace) => (
+                    <span key={workspace} className="demo-account-workspace-tag">
+                      {workspace}
+                    </span>
+                  ))}
                 </div>
-                <Button
-                  text="Use this account"
-                  appearance="ghost"
-                  size="sm"
-                  onClick={() => onUseAccount(account)}
-                  type="button"
-                />
-              </div>
+                <div className="demo-account-email">{account.email}</div>
+              </Dropdown.Item>
             ))}
-          </div>
-        </details>
-      ))}
+          </Fragment>
+        ))}
+      </DropdownButton>
     </div>
   );
 }

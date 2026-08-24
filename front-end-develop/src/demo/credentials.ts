@@ -87,6 +87,38 @@ export const crvsDemoCredentials: DemoCredential[] = [
     description: "Workload, analytics, exceptions, reassignment, audit history.",
     workspaces: ["CRVS"],
   },
+  {
+    role: CRVS_ROLES.PLATFORM_ADMINISTRATOR,
+    roleLabel: CRVS_ROLE_LABELS.PLATFORM_ADMINISTRATOR,
+    email: "crvs.admin@demo.identity.local",
+    password: "DemoCrvsAdmin@2026",
+    description: "Configure certificate templates, fees, validity and delivery settings.",
+    workspaces: ["CRVS"],
+  },
+  {
+    role: CRVS_ROLES.DEATH_NOTIFICATION_OFFICER,
+    roleLabel: CRVS_ROLE_LABELS.DEATH_NOTIFICATION_OFFICER,
+    email: "death.notifier@demo.identity.local",
+    password: "DemoDeathNotifier@2026",
+    description: "Create and submit death notifications for the assigned facility.",
+    workspaces: ["CRVS"],
+  },
+  {
+    role: CRVS_ROLES.MEDICAL_CERTIFIER,
+    roleLabel: CRVS_ROLE_LABELS.MEDICAL_CERTIFIER,
+    email: "medical.certifier@demo.identity.local",
+    password: "DemoMedicalCertifier@2026",
+    description: "Certify cause of death on notifications and registrations.",
+    workspaces: ["CRVS"],
+  },
+  {
+    role: CRVS_ROLES.CRVS_AUDITOR,
+    roleLabel: CRVS_ROLE_LABELS.CRVS_AUDITOR,
+    email: "crvs.auditor@demo.identity.local",
+    password: "DemoCrvsAuditor@2026",
+    description: "Read-only access to death registrations and audit history.",
+    workspaces: ["CRVS"],
+  },
 ];
 
 // Deliberately paired with CRVS Registration Officer, not Civil Registrar —

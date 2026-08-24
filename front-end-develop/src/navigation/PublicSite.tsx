@@ -8,7 +8,19 @@ import Home from "@/screens/public/home";
 import DigitalIdentity from "@/screens/public/digitalIdentity";
 import CrvsOverview from "@/screens/public/crvsOverview";
 import CivilRegistrationServicePage from "@/screens/public/civilRegistrationServicePage";
+import DeathServiceLanding from "@/screens/public/civilRegistration/death";
+import DeathReportStart from "@/screens/public/civilRegistration/death/report";
+import PublicDeathReportWizard from "@/screens/public/civilRegistration/death/report/wizard";
+import DeathReportSuccess from "@/screens/public/civilRegistration/death/success";
+import PublicDeathCaseStatus from "@/screens/public/civilRegistration/death/case";
+import PublicDeathCorrectionResponse from "@/screens/public/civilRegistration/death/respond";
 import Certificates from "@/screens/public/certificates";
+import BirthCertificateLanding from "@/screens/public/certificates/birth";
+import PublicBirthCertificateRequest from "@/screens/public/certificates/birth/request";
+import ResumeBirthCertificateRequest from "@/screens/public/certificates/birth/request/resume";
+import BirthCertificatePayment from "@/screens/public/certificates/birth/payment";
+import BirthCertificateRequestSuccess from "@/screens/public/certificates/birth/success";
+import BirthCertificateDownload from "@/screens/public/certificates/birth/download";
 import Track from "@/screens/public/track";
 import Verify from "@/screens/public/verify";
 import ServiceCentres from "@/screens/public/serviceCentres";
@@ -27,15 +39,24 @@ export const routes: NavigationType[] = [
     path: "/civil-registration/birth",
     element: <CivilRegistrationServicePage serviceId="birth" />,
   },
-  {
-    path: "/civil-registration/death",
-    element: <CivilRegistrationServicePage serviceId="death" />,
-  },
+  { path: "/civil-registration/death", element: <DeathServiceLanding /> },
+  { path: "/civil-registration/death/report", element: <DeathReportStart /> },
+  { path: "/civil-registration/death/report/:draftId", element: <PublicDeathReportWizard /> },
+  { path: "/civil-registration/death/report/:draftId/review", element: <PublicDeathReportWizard /> },
+  { path: "/civil-registration/death/report/:draftId/success", element: <DeathReportSuccess /> },
+  { path: "/civil-registration/death/case/:reference", element: <PublicDeathCaseStatus /> },
+  { path: "/civil-registration/death/respond/:token", element: <PublicDeathCorrectionResponse /> },
   {
     path: "/civil-registration/marriage",
     element: <CivilRegistrationServicePage serviceId="marriage" />,
   },
   { path: "/certificates", element: <Certificates /> },
+  { path: "/certificates/birth", element: <BirthCertificateLanding /> },
+  { path: "/certificates/birth/request", element: <PublicBirthCertificateRequest /> },
+  { path: "/certificates/birth/request/:requestId", element: <ResumeBirthCertificateRequest /> },
+  { path: "/certificates/birth/request/:requestId/payment", element: <BirthCertificatePayment /> },
+  { path: "/certificates/birth/request/:requestId/success", element: <BirthCertificateRequestSuccess /> },
+  { path: "/certificates/birth/download/:accessToken", element: <BirthCertificateDownload /> },
   { path: "/track", element: <Track /> },
   { path: "/verify", element: <Verify /> },
   { path: "/service-centres", element: <ServiceCentres /> },

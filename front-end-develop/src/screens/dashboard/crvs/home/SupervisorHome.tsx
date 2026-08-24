@@ -1,42 +1,38 @@
+import { useNavigate } from "react-router-dom";
 import CardCount from "@/components/card/count";
-import { crvsExceptions, crvsAuditLog, crvsWorkloadSummary } from "@/demo/seed/crvs";
+import Button from "@/components/button";
+import StatusBadge from "../components/StatusBadge";
+import { getDemoData } from "@/demo/storage/demoStore";
+import { hasWorkspacePermission } from "@/utils/workspace";
+import { CRVS_PERMISSIONS } from "@/constants/crvsRoles";
+import { deceasedDisplayName } from "../deathShared";
 
 export default function SupervisorHome() {
+  const navigate = useNavigate();
+  const db = getDemoData();
+  const registrations = db.crvsRegistrations;
+  const lateRegistrations = registrations.filter((c) => c.status === "LATE_REGISTRATION_REVIEW");
+  const exceptions = registrations.filter((c) => c.status === "EXCEPTION_REVIEW");
+  const syncFailures = registrations.filter((c) => c.sdid.status === "FAILED" || c.sdid.status === "MANUAL_REVIEW");
+  const recentAudit = db.auditEvents.filter((e) => e.module.startsWith("crvs.")).slice(0, 8);
+
+  const canViewDeathExceptions = hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DEATH_EXCEPTIONS_VIEW);
+  const deathRegistrations = db.crvsDeathRegistrations;
+  const deathExceptionCases = deathRegistrations.filter((c) => ["LATE_REGISTRATION_REVIEW", "MEDICO_LEGAL_REVIEW", "UNIDENTIFIED_PERSON_REVIEW"].includes(c.status));
+  const deathSyncFailures = deathRegistrations.filter((c) => c.sdid.status === "FAILED" || c.sdid.status === "MANUAL_REVIEW");
+
   return (
     <div className="crvs-page">
       <div className="crvs-page-header">
         <h1 className="crvs-page-title">CRVS workload overview</h1>
-        <p className="crvs-page-subtitle">
-          Exceptions, late registrations, staff workload and audit activity.
-        </p>
+        <p className="crvs-page-subtitle">Exceptions, late registrations, synchronization failures and audit activity.</p>
         <span className="crvs-demo-note">Demo data — fictional</span>
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount
-          name="Pending review"
-          count={crvsWorkloadSummary.pendingReview}
-          icon="fact_check"
-          color="var(--color-primary-500)"
-        />
-        <CardCount
-          name="Open exceptions"
-          count={crvsWorkloadSummary.openExceptions}
-          icon="warning"
-          color="var(--status-warning)"
-        />
-        <CardCount
-          name="Open corrections"
-          count={crvsWorkloadSummary.openCorrections}
-          icon="edit_note"
-          color="var(--status-neutral)"
-        />
-        <CardCount
-          name="Staff on duty"
-          count={crvsWorkloadSummary.staffOnDuty}
-          icon="groups"
-          color="var(--status-success)"
-        />
+        <CardCount name="Late registrations" count={lateRegistrations.length} icon="schedule" color="var(--status-warning)" />
+        <CardCount name="Open exceptions" count={exceptions.length} icon="warning" color="var(--status-warning)" />
+        <CardCount name="Sync failures" count={syncFailures.length} icon="sync_problem" color="var(--status-danger)" />
       </div>
 
       <div className="crvs-section">
@@ -46,26 +42,25 @@ export default function SupervisorHome() {
             <tr>
               <th>Reference</th>
               <th>Child</th>
-              <th>Days late</th>
-              <th>Assigned to</th>
+              <th>Days after birth</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {crvsExceptions.map((e) => (
-              <tr key={e.id}>
-                <td>{e.reference}</td>
-                <td>{e.childName}</td>
-                <td>{e.daysLate}</td>
-                <td>{e.assignedTo || "Unassigned"}</td>
+            {[...lateRegistrations, ...exceptions].length === 0 && (
+              <tr>
+                <td className="crvs-empty-row" colSpan={4}>
+                  No exceptions or late registrations right now.
+                </td>
+              </tr>
+            )}
+            {[...lateRegistrations, ...exceptions].map((c) => (
+              <tr key={c.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/dashboard/crvs/exceptions/${c.id}`)}>
+                <td>{c.reference}</td>
+                <td>{c.child.firstName ? `${c.child.firstName} ${c.child.lastName}` : `Unnamed ${c.child.lastName}`}</td>
+                <td>{c.daysAfterBirth}</td>
                 <td>
-                  <span
-                    className={`crvs-status-pill ${
-                      e.status === "unassigned" ? "crvs-status-warning" : "crvs-status-info"
-                    }`}
-                  >
-                    {e.status === "unassigned" ? "Unassigned" : "In progress"}
-                  </span>
+                  <StatusBadge kind="registration" status={c.status} />
                 </td>
               </tr>
             ))}
@@ -85,7 +80,7 @@ export default function SupervisorHome() {
             </tr>
           </thead>
           <tbody>
-            {crvsAuditLog.map((entry) => (
+            {recentAudit.map((entry) => (
               <tr key={entry.id}>
                 <td>{entry.actor}</td>
                 <td>{entry.action}</td>
@@ -96,6 +91,56 @@ export default function SupervisorHome() {
           </tbody>
         </table>
       </div>
+
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <Button text="Open exceptions" appearance="ghost" onClick={() => navigate("/dashboard/crvs/exceptions")} testId="open-exceptions" />
+        <Button text="View audit history" appearance="ghost" onClick={() => navigate("/dashboard/crvs/audit")} testId="open-audit" />
+      </div>
+
+      {canViewDeathExceptions && (
+        <>
+          <div className="crvs-section" style={{ marginTop: 24 }}>
+            <h2 className="crvs-section-title">Death exceptions &amp; late registrations</h2>
+            <div className="crvs-tile-grid">
+              <CardCount name="Exception review" count={deathExceptionCases.length} icon="warning" color="var(--status-warning)" />
+              <CardCount name="Sync failures" count={deathSyncFailures.length} icon="sync_problem" color="var(--status-danger)" />
+            </div>
+            <table className="crvs-table" style={{ marginTop: 12 }}>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Deceased</th>
+                  <th>Days after death</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {deathExceptionCases.length === 0 && (
+                  <tr>
+                    <td className="crvs-empty-row" colSpan={4}>
+                      No death exceptions right now.
+                    </td>
+                  </tr>
+                )}
+                {deathExceptionCases.map((c) => (
+                  <tr key={c.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/dashboard/crvs/death-exceptions/${c.id}`)}>
+                    <td>{c.reference}</td>
+                    <td>{deceasedDisplayName(c.deceased)}</td>
+                    <td>{c.daysAfterDeath}</td>
+                    <td>
+                      <StatusBadge kind="deathRegistration" status={c.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <Button text="Open death exceptions" appearance="ghost" onClick={() => navigate("/dashboard/crvs/death-exceptions")} testId="open-death-exceptions" />
+            <Button text="View death audit history" appearance="ghost" onClick={() => navigate("/dashboard/crvs/death-audit")} testId="open-death-audit" />
+          </div>
+        </>
+      )}
     </div>
   );
 }

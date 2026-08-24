@@ -54,6 +54,16 @@ export function getCurrentAccountId(): string | undefined {
   return session?.account?._id || session?.email;
 }
 
+/** Display name for audit entries/statusHistory "by" fields — every CRVS
+ * mutation service call needs one alongside getCurrentAccountId(). */
+export function getCurrentActorName(): string {
+  const session = readSession();
+  const first = session?.account?.firstName || session?.firstName;
+  const last = session?.account?.lastName || session?.lastName;
+  if (first || last) return [first, last].filter(Boolean).join(" ");
+  return session?.email || "Unknown staff member";
+}
+
 export function getWorkspaces(): StaffWorkspace[] {
   return Array.from(new Set(getStaffAssignments().map((a) => a.workspace)));
 }

@@ -16,7 +16,20 @@ export type CrvsAuditModule =
   | "crvs.correction"
   | "crvs.reassignment"
   | "crvs.exception"
-  | "crvs.sync";
+  | "crvs.sync"
+  | "crvs.certificate"
+  | "crvs.certificate.payment"
+  | "crvs.certificate.delivery"
+  | "crvs.certificate.verification"
+  | "crvs.death_notification"
+  | "crvs.death_registration"
+  | "crvs.death_review"
+  | "crvs.death_correction"
+  | "crvs.death_reassignment"
+  | "crvs.death_exception"
+  | "crvs.death_sync"
+  | "crvs.death_identity_search"
+  | "crvs.death_duplicate_check";
 
 export const logCrvsAudit = (
   db: DemoDatabase,

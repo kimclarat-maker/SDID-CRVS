@@ -1,6 +1,6 @@
 import { getDemoData } from "../storage/demoStore";
 import { DemoApplicationStatus } from "../types";
-import { BirthRegistrationStatus } from "@/domain/crvs/types";
+import { BirthRegistrationStatus, BirthCertificateRequestStatus } from "@/domain/crvs/types";
 
 export const DEMO_TRACKING_REFERENCE = "APP-DEMO-2026-0001";
 export const DEMO_TRACKING_CODE = "246810";
@@ -179,6 +179,87 @@ const maskName = (firstName: string, lastName: string) =>
   `${firstName.charAt(0)}${"*".repeat(Math.max(firstName.length - 1, 2))} ${lastName.charAt(0)}${"*".repeat(
     Math.max(lastName.length - 1, 2)
   )}`;
+
+// Birth-certificate request tracking (spec §38) — a third fallback lookup
+// alongside the SDID application tracker and birth-registration tracker
+// above. Only restricted, safe-for-public fields are ever returned: no
+// requester identity, no internal review notes, no payment method/card data.
+export const DEMO_CERTIFICATE_TRACKING_REFERENCE = "CERTREQ-DEMO-2026-0004";
+export const DEMO_CERTIFICATE_TRACKING_CODE = "246812";
+
+const CERT_STAGE_LABELS = [
+  "Request submitted",
+  "Identity verified",
+  "Payment pending",
+  "Payment received",
+  "Under review",
+  "Approved",
+  "Certificate issued",
+  "Available for download",
+  "Delivered",
+];
+
+const CERT_STAGE_INDEX: Record<BirthCertificateRequestStatus, number> = {
+  DRAFT: 0,
+  IDENTITY_VERIFICATION_REQUIRED: 0,
+  RECORD_LOOKUP_REQUIRED: 1,
+  RECORD_NOT_FOUND: 1,
+  ELIGIBILITY_CHECK: 1,
+  MANUAL_REVIEW: 4,
+  PAYMENT_PENDING: 2,
+  PAYMENT_FAILED: 2,
+  PAID: 3,
+  APPROVED: 5,
+  REJECTED: 5,
+  ISSUING: 6,
+  ISSUED: 6,
+  DELIVERY_PENDING: 7,
+  DELIVERY_FAILED: 7,
+  DELIVERED: 8,
+  CANCELLED: 0,
+};
+
+const CERT_OUTSTANDING_ACTION: Partial<Record<BirthCertificateRequestStatus, string>> = {
+  RECORD_NOT_FOUND: "No eligible birth record was found. You can search again or contact your registration office.",
+  PAYMENT_FAILED: "The last payment attempt failed. Please retry payment.",
+  MANUAL_REVIEW: "Your request needs manual review before it can proceed.",
+  REJECTED: "This request was not approved. Contact your registration office for next steps.",
+  DELIVERY_FAILED: "The last delivery attempt failed. Delivery can be retried.",
+};
+
+export type DemoCertificateTrackingResult = {
+  reference: string;
+  status: string;
+  submittedAt?: string;
+  stages: string[];
+  currentStageIndex: number;
+  outstandingAction?: string;
+};
+
+export const demoTrackCertificateRequest = (
+  reference: string,
+  code: string
+): DemoCertificateTrackingResult | null => {
+  if (
+    reference.trim().toUpperCase() !== DEMO_CERTIFICATE_TRACKING_REFERENCE ||
+    code.trim() !== DEMO_CERTIFICATE_TRACKING_CODE
+  ) {
+    return null;
+  }
+
+  const db = getDemoData();
+  const request = db.crvsCertificateRequests.find((r) => r.applicationReference === DEMO_CERTIFICATE_TRACKING_REFERENCE);
+  if (!request) return null;
+
+  return {
+    reference: request.applicationReference,
+    status: request.status,
+    submittedAt: request.submittedAt,
+    stages: CERT_STAGE_LABELS,
+    currentStageIndex: CERT_STAGE_INDEX[request.status],
+    outstandingAction: CERT_OUTSTANDING_ACTION[request.status],
+  };
+};
 
 export const demoVerifyDocument = (
   documentNumber: string,

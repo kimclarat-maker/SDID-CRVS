@@ -224,23 +224,43 @@ export const demoSubmitRegistration = (id: string, actorName: string): BirthRegi
       registrationCase.duplicateCheck?.overallLevel === "POTENTIAL" ||
       registrationCase.duplicateCheck?.overallLevel === "PROBABLE";
 
-    const nextStatus: BirthRegistrationCase["status"] =
-      registrationCase.status === "CORRECTION_REQUIRED"
-        ? "RESUBMITTED"
-        : routesToException
-        ? "EXCEPTION_REVIEW"
-        : registrationCase.isLate
-        ? "LATE_REGISTRATION_REVIEW"
-        : "UNDER_REVIEW";
-
-    assertTransitionRegistration(registrationCase.status, nextStatus);
     const now = new Date().toISOString();
-    registrationCase.status = nextStatus;
     registrationCase.submittedAt = registrationCase.submittedAt || now;
     registrationCase.updatedAt = now;
     registrationCase.version += 1;
-    registrationCase.statusHistory.push({ status: nextStatus, at: now, by: actorName });
-    logCrvsAudit(db, actorName, "submitted", "crvs.registration", registrationCase.reference, `Submitted; routed to ${nextStatus}.`);
+
+    // CORRECTION_REQUIRED goes straight to RESUBMITTED (that's its only
+    // legal transition). Everything else lands on SUBMITTED first — the
+    // "unassigned" review queue is genuinely the SUBMITTED state, picked up
+    // by an explicit "Start review" action (demoStartReview) rather than
+    // auto-jumping to UNDER_REVIEW here. Late/exception-routed cases are the
+    // one exception: per the workflow spec they bypass the ordinary queue
+    // and go directly into supervisor review, so we chain a second, still
+    // individually-legal transition (SUBMITTED -> LATE_REGISTRATION_REVIEW /
+    // EXCEPTION_REVIEW) in the same call.
+    if (registrationCase.status === "CORRECTION_REQUIRED") {
+      assertTransitionRegistration(registrationCase.status, "RESUBMITTED");
+      registrationCase.status = "RESUBMITTED";
+      registrationCase.statusHistory.push({ status: "RESUBMITTED", at: now, by: actorName });
+    } else {
+      assertTransitionRegistration(registrationCase.status, "SUBMITTED");
+      registrationCase.status = "SUBMITTED";
+      registrationCase.statusHistory.push({ status: "SUBMITTED", at: now, by: actorName });
+
+      const escalatedStatus: BirthRegistrationCase["status"] | undefined = routesToException
+        ? "EXCEPTION_REVIEW"
+        : registrationCase.isLate
+        ? "LATE_REGISTRATION_REVIEW"
+        : undefined;
+
+      if (escalatedStatus) {
+        assertTransitionRegistration(registrationCase.status, escalatedStatus);
+        registrationCase.status = escalatedStatus;
+        registrationCase.statusHistory.push({ status: escalatedStatus, at: now, by: "System" });
+      }
+    }
+
+    logCrvsAudit(db, actorName, "submitted", "crvs.registration", registrationCase.reference, `Submitted; now ${registrationCase.status}.`);
     result = registrationCase;
     return db;
   });
@@ -383,8 +403,13 @@ export const demoApproveRegistration = (
     return db;
   });
 
+  // enqueueSdidSync runs its own updateDemoData() cycle (a fresh
+  // getDemoData() read), so `result` captured inside the approval's own
+  // mutate callback above is a stale snapshot from before the sync record
+  // is set to PENDING. Re-fetch so the case this function returns already
+  // reflects it, instead of momentarily lying to callers with "NOT_READY".
   enqueueSdidSync(result!.id);
-  return result!;
+  return getDemoData().crvsRegistrations.find((c) => c.id === result!.id)!;
 };
 
 export const demoRejectRegistration = (

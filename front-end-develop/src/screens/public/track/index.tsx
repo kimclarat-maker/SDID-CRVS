@@ -5,7 +5,14 @@ import Section from "@/components/public/Section";
 import Notice from "@/components/public/Notice";
 import StatusTimeline from "@/components/public/StatusTimeline";
 import { isDemoMode } from "@/demo/config";
-import { demoTrackApplication, DemoTrackingResult, demoTrackBirthRegistration, DemoBirthTrackingResult } from "@/demo/services/public";
+import {
+  demoTrackApplication,
+  DemoTrackingResult,
+  demoTrackBirthRegistration,
+  DemoBirthTrackingResult,
+  demoTrackCertificateRequest,
+  DemoCertificateTrackingResult,
+} from "@/demo/services/public";
 import DemoBadge from "@/components/demoBadge";
 
 interface TrackFormErrors {
@@ -25,6 +32,9 @@ export default function Track() {
     null
   );
   const [birthResult, setBirthResult] = useState<DemoBirthTrackingResult | null>(
+    null
+  );
+  const [certResult, setCertResult] = useState<DemoCertificateTrackingResult | null>(
     null
   );
   const [submitting, setSubmitting] = useState(false);
@@ -48,6 +58,7 @@ export default function Track() {
     if (!validate()) {
       setResult(null);
       setDemoResult(null);
+      setCertResult(null);
       return;
     }
 
@@ -58,6 +69,7 @@ export default function Track() {
         if (found) {
           setDemoResult(found);
           setBirthResult(null);
+          setCertResult(null);
           setResult({ stageIndex: found.currentStageIndex });
           setSubmitting(false);
           return;
@@ -67,13 +79,25 @@ export default function Track() {
         if (foundBirth) {
           setBirthResult(foundBirth);
           setDemoResult(null);
+          setCertResult(null);
           setResult({ stageIndex: foundBirth.currentStageIndex });
+          setSubmitting(false);
+          return;
+        }
+
+        const foundCert = demoTrackCertificateRequest(reference, otp);
+        if (foundCert) {
+          setCertResult(foundCert);
+          setDemoResult(null);
+          setBirthResult(null);
+          setResult({ stageIndex: foundCert.currentStageIndex });
           setSubmitting(false);
           return;
         }
 
         setDemoResult(null);
         setBirthResult(null);
+        setCertResult(null);
         setResult(null);
         setSubmitting(false);
         return;
@@ -85,6 +109,7 @@ export default function Track() {
         reference.trim().length % page.statusStages.length;
       setDemoResult(null);
       setBirthResult(null);
+      setCertResult(null);
       setResult({ stageIndex: mockStageIndex });
       setSubmitting(false);
     }, 400);
@@ -167,9 +192,11 @@ export default function Track() {
         {isDemoMode() && (
           <p style={{ marginTop: "1rem" }}>
             <DemoBadge /> Try it: reference{" "}
-            <code>APP-DEMO-2026-0001</code>, code <code>246810</code> — or a
+            <code>APP-DEMO-2026-0001</code>, code <code>246810</code> — a
             birth registration, reference <code>BR-DEMO-2026-0002</code>,
-            code <code>135791</code>
+            code <code>135791</code> — or a birth-certificate request,
+            reference <code>CERTREQ-DEMO-2026-0004</code>, code{" "}
+            <code>246812</code>
           </p>
         )}
 
@@ -237,8 +264,27 @@ export default function Track() {
                   )}
                 </dl>
               )}
+              {certResult && (
+                <dl className="public-form-hint" style={{ marginBottom: "1rem" }}>
+                  <div>
+                    <strong>Application reference:</strong> {certResult.reference}
+                  </div>
+                  {certResult.submittedAt && (
+                    <div>
+                      <strong>Submitted:</strong>{" "}
+                      {new Date(certResult.submittedAt).toLocaleDateString()}
+                    </div>
+                  )}
+                  {certResult.outstandingAction && (
+                    <div>
+                      <strong>Outstanding action:</strong>{" "}
+                      {certResult.outstandingAction}
+                    </div>
+                  )}
+                </dl>
+              )}
               <StatusTimeline
-                stages={birthResult ? birthResult.stages : page.statusStages}
+                stages={birthResult ? birthResult.stages : certResult ? certResult.stages : page.statusStages}
                 currentIndex={result.stageIndex}
               />
             </>

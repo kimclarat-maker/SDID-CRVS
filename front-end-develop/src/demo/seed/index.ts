@@ -11,6 +11,9 @@ import { seedDevices } from "./devices";
 import { seedNotifications } from "./notifications";
 import { seedCrvsNotifications } from "./crvsNotifications";
 import { seedCrvsRegistrations, seedCrvsFoundationalIdentities } from "./crvsRegistrations";
+import { seedCrvsCertificateRequests, seedCrvsCertificates, seedCrvsCertificateConfig } from "./crvsCertificates";
+import { seedCrvsDeathNotifications } from "./crvsDeathNotifications";
+import { seedCrvsDeathRegistrations, seedDeathLinkedFoundationalIdentities } from "./crvsDeathRegistrations";
 
 export const buildDemoDatabase = (): DemoDatabase => {
   const centers = seedCenters();
@@ -29,7 +32,15 @@ export const buildDemoDatabase = (): DemoDatabase => {
   const analytics = seedAnalytics();
   const crvsNotifications = seedCrvsNotifications();
   const crvsRegistrations = seedCrvsRegistrations();
-  const crvsFoundationalIdentities = seedCrvsFoundationalIdentities();
+  const crvsFoundationalIdentities = [
+    ...seedCrvsFoundationalIdentities(),
+    ...seedDeathLinkedFoundationalIdentities(),
+  ];
+  const crvsCertificateRequests = seedCrvsCertificateRequests();
+  const crvsCertificates = seedCrvsCertificates();
+  const crvsCertificateConfig = seedCrvsCertificateConfig();
+  const crvsDeathNotifications = seedCrvsDeathNotifications();
+  const crvsDeathRegistrations = seedCrvsDeathRegistrations();
 
   return {
     version: DEMO_DATA_VERSION,
@@ -45,5 +56,10 @@ export const buildDemoDatabase = (): DemoDatabase => {
     crvsNotifications,
     crvsRegistrations,
     crvsFoundationalIdentities,
+    crvsCertificateRequests,
+    crvsCertificates,
+    crvsCertificateConfig,
+    crvsDeathNotifications,
+    crvsDeathRegistrations,
   };
 };

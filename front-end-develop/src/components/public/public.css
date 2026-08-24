@@ -994,7 +994,7 @@ body {
     color 180ms ease;
 }
 
-.public-btn-primary {
+.public-btn.public-btn-primary {
   background: var(--public-brand, var(--brand-primary));
   color: #ffffff;
 }
@@ -1003,7 +1003,7 @@ body {
   background: var(--public-brand-hover, var(--brand-primary-strong));
 }
 
-.public-btn-secondary {
+.public-btn.public-btn-secondary {
   background: transparent;
   border-color: var(--public-border-strong, var(--border-default));
   color: var(--public-ink, var(--text-primary));
@@ -1013,7 +1013,7 @@ body {
   background: var(--public-surface-soft, var(--surface-hover));
 }
 
-.public-btn-outline {
+.public-btn.public-btn-outline {
   background: var(--surface-card);
   border-color: var(--border-strong);
   color: var(--text-primary);

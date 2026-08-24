@@ -1,6 +1,24 @@
-import type { BirthNotification, BirthRegistrationCase, FoundationalIdentity } from "@/domain/crvs/types";
+import type {
+  BirthNotification,
+  BirthRegistrationCase,
+  FoundationalIdentity,
+  BirthCertificateRequest,
+  DemoBirthCertificate,
+  CertificateConfig,
+  DeathNotification,
+  DeathRegistrationCase,
+} from "@/domain/crvs/types";
 
-export type { BirthNotification, BirthRegistrationCase, FoundationalIdentity };
+export type {
+  BirthNotification,
+  BirthRegistrationCase,
+  FoundationalIdentity,
+  BirthCertificateRequest,
+  DemoBirthCertificate,
+  CertificateConfig,
+  DeathNotification,
+  DeathRegistrationCase,
+};
 
 export type DemoRole =
   | "administrator"
@@ -199,4 +217,9 @@ export type DemoDatabase = {
   crvsNotifications: BirthNotification[];
   crvsRegistrations: BirthRegistrationCase[];
   crvsFoundationalIdentities: FoundationalIdentity[];
+  crvsCertificateRequests: BirthCertificateRequest[];
+  crvsCertificates: DemoBirthCertificate[];
+  crvsCertificateConfig: CertificateConfig;
+  crvsDeathNotifications: DeathNotification[];
+  crvsDeathRegistrations: DeathRegistrationCase[];
 };

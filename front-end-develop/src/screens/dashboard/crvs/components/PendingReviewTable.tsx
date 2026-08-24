@@ -1,24 +1,24 @@
+import { useNavigate } from "react-router-dom";
 import { Whisper, Tooltip } from "rsuite";
 import Button from "@/components/button";
-import toastMessage from "@/utils/common/toastMessage";
-import { crvsRegistrationCases } from "@/demo/seed/crvs";
+import StatusBadge from "./StatusBadge";
+import { getDemoData } from "@/demo/storage/demoStore";
 import { getCurrentAccountId } from "@/utils/workspace";
-import { canApproveRegistration } from "@/utils/workspace/crvsRules";
+import { canApproveCase } from "@/utils/workspace/crvsRules";
 
 /**
- * Shared by the Civil Registrar's home landing and the dedicated
- * /dashboard/crvs/births/review queue page. The real approve/reject
- * mutation ships with the birth-registration workflow milestone — this
- * demonstrates the "can't approve your own case" guard against fixture
- * data in the meantime.
+ * Shared by the Civil Registrar's home landing and, as a compact glance
+ * card, the /dashboard/crvs/review queue. Approval itself only happens in
+ * the full review workspace (spec §13/§14) — this surfaces which
+ * under-review cases are actually approvable by the signed-in registrar
+ * right now (creator/conflict-of-interest/jurisdiction checks all applied)
+ * and links straight to the decision panel for the ones that are.
  */
 export default function PendingReviewTable() {
+  const navigate = useNavigate();
   const currentAccountId = getCurrentAccountId();
-  const pendingReview = crvsRegistrationCases.filter((c) => c.status === "submitted");
-
-  const handleApproveClick = () => {
-    toastMessage("success", "Approval workflow arrives in the next milestone.");
-  };
+  const db = getDemoData();
+  const pendingReview = db.crvsRegistrations.filter((c) => c.status === "UNDER_REVIEW");
 
   return (
     <table className="crvs-table">
@@ -26,42 +26,40 @@ export default function PendingReviewTable() {
         <tr>
           <th>Reference</th>
           <th>Child</th>
-          <th>Submitted by</th>
+          <th>Status</th>
           <th>Jurisdiction</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         {pendingReview.map((c) => {
-          const canApprove = canApproveRegistration(currentAccountId, c.submittedByOfficerId);
-          const approveButton = (
+          const { allowed, reasons } = canApproveCase(currentAccountId, c);
+          const actionButton = (
             <Button
-              text="Approve"
+              text="Review"
               size="sm"
               appearance="ghost"
-              disabled={!canApprove}
-              onClick={handleApproveClick}
-              testId={`approve-${c.id}`}
+              disabled={!allowed}
+              onClick={() => navigate(`/dashboard/crvs/review/${c.id}/decision`)}
+              testId={`review-${c.id}`}
             />
           );
 
           return (
             <tr key={c.id}>
               <td>{c.reference}</td>
-              <td>{c.childName}</td>
-              <td>{c.submittedByName}</td>
+              <td>{c.child.firstName ? `${c.child.firstName} ${c.child.lastName}` : `Unnamed ${c.child.lastName}`}</td>
+              <td>
+                <StatusBadge kind="registration" status={c.status} />
+              </td>
               <td>{c.jurisdiction}</td>
               <td>
-                {!canApprove ? (
-                  <Whisper
-                    placement="top"
-                    trigger="hover"
-                    speaker={<Tooltip>You can't approve a case you created.</Tooltip>}
-                  >
-                    <span>{approveButton}</span>
+                {!allowed ? (
+                  <Whisper placement="top" trigger="hover" speaker={<Tooltip>{reasons[0]}</Tooltip>}>
+                    <span>{actionButton}</span>
                   </Whisper>
                 ) : (
-                  approveButton
+                  actionButton
                 )}
               </td>
             </tr>

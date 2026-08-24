@@ -1,55 +1,34 @@
 import { useNavigate } from "react-router-dom";
 import CardCount from "@/components/card/count";
 import Button from "@/components/button";
-import { crvsRegistrationCases, REGISTRATION_OFFICER_DEMO_ID } from "@/demo/seed/crvs";
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Draft",
-  submitted: "Submitted",
-  correctionRequested: "Correction requested",
-  approved: "Approved",
-  rejected: "Rejected",
-};
-
-const STATUS_CLASS: Record<string, string> = {
-  draft: "crvs-status-neutral",
-  submitted: "crvs-status-info",
-  correctionRequested: "crvs-status-warning",
-  approved: "crvs-status-success",
-  rejected: "crvs-status-warning",
-};
+import StatusBadge from "../components/StatusBadge";
+import { getDemoData } from "@/demo/storage/demoStore";
+import { getCurrentAccountId, hasWorkspacePermission } from "@/utils/workspace";
+import { CRVS_PERMISSIONS } from "@/constants/crvsRoles";
+import { deceasedDisplayName } from "../deathShared";
 
 export default function RegistrationOfficerHome() {
   const navigate = useNavigate();
-  const myCases = crvsRegistrationCases.filter(
-    (c) => c.submittedByOfficerId === REGISTRATION_OFFICER_DEMO_ID
-  );
-  const drafts = myCases.filter((c) => c.status === "draft");
-  const returnedCorrections = myCases.filter((c) => c.status === "correctionRequested");
-  const submitted = myCases.filter((c) => c.status === "submitted");
+  const currentAccountId = getCurrentAccountId();
+  const myCases = getDemoData().crvsRegistrations.filter((c) => c.officerId === currentAccountId);
+  const canViewDeaths = hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DEATH_REGISTRATION_VIEW);
+  const myDeathCases = getDemoData().crvsDeathRegistrations.filter((c) => c.officerId === currentAccountId);
+  const drafts = myCases.filter((c) => c.status === "DRAFT");
+  const correctionRequired = myCases.filter((c) => c.status === "CORRECTION_REQUIRED");
+  const submitted = myCases.filter((c) => !["DRAFT", "CORRECTION_REQUIRED", "CANCELLED"].includes(c.status));
 
   return (
     <div className="crvs-page">
       <div className="crvs-page-header">
         <h1 className="crvs-page-title">My registrations</h1>
-        <p className="crvs-page-subtitle">Drafts, returned corrections and submitted cases.</p>
+        <p className="crvs-page-subtitle">Drafts, correction requests and submitted cases you created.</p>
         <span className="crvs-demo-note">Demo data — fictional</span>
       </div>
 
       <div className="crvs-tile-grid">
         <CardCount name="Drafts" count={drafts.length} icon="edit_document" color="var(--status-neutral)" />
-        <CardCount
-          name="Returned for correction"
-          count={returnedCorrections.length}
-          icon="undo"
-          color="var(--status-warning)"
-        />
-        <CardCount
-          name="Submitted"
-          count={submitted.length}
-          icon="send"
-          color="var(--color-primary-500)"
-        />
+        <CardCount name="Correction required" count={correctionRequired.length} icon="undo" color="var(--status-warning)" />
+        <CardCount name="Submitted" count={submitted.length} icon="send" color="var(--status-info)" />
       </div>
 
       <div className="crvs-section">
@@ -72,14 +51,12 @@ export default function RegistrationOfficerHome() {
               </tr>
             )}
             {myCases.map((c) => (
-              <tr key={c.id}>
+              <tr key={c.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/dashboard/crvs/births/${c.id}`)}>
                 <td>{c.reference}</td>
-                <td>{c.childName}</td>
-                <td>{new Date(c.submittedAt).toLocaleDateString()}</td>
+                <td>{c.child.firstName ? `${c.child.firstName} ${c.child.lastName}` : `Unnamed ${c.child.lastName}`}</td>
+                <td>{new Date(c.updatedAt).toLocaleDateString()}</td>
                 <td>
-                  <span className={`crvs-status-pill ${STATUS_CLASS[c.status]}`}>
-                    {STATUS_LABEL[c.status]}
-                  </span>
+                  <StatusBadge kind="registration" status={c.status} />
                 </td>
               </tr>
             ))}
@@ -87,12 +64,46 @@ export default function RegistrationOfficerHome() {
         </table>
       </div>
 
-      <Button
-        text="New draft registration"
-        startIcon="add_circle"
-        onClick={() => navigate("/dashboard/crvs/births/new")}
-        testId="new-draft-registration"
-      />
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <Button text="Start a birth registration" startIcon="add_circle" onClick={() => navigate("/dashboard/crvs/births/new")} testId="new-draft-registration" />
+        <Button text="View corrections queue" appearance="ghost" onClick={() => navigate("/dashboard/crvs/births/corrections")} testId="view-corrections-queue" />
+      </div>
+
+      {canViewDeaths && (
+        <div className="crvs-section" style={{ marginTop: 24 }}>
+          <h2 className="crvs-section-title">My death registrations</h2>
+          <table className="crvs-table">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Deceased</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {myDeathCases.length === 0 && (
+                <tr>
+                  <td className="crvs-empty-row" colSpan={3}>
+                    No death cases yet.
+                  </td>
+                </tr>
+              )}
+              {myDeathCases.map((c) => (
+                <tr key={c.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/dashboard/crvs/death-registrations/${c.id}`)}>
+                  <td>{c.reference}</td>
+                  <td>{deceasedDisplayName(c.deceased)}</td>
+                  <td>
+                    <StatusBadge kind="deathRegistration" status={c.status} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
+            <Button text="Start a death registration" startIcon="add_circle" onClick={() => navigate("/dashboard/crvs/death-registrations/new")} testId="new-draft-death-registration" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

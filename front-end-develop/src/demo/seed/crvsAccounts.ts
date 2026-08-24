@@ -8,12 +8,26 @@ export const NOTIFIER_DEMO_ID = "notifier@demo.identity.local";
 export const REGISTRATION_OFFICER_DEMO_ID = "crvs.officer@demo.identity.local";
 export const CIVIL_REGISTRAR_DEMO_ID = "registrar@demo.identity.local";
 export const CRVS_SUPERVISOR_DEMO_ID = "crvs.supervisor@demo.identity.local";
+export const PLATFORM_ADMINISTRATOR_DEMO_ID = "crvs.admin@demo.identity.local";
 export const DUAL_WORKSPACE_DEMO_ID = "dual.staff@demo.identity.local";
 
 export const NOTIFIER_DEMO_NAME = "Birth Notification Officer";
 export const REGISTRATION_OFFICER_DEMO_NAME = "CRVS Registration Officer";
 export const CIVIL_REGISTRAR_DEMO_NAME = "Civil Registrar";
 export const CRVS_SUPERVISOR_DEMO_NAME = "CRVS Supervisor";
+export const PLATFORM_ADMINISTRATOR_DEMO_NAME = "Platform Administrator";
+
+// Death-workflow demo actors. REGISTRATION_OFFICER_DEMO_ID/
+// CIVIL_REGISTRAR_DEMO_ID/CRVS_SUPERVISOR_DEMO_ID above are reused for the
+// death workflow too (those roles carry both birth and death permissions —
+// see constants/crvsRoles.ts), so only the death-specific roles get new ids.
+export const DEATH_NOTIFICATION_OFFICER_DEMO_ID = "death.notifier@demo.identity.local";
+export const MEDICAL_CERTIFIER_DEMO_ID = "medical.certifier@demo.identity.local";
+export const CRVS_AUDITOR_DEMO_ID = "crvs.auditor@demo.identity.local";
+
+export const DEATH_NOTIFICATION_OFFICER_DEMO_NAME = "Death Notification Officer";
+export const MEDICAL_CERTIFIER_DEMO_NAME = "Medical Certifier";
+export const CRVS_AUDITOR_DEMO_NAME = "CRVS Auditor";
 
 // Matches DEMO_CRVS_FACILITY in demo/session.ts so jurisdiction/facility
 // guard checks agree between the logged-in assignment and seeded case data.

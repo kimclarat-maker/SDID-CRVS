@@ -1,77 +1,31 @@
 .demo-accounts-panel {
   margin-top: 20px;
-  padding: 16px;
-  background: var(--surface-subtle);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
 }
 
-.demo-accounts-panel-title {
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
-  margin-bottom: 4px;
+.demo-accounts-panel .demo-accounts-dropdown {
+  width: 100%;
 }
 
-.demo-accounts-panel-hint {
+.demo-accounts-panel .demo-accounts-dropdown .rs-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.demo-accounts-dropdown-hint {
   font-size: var(--font-size-caption);
   color: var(--text-muted);
-  margin: 0 0 12px;
+  white-space: normal;
+  max-width: 320px;
+  cursor: default;
 }
 
-.demo-account-group {
-  margin-top: 10px;
-}
-
-.demo-account-group-summary {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  list-style: none;
+.demo-account-group-label {
+  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-body-sm);
   color: var(--text-secondary);
-  padding: 4px 0;
-}
-
-.demo-account-group-summary::-webkit-details-marker {
-  display: none;
-}
-
-.demo-account-group-summary::before {
-  content: "▸";
-  display: inline-block;
-  transition: transform 150ms ease;
-  color: var(--text-muted);
-}
-
-.demo-account-group[open] > .demo-account-group-summary::before {
-  transform: rotate(90deg);
-}
-
-.demo-account-group-summary:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-.demo-account-group-count {
-  font-size: var(--font-size-caption);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-regular);
-}
-
-.demo-account-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.demo-account-group-body .demo-account-row:first-of-type {
-  border-top: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: default;
 }
 
 .demo-account-role {
@@ -92,8 +46,7 @@
   border-radius: var(--radius-pill);
 }
 
-.demo-account-email,
-.demo-account-password {
+.demo-account-email {
   font-size: var(--font-size-caption);
   color: var(--text-muted);
   font-family: monospace;

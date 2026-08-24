@@ -1,39 +1,35 @@
 import { useNavigate } from "react-router-dom";
 import CardCount from "@/components/card/count";
 import Button from "@/components/button";
-import { crvsBirthNotifications } from "@/demo/seed/crvs";
+import StatusBadge from "../components/StatusBadge";
+import { getDemoData } from "@/demo/storage/demoStore";
 
 export default function BirthNotificationOfficerHome() {
   const navigate = useNavigate();
-  const newCount = crvsBirthNotifications.filter((n) => n.status === "new").length;
+  const notifications = getDemoData().crvsNotifications;
+  const drafts = notifications.filter((n) => n.status === "DRAFT");
+  const submitted = notifications.filter((n) => n.status === "SUBMITTED");
+  const returned = notifications.filter((n) => n.status === "RETURNED");
+  const accepted = notifications.filter((n) => n.status === "ACCEPTED");
+  const recent = [...notifications].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1)).slice(0, 5);
 
   return (
     <div className="crvs-page">
       <div className="crvs-page-header">
         <h1 className="crvs-page-title">Birth notifications</h1>
-        <p className="crvs-page-subtitle">
-          Recent notifications for your assigned facility.
-        </p>
+        <p className="crvs-page-subtitle">Notifications created today and recent activity for your facility.</p>
         <span className="crvs-demo-note">Demo data — fictional</span>
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount
-          name="New notifications"
-          count={newCount}
-          icon="campaign"
-          color="var(--color-primary-500)"
-        />
-        <CardCount
-          name="Total this month"
-          count={crvsBirthNotifications.length}
-          icon="event_note"
-          color="var(--status-success)"
-        />
+        <CardCount name="Drafts" count={drafts.length} icon="edit_document" color="var(--status-neutral)" />
+        <CardCount name="Submitted" count={submitted.length} icon="outgoing_mail" color="var(--status-info)" />
+        <CardCount name="Returned" count={returned.length} icon="undo" color="var(--status-warning)" />
+        <CardCount name="Accepted" count={accepted.length} icon="check_circle" color="var(--status-success)" />
       </div>
 
       <div className="crvs-section">
-        <h2 className="crvs-section-title">Recent notifications</h2>
+        <h2 className="crvs-section-title">Recent notification activity</h2>
         <table className="crvs-table">
           <thead>
             <tr>
@@ -44,19 +40,20 @@ export default function BirthNotificationOfficerHome() {
             </tr>
           </thead>
           <tbody>
-            {crvsBirthNotifications.map((n) => (
-              <tr key={n.id}>
+            {recent.length === 0 && (
+              <tr>
+                <td className="crvs-empty-row" colSpan={4}>
+                  No notifications yet.
+                </td>
+              </tr>
+            )}
+            {recent.map((n) => (
+              <tr key={n.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/dashboard/crvs/notifications/${n.id}`)}>
                 <td>{n.reference}</td>
-                <td>{n.childName}</td>
-                <td>{n.dateOfBirth}</td>
+                <td>{n.child.firstName ? `${n.child.firstName} ${n.child.lastName}` : `Unnamed ${n.child.lastName}`}</td>
+                <td>{new Date(n.child.dateOfBirth).toLocaleDateString()}</td>
                 <td>
-                  <span
-                    className={`crvs-status-pill ${
-                      n.status === "new" ? "crvs-status-info" : "crvs-status-neutral"
-                    }`}
-                  >
-                    {n.status === "new" ? "New" : "Acknowledged"}
-                  </span>
+                  <StatusBadge kind="notification" status={n.status} />
                 </td>
               </tr>
             ))}
@@ -64,12 +61,17 @@ export default function BirthNotificationOfficerHome() {
         </table>
       </div>
 
-      <Button
-        text="Create notification"
-        startIcon="add_circle"
-        onClick={() => navigate("/dashboard/crvs/births/new")}
-        testId="create-birth-notification"
-      />
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <Button
+          text="Create birth notification"
+          startIcon="add_circle"
+          onClick={() => navigate("/dashboard/crvs/notifications/new")}
+          testId="create-birth-notification"
+        />
+        <Button text="View all drafts" appearance="ghost" onClick={() => navigate("/dashboard/crvs/notifications/drafts")} testId="view-notification-drafts" />
+        <Button text="View submitted" appearance="ghost" onClick={() => navigate("/dashboard/crvs/notifications/submitted")} testId="view-notification-submitted" />
+        <Button text="View returned" appearance="ghost" onClick={() => navigate("/dashboard/crvs/notifications/returned")} testId="view-notification-returned" />
+      </div>
     </div>
   );
 }

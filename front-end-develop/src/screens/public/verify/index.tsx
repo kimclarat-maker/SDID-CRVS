@@ -7,7 +7,9 @@ import Icon from "@/components/icon";
 import { platformConfig } from "@/config/platform.config";
 import { isDemoMode } from "@/demo/config";
 import { demoVerifyDocument } from "@/demo/services/public";
+import { demoVerifyCertificate } from "@/demo/services/crvsCertificates";
 import DemoBadge from "@/components/demoBadge";
+import QrScannerModal from "@/components/crvs/certificateModals/QrScannerModal";
 
 interface VerifyFormErrors {
   documentNumber?: string;
@@ -75,6 +77,8 @@ export default function Verify() {
   const [verificationCode, setVerificationCode] = useState("");
   const [errors, setErrors] = useState<VerifyFormErrors>({});
   const [result, setResult] = useState<MockVerificationResult | null>(null);
+  const [certResult, setCertResult] = useState<ReturnType<typeof demoVerifyCertificate> | null>(null);
+  const [showQrScanner, setShowQrScanner] = useState(false);
 
   const validate = (): boolean => {
     const nextErrors: VerifyFormErrors = {};
@@ -92,6 +96,7 @@ export default function Verify() {
     event.preventDefault();
     if (!validate()) {
       setResult(null);
+      setCertResult(null);
       return;
     }
 
@@ -100,27 +105,54 @@ export default function Verify() {
         documentNumber.trim(),
         verificationCode.trim()
       );
-      setResult(
-        found
-          ? {
-              isValid: found.valid,
-              issuingAuthority: found.issuingAuthority,
-              documentType: found.documentType,
-              documentStatus: found.status,
-              holderMatch: `${found.maskedHolderName} (masked)`,
-            }
-          : {
-              isValid: false,
-              issuingAuthority: "Not applicable",
-              documentType: "Not applicable",
-              documentStatus: "Not found",
-              holderMatch: "Not applicable",
-            }
-      );
+      if (found) {
+        setCertResult(null);
+        setResult({
+          isValid: found.valid,
+          issuingAuthority: found.issuingAuthority,
+          documentType: found.documentType,
+          documentStatus: found.status,
+          holderMatch: `${found.maskedHolderName} (masked)`,
+        });
+        return;
+      }
+
+      const certFound = demoVerifyCertificate({
+        certificateNumber: documentNumber.trim(),
+        verificationCode: verificationCode.trim(),
+      });
+      if (certFound.outcome !== "NOT_FOUND") {
+        setResult(null);
+        setCertResult(certFound);
+        return;
+      }
+
+      setCertResult(null);
+      setResult({
+        isValid: false,
+        issuingAuthority: "Not applicable",
+        documentType: "Not applicable",
+        documentStatus: "Not found",
+        holderMatch: "Not applicable",
+      });
       return;
     }
 
+    setCertResult(null);
     setResult(buildMockResult(documentNumber.trim(), verificationCode.trim()));
+  };
+
+  const handleQrDecoded = (value: string) => {
+    let token = value;
+    try {
+      const url = new URL(value, window.location.origin);
+      token = url.searchParams.get("token") || value;
+    } catch {
+      // Not a URL — treat the scanned value as a raw token.
+    }
+    const certFound = demoVerifyCertificate({ token });
+    setResult(null);
+    setCertResult(certFound);
   };
 
   return (
@@ -170,6 +202,14 @@ export default function Verify() {
               <Icon name="qr_code_2" styles={{ fontSize: 64 }} />
             </div>
             <p>{page.qrHint}</p>
+            <button
+              type="button"
+              className="public-btn public-btn-outline"
+              onClick={() => setShowQrScanner(true)}
+              data-testid="verify-scan-qr"
+            >
+              Scan QR code
+            </button>
           </div>
 
           <form
@@ -268,7 +308,60 @@ export default function Verify() {
             </dl>
           </div>
         )}
+
+        {certResult && (
+          <div
+            className="public-card"
+            style={{ marginTop: "1.5rem", maxWidth: 480 }}
+            role="status"
+            aria-live="polite"
+            data-testid="verify-certificate-result"
+          >
+            <Notice
+              type={
+                certResult.outcome === "VALID"
+                  ? "success"
+                  : certResult.outcome === "REVOKED" || certResult.outcome === "INVALID_CODE"
+                  ? "danger"
+                  : "warning"
+              }
+              title="Result"
+            >
+              {certResult.outcome.replace(/_/g, " ")}
+            </Notice>
+            {certResult.outcome !== "NOT_FOUND" && certResult.outcome !== "INVALID_CODE" && (
+              <dl className="public-fact-list" style={{ marginTop: "1rem" }}>
+                <div>
+                  <dt>Issuing authority</dt>
+                  <dd>{certResult.issuingAuthority}</dd>
+                </div>
+                <div>
+                  <dt>Document type</dt>
+                  <dd>{certResult.documentType}</dd>
+                </div>
+                <div>
+                  <dt>Certificate status</dt>
+                  <dd>{certResult.status}</dd>
+                </div>
+                <div>
+                  <dt>Issue date</dt>
+                  <dd>{certResult.issueDate ? new Date(certResult.issueDate).toLocaleDateString() : "—"}</dd>
+                </div>
+                <div>
+                  <dt>Holder (masked)</dt>
+                  <dd>{certResult.maskedHolderName}</dd>
+                </div>
+                <div>
+                  <dt>Replacement status</dt>
+                  <dd>{certResult.replacementStatus}</dd>
+                </div>
+              </dl>
+            )}
+          </div>
+        )}
       </Section>
+
+      <QrScannerModal show={showQrScanner} onClose={() => setShowQrScanner(false)} onDecoded={handleQrDecoded} />
     </>
   );
 }

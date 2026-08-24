@@ -28,10 +28,14 @@ import { userLoginApi } from "@/api/login";
 describe("Login shows feedback when the real API is unreachable", () => {
   afterEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
     sessionStorage.clear();
   });
 
   it("toasts a login-failed message when userLoginApi resolves to undefined (swallowed network error)", async () => {
+    // Explicit, not ambient: this exercises the real-API path regardless of
+    // the developer's local .env VITE_DEMO_MODE setting.
+    vi.stubEnv("VITE_DEMO_MODE", "false");
     (userLoginApi as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
     render(
@@ -52,14 +56,26 @@ describe("Login shows feedback when the real API is unreachable", () => {
     });
     fireEvent.click(screen.getByTestId("submit-button"));
 
-    await waitFor(() => expect(toastMessage).toHaveBeenCalled());
+    await waitFor(() => {
+      const calls = (toastMessage as unknown as ReturnType<typeof vi.fn>).mock.calls;
+      expect(
+        calls.some(([, payload]) => typeof payload?.message === "string" && payload.message.length > 0)
+      ).toBe(true);
+    });
 
-    const [type, payload] = (toastMessage as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
+    // Find the login-failure toast specifically (mount-time effects, e.g.
+    // the offline/local-service health check, may also call toastMessage).
+    const calls = (toastMessage as unknown as ReturnType<typeof vi.fn>).mock.calls;
+    const loginFailureCall = calls.find(
+      ([, payload]) => typeof payload?.message === "string" && payload.message.length > 0
+    );
+
+    expect(loginFailureCall).toBeDefined();
+    const [type, payload] = loginFailureCall!;
     expect(type).toBe("error");
     // Must be a message toastMessage's own EXCLUDED_MESSAGES list won't
     // silently drop (unlike the raw "Network Error"/ECONNREFUSED text).
     expect(payload.message.toUpperCase()).not.toContain("NETWORK ERROR");
     expect(payload.message.toUpperCase()).not.toContain("ECONNREFUSED");
-    expect(payload.message.length).toBeGreaterThan(0);
   });
 });
