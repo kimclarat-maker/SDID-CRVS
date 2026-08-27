@@ -29,8 +29,6 @@ import { SelfieProvider } from "@/context/SelfieContext";
 import { AutoLogoutManager } from "./utils/autoLogout";
 import { setLoginModal } from "@/api";
 import toastMessage from "./utils/common/toastMessage";
-import { useSingleTabLock } from "./hooks/useSingleTabLock";
-import AppAlreadyOpen from "./components/message/alreadyOpen";
 
 const queryClient = new QueryClient();
 
@@ -55,7 +53,6 @@ function App() {
   const [theme, setTheme] = useState<ThemeType>("light");
   const [showLogin, setShowLogin] = useState(false);
   const autoLogoutManagerRef = useRef<AutoLogoutManager | null>(null);
-  const { hasAccess, restoreAccess, closeCurrentTab } = useSingleTabLock();
 
   useEffect(() => {
     const showModal = () => {
@@ -195,27 +192,18 @@ function App() {
               >
                 <Suspense fallback={<Loading isFullScreen />}>
                   <LanguageUpdater />
-                  {!hasAccess ? (
-                    <AppAlreadyOpen
-                      restoreAccess={restoreAccess}
-                      closeCurrentTab={closeCurrentTab}
-                    />
-                  ) : (
-                    <>
-                      <PublicSite />
-                      <Public />
-                      <Doc />
-                      <SelfieProvider>
-                        <Private />
-                      </SelfieProvider>
-                      <TokenExpiryBanner
-                        open={showLogin}
-                        setOpen={setShowLogin}
-                        onSuccessfulReauth={handleSuccessfulReauth}
-                        onManualLogout={handleManualLogout}
-                      />
-                    </>
-                  )}
+                  <PublicSite />
+                  <Public />
+                  <Doc />
+                  <SelfieProvider>
+                    <Private />
+                  </SelfieProvider>
+                  <TokenExpiryBanner
+                    open={showLogin}
+                    setOpen={setShowLogin}
+                    onSuccessfulReauth={handleSuccessfulReauth}
+                    onManualLogout={handleManualLogout}
+                  />
                 </Suspense>
               </Router>
             </LanguageContext.Provider>
