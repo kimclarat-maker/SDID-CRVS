@@ -2,8 +2,17 @@ import toastMessage from "@/utils/common/toastMessage";
 import { CountryGETParameters } from "@/types/geography";
 import api from "..";
 import { CountryTypes } from "@/types/geography";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchCountries,
+  demoFetchSingleCountry,
+  demoUpdateCountry,
+  demoDeleteCountry,
+  demoCreateCountry,
+} from "@/demo/services/geography";
 
 export const fetchCountries = async (params?: CountryGETParameters) => {
+  if (isDemoMode()) return demoFetchCountries(params);
   try {
     if (params && params?.offset && params?.offset > 0) {
       params.offset -= 1;
@@ -33,6 +42,7 @@ export const fetchCountries = async (params?: CountryGETParameters) => {
 };
 
 export const fetchSingleCountry = async (id: string) => {
+  if (isDemoMode()) return demoFetchSingleCountry(id);
   try {
     const options = {
       method: "GET",
@@ -52,6 +62,7 @@ export const fetchSingleCountry = async (id: string) => {
 };
 
 export const updateCountry = async (params: CountryTypes) => {
+  if (isDemoMode()) return demoUpdateCountry(params);
   try {
     const options = {
       method: "PATCH",
@@ -72,6 +83,7 @@ export const updateCountry = async (params: CountryTypes) => {
 };
 
 export const deleteCountry = async (id: string) => {
+  if (isDemoMode()) return demoDeleteCountry(id);
   try {
     const options = {
       method: "DELETE",
@@ -91,6 +103,7 @@ export const deleteCountry = async (id: string) => {
 };
 
 export const createCountry = async (params: CountryTypes) => {
+  if (isDemoMode()) return demoCreateCountry(params);
   try {
     const options = {
       method: "POST",

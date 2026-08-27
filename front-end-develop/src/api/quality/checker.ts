@@ -2,8 +2,15 @@ import { BIO_AUDIT_API, BIO_AUDIT_API_KEY } from "@/constants/bioAudit";
 import { base64ToBlob, guessName } from "@/utils/common/image/base64ToBlob";
 import toastMessage from "@/utils/common/toastMessage";
 import axios from "axios";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoQualityChecker,
+  demoIrisQualityChecker,
+  demoFingerprintQualityChecker,
+} from "@/demo/services/deviceServices";
 
 export const qualityChecker = async (base64Input: string) => {
+  if (isDemoMode()) return demoQualityChecker();
   try {
     const blob = base64ToBlob(base64Input, "image/jpeg");
     const name = guessName(base64Input, "upload.bin");
@@ -32,6 +39,7 @@ export const irisQualityChecker = async (
   base64Input: string,
   position: string
 ) => {
+  if (isDemoMode()) return demoIrisQualityChecker();
   try {
     const res = await axios({
       url: `${BIO_AUDIT_API}/iris/enroll`,
@@ -57,6 +65,7 @@ export const fingerprintQualityChecker = async (
   base64Input: string,
   position: string
 ) => {
+  if (isDemoMode()) return demoFingerprintQualityChecker();
   try {
     const res = await axios({
       url: `${BIO_AUDIT_API}/fingerprint/enroll`,

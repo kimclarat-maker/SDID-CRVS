@@ -1,4 +1,5 @@
-import { BirthRegistrationCase, BirthCertificateRequest, DeathRegistrationCase } from "@/domain/crvs/types";
+import { BirthRegistrationCase, BirthCertificateRequest, DeathRegistrationCase, MarriageApplication, DivorceRegistration } from "@/domain/crvs/types";
+import { marriagePolicyConfig } from "@/domain/crvs/marriagePolicyConfig";
 import { getAssignmentForWorkspace } from ".";
 
 /**
@@ -158,5 +159,121 @@ export function canApproveDeathCase(
   }
   const openCorrection = deathCase.correctionRequests.some((c) => !c.resolvedAt);
   if (openCorrection) reasons.push("There is a pending correction request on this case.");
+  return { allowed: reasons.length === 0, reasons };
+}
+
+/**
+ * Conflict-of-interest reasons for a marriage application — genuinely
+ * two-party, unlike every check above: checks the approver against BOTH
+ * spouses and every witness across BOTH spouses' witness lists, not one
+ * subject (spec §3 "the staff member who prepared the application must not
+ * perform its final legal approval").
+ */
+export function marriageConflictOfInterestReasons(
+  accountId: string | undefined,
+  application: Pick<MarriageApplication, "officerId" | "applicant1" | "applicant2" | "witnesses">
+): string[] {
+  if (!accountId) return [];
+  const reasons: string[] = [];
+  if (accountId === application.officerId) reasons.push("You prepared this application.");
+  if (application.applicant1.sdidIdentityId === accountId) reasons.push("You are applicant 1 on this application.");
+  if (application.applicant2.sdidIdentityId === accountId) reasons.push("You are applicant 2 on this application.");
+  if (application.witnesses.some((w) => w.sdidIdentityId === accountId)) {
+    reasons.push("You are a witness on this application.");
+  }
+  return reasons;
+}
+
+/** Same jurisdiction-gate shape as canAccessCaseJurisdiction(), scoped to marriage applications. */
+export function canAccessMarriageCaseJurisdiction(caseJurisdiction: string | undefined): boolean {
+  return canAccessCaseJurisdiction(caseJurisdiction);
+}
+
+/**
+ * Full approval gate for marriage applications: conflict-of-interest +
+ * jurisdiction + open-correction + open-objection checks, plus a
+ * marriage-only third dimension not present in birth/death — when
+ * marriagePolicyConfig.ceremony.separationOfDutiesRequired is set, the
+ * approver must also not be the ceremony's recorded officiant, enforcing a
+ * genuine three-party maker-checker chain (preparing officer, conducting
+ * officiant, approving registrar) rather than birth/death's two-party one.
+ */
+export function canApproveMarriageCase(
+  accountId: string | undefined,
+  application: Pick<
+    MarriageApplication,
+    "officerId" | "applicant1" | "applicant2" | "witnesses" | "jurisdiction" | "correctionRequests" | "objection"
+  >,
+  ceremonyOfficiantId?: string
+): { allowed: boolean; reasons: string[] } {
+  const reasons = marriageConflictOfInterestReasons(accountId, application);
+  if (!canAccessMarriageCaseJurisdiction(application.jurisdiction)) {
+    reasons.push("This application is outside your assigned jurisdiction.");
+  }
+  const openCorrection = application.correctionRequests.some((c) => !c.resolvedAt);
+  if (openCorrection) reasons.push("There is a pending correction request on this application.");
+  if (application.objection && application.objection.status === "PENDING") {
+    reasons.push("There is a pending objection on this application.");
+  }
+  if (
+    marriagePolicyConfig.ceremony.separationOfDutiesRequired &&
+    accountId &&
+    ceremonyOfficiantId &&
+    accountId === ceremonyOfficiantId
+  ) {
+    reasons.push("You conducted the ceremony for this application and cannot also approve its registration.");
+  }
+  return { allowed: reasons.length === 0, reasons };
+}
+
+/**
+ * Conflict-of-interest reasons for a divorce registration (spec §4 "A user
+ * who prepared or submitted a case cannot perform its final approval... must
+ * block a Registrar from processing a case involving themselves"): checks
+ * the approver against the officer who prepared the case, the applicant, and
+ * both former spouses.
+ */
+export function divorceConflictOfInterestReasons(
+  accountId: string | undefined,
+  registration: Pick<DivorceRegistration, "officerId" | "applicant" | "formerSpouse1" | "formerSpouse2">
+): string[] {
+  if (!accountId) return [];
+  const reasons: string[] = [];
+  if (accountId === registration.officerId) reasons.push("You prepared this divorce registration.");
+  if (registration.applicant.sdidIdentityId === accountId) reasons.push("You are the applicant on this registration.");
+  if (registration.formerSpouse1.sdidIdentityId === accountId) reasons.push("You are former spouse 1 on this registration.");
+  if (registration.formerSpouse2.sdidIdentityId === accountId) reasons.push("You are former spouse 2 on this registration.");
+  return reasons;
+}
+
+/** Same jurisdiction-gate shape as canAccessCaseJurisdiction(), scoped to divorce registrations. */
+export function canAccessDivorceCaseJurisdiction(caseJurisdiction: string | undefined): boolean {
+  return canAccessCaseJurisdiction(caseJurisdiction);
+}
+
+/**
+ * Full approval gate for divorce registrations: conflict-of-interest +
+ * jurisdiction + open-correction + open-exception checks, plus the
+ * Registrar's explicit "I did not prepare this case" / conflict-of-interest
+ * declaration (spec §4/§17/§21) enforced separately by the approval
+ * modal/service — this function is the automatic half of the maker-checker
+ * gate, not a replacement for that confirmation.
+ */
+export function canApproveDivorceCase(
+  accountId: string | undefined,
+  registration: Pick<
+    DivorceRegistration,
+    "officerId" | "applicant" | "formerSpouse1" | "formerSpouse2" | "jurisdiction" | "correctionRequests" | "exception"
+  >
+): { allowed: boolean; reasons: string[] } {
+  const reasons = divorceConflictOfInterestReasons(accountId, registration);
+  if (!canAccessDivorceCaseJurisdiction(registration.jurisdiction)) {
+    reasons.push("This divorce registration is outside your assigned jurisdiction.");
+  }
+  const openCorrection = registration.correctionRequests.some((c) => !c.resolvedAt);
+  if (openCorrection) reasons.push("There is a pending correction request on this registration.");
+  if (registration.exception && registration.exception.status === "OPEN") {
+    reasons.push("There is an open exception on this registration.");
+  }
   return { allowed: reasons.length === 0, reasons };
 }

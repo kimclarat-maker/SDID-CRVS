@@ -1,8 +1,14 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters } from "@/types/SupportingDocument";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchSupportingDocuments,
+  demoFetchSingleSupportingDocuments,
+} from "@/demo/services/referenceLookups";
 
 export const fetchSupportingDocuments = async (params?: GETParameters) => {
+  if (isDemoMode()) return demoFetchSupportingDocuments();
   try {
     const options = {
       method: "GET",
@@ -20,6 +26,7 @@ export const fetchSupportingDocuments = async (params?: GETParameters) => {
 };
 
 export const fetchSingleSupportingDocuments = async (fieldName?: string) => {
+  if (isDemoMode()) return demoFetchSingleSupportingDocuments(fieldName);
   try {
     const options = {
       method: "GET",

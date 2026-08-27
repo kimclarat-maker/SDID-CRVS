@@ -7,6 +7,23 @@ import {
   demoListApplications,
   demoGetApplicationById,
 } from "@/demo/services/applications";
+import {
+  demoOnStart,
+  demoOnAddIRIS,
+  demoOnAddFingerprint,
+  demoOnAddSignature,
+  demoOnAddSelfie,
+  demoOnMatchFacialForPairValidator,
+  demoOnSubmitEnrollment,
+  demoFetchBioRefreshHistory,
+  demoAssignOfficer,
+  demoDeleteEnrollment,
+  demoFetchBiometricById,
+  demoManualSync,
+  demoPushToSdidCore,
+  demoPushBiometricRefreshToCore,
+  demoEnrollmentRollback,
+} from "@/demo/services/enrollmentBiometrics";
 
 interface ApiResponse {
   data: EnrollmentType[];
@@ -20,6 +37,7 @@ export const fetchEnrollments = async (
   if (isDemoMode())
     return demoListApplications({
       ...params,
+      search: params.search || (params as any).enrollmentNumber,
       status: type === "OFFLINE" ? "OFFLINE" : (params as any).status,
     } as any);
 
@@ -109,6 +127,9 @@ export const onStart = async ({
   bioToken?: string;
   isStartedOnline?: boolean;
 }) => {
+  if (isDemoMode())
+    return demoOnStart({ preEnrollmentId, isBioRefresh, payload, bioToken, isStartedOnline });
+
   try {
     const options = {
       method: "POST",
@@ -143,6 +164,8 @@ export const onAddIRIS = async (
   bioToken?: string,
   isStartedOnline?: boolean
 ) => {
+  if (isDemoMode()) return demoOnAddIRIS(payload);
+
   try {
     const options = {
       method: "POST",
@@ -200,6 +223,8 @@ export const onAddFingerprint = async (
   bioToken?: string,
   isStartedOnline?: boolean
 ) => {
+  if (isDemoMode()) return demoOnAddFingerprint(enrollmentId);
+
   try {
     const options = {
       method: "POST",
@@ -237,6 +262,8 @@ export const onAddSignature = async (
   isBioRefresh: boolean,
   bioToken?: string
 ) => {
+  if (isDemoMode()) return demoOnAddSignature(payload);
+
   try {
     const options = {
       method: "POST",
@@ -271,6 +298,8 @@ export const onAddSelfie = async (
   bioToken?: string,
   isStartedOnline?: boolean
 ) => {
+  if (isDemoMode()) return demoOnAddSelfie(payload);
+
   try {
     const options = {
       method: "POST",
@@ -299,6 +328,8 @@ export const onMatchFacialForPairValidator = async (
   isBioRefresh?: boolean,
   isStartedOnline?: boolean
 ) => {
+  if (isDemoMode()) return demoOnMatchFacialForPairValidator(payload);
+
   try {
     const options = {
       method: "POST",
@@ -322,6 +353,8 @@ export const onSubmitEnrollment = async (
   isBioRefresh?: boolean,
   isStartedOnline?: boolean
 ) => {
+  if (isDemoMode()) return demoOnSubmitEnrollment(enrollmentId, isBioRefresh);
+
   try {
     const options = {
       method: "POST",
@@ -340,6 +373,8 @@ export const onSubmitEnrollment = async (
 };
 
 export const fetchBioRefreshHistory = async (enrollmentId: string) => {
+  if (isDemoMode()) return demoFetchBioRefreshHistory(enrollmentId);
+
   try {
     const options = {
       method: "GET",
@@ -358,6 +393,8 @@ export const assignOfficer = async (
   enrollmentId: string,
   accountId: string
 ) => {
+  if (isDemoMode()) return demoAssignOfficer(enrollmentId, accountId);
+
   try {
     const options = {
       method: "PATCH",
@@ -374,6 +411,8 @@ export const assignOfficer = async (
 };
 
 export const deleteData = async (enrollmentId: string) => {
+  if (isDemoMode()) return demoDeleteEnrollment(enrollmentId);
+
   try {
     const options = {
       method: "DELETE",
@@ -389,6 +428,8 @@ export const deleteData = async (enrollmentId: string) => {
 };
 
 export const fetchBiometricById = async (params: any) => {
+  if (isDemoMode()) return demoFetchBiometricById(params);
+
   try {
     const options = {
       method: "GET",
@@ -405,6 +446,8 @@ export const fetchBiometricById = async (params: any) => {
 };
 
 export const manualSyncApiHandler = async () => {
+  if (isDemoMode()) return demoManualSync();
+
   try {
     const options = {
       method: "POST",
@@ -420,6 +463,8 @@ export const manualSyncApiHandler = async () => {
 };
 
 export const pushToSdidCore = async (enrollmentId: string) => {
+  if (isDemoMode()) return demoPushToSdidCore(enrollmentId);
+
   try {
     const options = {
       method: "POST",
@@ -435,6 +480,8 @@ export const pushToSdidCore = async (enrollmentId: string) => {
 };
 
 export const pushBiometricRefreshToCore = async (enrollmentId: string) => {
+  if (isDemoMode()) return demoPushBiometricRefreshToCore(enrollmentId);
+
   try {
     const options = {
       method: "POST",
@@ -453,6 +500,8 @@ export const enrollmentRollback = async (payload: {
   enrollmentId: string;
   rollbackReason: string;
 }) => {
+  if (isDemoMode()) return demoEnrollmentRollback(payload);
+
   try {
     const options = {
       method: "POST",

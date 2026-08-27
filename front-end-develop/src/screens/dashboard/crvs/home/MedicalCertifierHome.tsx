@@ -23,11 +23,23 @@ export default function MedicalCertifierHome() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Notifications awaiting certification" count={pendingNotifications.length} icon="assignment_late" color="var(--status-warning)" />
-        <CardCount name="Registrations awaiting certification" count={pendingRegistrations.length} icon="medical_information" color="var(--status-warning)" />
+        <CardCount
+          name="Notifications awaiting certification"
+          count={pendingNotifications.length}
+          icon="assignment_late"
+          color="var(--status-warning)"
+          onClick={() => document.getElementById("medical-certifier-notifications-table")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        />
+        <CardCount
+          name="Registrations awaiting certification"
+          count={pendingRegistrations.length}
+          icon="medical_information"
+          color="var(--status-warning)"
+          onClick={() => document.getElementById("medical-certifier-registrations-table")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        />
       </div>
 
-      <div className="crvs-section">
+      <div className="crvs-section" id="medical-certifier-notifications-table">
         <h2 className="crvs-section-title">Notifications</h2>
         <table className="crvs-table">
           <thead>
@@ -58,7 +70,7 @@ export default function MedicalCertifierHome() {
         </table>
       </div>
 
-      <div className="crvs-section">
+      <div className="crvs-section" id="medical-certifier-registrations-table">
         <h2 className="crvs-section-title">Registrations</h2>
         <table className="crvs-table">
           <thead>

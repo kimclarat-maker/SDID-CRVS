@@ -28,6 +28,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { fingerprintComments } from "@/constants/comments";
 import { useUploadBioData } from "@/hooks/useUploadMedia";
 import { isUUID } from "@/utils/common/uuid";
+import { isDemoMode } from "@/demo/config";
 import { cfg } from "@/constants/cfg";
 import capitalizeText from "@/utils/common/capitalizeText";
 import { preview } from "vite";
@@ -249,6 +250,19 @@ const FingerprintCapturePage = ({
       console.error("Error parse preview:", error);
     }
   }, [enrollmentData]);
+
+  // Demo mode has no real fingerprint scanner to produce a capture, and this
+  // screen's "Next" button is gated on supportingDocuments being non-empty
+  // (not on an actual scan) — auto-attach a placeholder document so the
+  // wizard can still be clicked through end-to-end (spec: auto-simulate
+  // capture steps with dummy data).
+  useEffect(() => {
+    if (isDemoMode() && (!supportingDocuments || supportingDocuments.length === 0)) {
+      setSupportingDocuments([
+        { _id: "demo-fingerprint-doc", name: "Demo supporting document.pdf" },
+      ] as any);
+    }
+  }, [supportingDocuments]);
 
   const lowQualityFingersRef = useRef<any[]>([]); // keeps low quality separately
 

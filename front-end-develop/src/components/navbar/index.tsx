@@ -278,7 +278,7 @@ export default function Navbar({
                     circle
                     title="Documentation"
                     onClick={() =>
-                      window.open("/docs", "_blank", "noopener,noreferrer")
+                      window.open("/doc/admin", "_blank", "noopener,noreferrer")
                     }
                   />
                 </Stack.Item>

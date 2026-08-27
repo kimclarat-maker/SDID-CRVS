@@ -2,8 +2,14 @@ import axios from "axios";
 import api, { apiHandler } from "..";
 import { getStorage } from "@/utils/storage";
 import { cfg } from "@/constants/cfg";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchOnlineSyncedAnalytics,
+  demoFetchOfflineSyncedAnalytics,
+} from "@/demo/services/adminOps";
 
 export const fetchOnlineSyncedAnalytics = async (params?: any) => {
+  if (isDemoMode()) return demoFetchOnlineSyncedAnalytics();
   try {
     const user = await getStorage();
 
@@ -35,6 +41,7 @@ export const fetchOnlineSyncedAnalytics = async (params?: any) => {
 };
 
 export const fetchOfflineSyncedAnalytics = async (params?: any) => {
+  if (isDemoMode()) return demoFetchOfflineSyncedAnalytics();
   try {
     const options = {
       method: "GET",

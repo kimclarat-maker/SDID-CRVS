@@ -472,6 +472,13 @@ export const en: PublicContent = {
         href: "/civil-registration/marriage",
       },
       {
+        id: "divorce",
+        title: "Divorce registration",
+        description:
+          "Register a divorce already granted by a court or other competent authority.",
+        href: "/civil-registration/divorce",
+      },
+      {
         id: "certificates",
         title: "Certificate requests",
         description: "Request an official certificate for a registered record.",
@@ -517,8 +524,91 @@ export const en: PublicContent = {
       description:
         "Marriage or partnership registration creates the official record of a union recognised by the responsible authority.",
       eventNoun: "marriage or partnership",
-      primaryActionHref: "/staff/sign-in",
+      primaryActionHref: "/civil-registration/marriage/declaration",
     }),
+    // Divorce is written out in full rather than built from
+    // buildServicePage(), because its copy has to draw a distinction the
+    // generic template has no room for: this service registers a divorce a
+    // court has ALREADY granted, and never files, hears or decides one.
+    divorce: {
+      id: "divorce",
+      title: "Divorce registration",
+      summary: "Register a divorce a court has already granted, so the civil register and both former spouses' records reflect it.",
+      description:
+        "Divorce registration is the administrative step that comes after a court has ended a marriage. The registry records the decision the court has already made: the existing marriage record is marked as dissolved and each former spouse's civil status becomes divorced. It is not a way to ask for a divorce, and it changes nothing about what the court decided.",
+      whoMayApply: [
+        "Either former spouse named in the court decision.",
+        "Both former spouses together, where they prefer to register the decision jointly.",
+        "Another interested person acting for a former spouse, who must declare and evidence their authority to do so.",
+        "A registration officer entering the request with you at a service centre.",
+      ],
+      eligibility: [
+        "A competent court or authority has already granted the divorce.",
+        "The decision is final and is no longer open to appeal.",
+        "The marriage being dissolved is on the civil register, or can be evidenced with a marriage certificate or record.",
+      ],
+      requiredEvidence: [
+        "The final court judgment or divorce decree.",
+        "The marriage certificate, or the marriage record details, for the marriage being dissolved.",
+        "A valid identity document for the person submitting the request.",
+        "Proof that the decision is final, such as a certificate of non-appeal.",
+      ],
+      conditionalEvidence: [
+        "Where the person submitting is not one of the former spouses: a power of attorney or court authorisation.",
+        "Where the divorce was granted outside the country: a certified translation, authentication or legalisation of the decision, and a recognition (exequatur) decision.",
+        "Where the marriage record cannot be located in the registry: any documentary evidence of the marriage, so a registrar can search manually.",
+      ],
+      registrationSteps: [
+        "Obtain the final decision from the court that granted the divorce. This service cannot do that for you.",
+        "Start a registration request and identify the marriage the divorce ends.",
+        "Enter the court decision's details and upload the supporting documents.",
+        "Review everything, make the required declarations, and submit.",
+        "A registration officer verifies the court decision and either registers the divorce or asks you for a correction.",
+        "Once registered, request a divorce record or certificate if you need one.",
+      ],
+      onlineOption: "Complete the whole registration request online, saving your progress and returning to it with your reference.",
+      assistedOption: "Visit a service centre, where a registration officer can enter the request with you and check your documents.",
+      feeDescription: "No fee is charged for registering a divorce.",
+      waiverDescription: "No fee applies, so no waiver is needed.",
+      processingTimeDescription:
+        "Most requests are reviewed within about ten working days. Verifying the court decision adds up to five working days, and a decision granted abroad needs a further recognition review.",
+      faqs: [
+        {
+          question: "Can I get a divorce through this service?",
+          answer:
+            "No. A divorce can only be granted by a court. This service registers a divorce that a court has already granted, so that the civil register and both former spouses' identity records reflect it. If your divorce has not been granted yet, there is nothing to register.",
+        },
+        {
+          question: "What is the difference between the court's judgment and registering it?",
+          answer:
+            "The judgment is the court's decision to end the marriage. Registration is the civil registry recording that decision. Until the divorce is registered, the marriage record and both former spouses' civil status still show them as married, which can affect anything that depends on civil status — including remarrying.",
+        },
+        {
+          question: "Will you look at why my marriage ended, or decide about children, maintenance or property?",
+          answer:
+            "No. The registry never examines the grounds for a divorce and has no role in custody, maintenance or the division of property. Those are decided by the court, and this service does not collect information about them.",
+        },
+        {
+          question: "My divorce was granted in another country. Can I register it here?",
+          answer:
+            "Yes, but a decision granted abroad has extra requirements: a certified translation, authentication or legalisation of the decision, and a recognition decision. A supervisor reviews every foreign decision before it can be registered, which takes longer than a domestic one.",
+        },
+        {
+          question: "Does the other former spouse have to agree, or be told?",
+          answer:
+            "Registering the decision does not need the other former spouse's agreement — the court has already decided. Because the divorce affects both people's civil status, both records are updated once it is registered. The tracking page never shows either former spouse the other's contact details or documents.",
+        },
+        {
+          question: "When can I get a divorce certificate?",
+          answer:
+            "Once the divorce has been registered and any outstanding correction or review has been resolved. Track your request with your reference — the tracking page tells you when a record or certificate can be requested.",
+        },
+      ],
+      privacyNotice:
+        "Court documents you upload are treated as restricted: they are visible only to you and to the staff handling your request, and are never shown on the public tracking page. Tracking pages show a status and next step only — never the judgment, the documents, internal notes, or the other former spouse's personal details.",
+      primaryActionLabel: "Register an existing divorce",
+      primaryActionHref: "/civil-registration/divorce/register",
+    },
   },
 
   certificates: {

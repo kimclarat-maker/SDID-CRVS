@@ -2,6 +2,11 @@ import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters, RollBack } from "@/types/RollBack";
 import api from "..";
 import rollbacks from "@/mocks/rollbacks";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoCreateRollBack,
+  demoFetchRollBacks,
+} from "@/demo/services/adminOps";
 
 interface ApiResponse {
   data: RollBack[];
@@ -13,6 +18,7 @@ export const createRollBack = async (payload: {
   rollbackReason: string;
   isRemoteFetchForceEnabled?: boolean;
 }): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoCreateRollBack(payload) as any;
   try {
     const options = {
       method: "POST",
@@ -33,6 +39,7 @@ export const createRollBack = async (payload: {
 export const fetchRollBacks = async (
   params: GETParameters
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoFetchRollBacks(params);
   try {
     const options = {
       method: "GET",

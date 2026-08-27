@@ -15,9 +15,9 @@ const CardCount: React.FC<CardCountType> = ({
   return (
     <div
       className="card-count-container"
-      style={{ ["--accent-color" as string]: color, cursor: "pointer" }}
+      style={{ ["--accent-color" as string]: color, cursor: onClick ? "pointer" : "default" }}
     >
-      <div className="card " onClick={onClick}>
+      <div className="card " onClick={onClick} role={onClick ? "button" : undefined} tabIndex={onClick ? 0 : undefined}>
         <div className="card-body">
           {icon && (
             <div className="card-count-icon-container">

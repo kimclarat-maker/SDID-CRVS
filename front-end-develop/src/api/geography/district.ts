@@ -1,9 +1,18 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { DistrictTypes, ProvinceGETParameters } from "@/types/geography";
 import api from "..";
-import districts from "@/mocks/geo/districts";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchDistricts,
+  demoFetchDistrictsByProvince,
+  demoFetchSingleDistrict,
+  demoUpdateDistrict,
+  demoDeleteDistrict,
+  demoCreateDistrict,
+} from "@/demo/services/geography";
 
 export const fetchDistricts = async (params?: ProvinceGETParameters) => {
+  if (isDemoMode()) return demoFetchDistricts(params);
   try {
     let url = `/geo/districts`;
 
@@ -44,6 +53,8 @@ export const fetchDistrictsByProvince = async (
   offset?: number,
   limit?: number
 ) => {
+  if (isDemoMode())
+    return demoFetchDistrictsByProvince(provinceId, status, offset, limit);
   try {
     const options = {
       method: "GET",
@@ -68,6 +79,7 @@ export const fetchDistrictsByProvince = async (
 };
 
 export const fetchSingleDistrict = async (id: string) => {
+  if (isDemoMode()) return demoFetchSingleDistrict(id);
   try {
     const options = {
       method: "GET",
@@ -87,6 +99,7 @@ export const fetchSingleDistrict = async (id: string) => {
 };
 
 export const updateDistrict = async (params: DistrictTypes) => {
+  if (isDemoMode()) return demoUpdateDistrict(params);
   try {
     const options = {
       method: "PATCH",
@@ -107,6 +120,7 @@ export const updateDistrict = async (params: DistrictTypes) => {
 };
 
 export const deleteDistrict = async (id: string) => {
+  if (isDemoMode()) return demoDeleteDistrict(id);
   try {
     const options = {
       method: "DELETE",
@@ -126,6 +140,7 @@ export const deleteDistrict = async (id: string) => {
 };
 
 export const createDistrict = async (params: DistrictTypes) => {
+  if (isDemoMode()) return demoCreateDistrict(params);
   try {
     const options = {
       method: "POST",

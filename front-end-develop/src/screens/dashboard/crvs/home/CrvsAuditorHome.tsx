@@ -14,7 +14,7 @@ export default function CrvsAuditorHome() {
     <div className="crvs-page">
       <div className="crvs-page-header">
         <h1 className="crvs-page-title">Audit oversight</h1>
-        <p className="crvs-page-subtitle">Read-only access to death registrations and audit history.</p>
+        <p className="crvs-page-subtitle">Read-only access to birth, death, and marriage registrations and audit history.</p>
         <span className="crvs-demo-note">Demo data — fictional</span>
       </div>
 
@@ -50,8 +50,11 @@ export default function CrvsAuditorHome() {
       </div>
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <Button text="Open birth audit history" appearance="primary" onClick={() => navigate("/dashboard/crvs/audit")} testId="auditor-open-birth-audit" />
         <Button text="Open death audit history" appearance="primary" onClick={() => navigate("/dashboard/crvs/death-audit")} testId="auditor-open-death-audit" />
+        <Button text="Open marriage audit history" appearance="primary" onClick={() => navigate("/dashboard/crvs/marriage-audit")} testId="auditor-open-marriage-audit" />
         <Button text="View death registrations" appearance="ghost" onClick={() => navigate("/dashboard/crvs/death-registrations")} testId="auditor-open-death-registrations" />
+        <Button text="View registered marriages" appearance="ghost" onClick={() => navigate("/dashboard/crvs/registered-marriages")} testId="auditor-open-registered-marriages" />
       </div>
     </div>
   );

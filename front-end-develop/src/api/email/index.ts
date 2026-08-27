@@ -1,8 +1,17 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters } from "@/types/SMS";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchEmailSettings,
+  demoFetchEmailTemplate,
+  demoSendEmail,
+  demoSendEmailMessage,
+  demoFetchEmailFlows,
+} from "@/demo/services/messaging";
 
 export const fetchEmailSettings = async (params?: GETParameters) => {
+  if (isDemoMode()) return demoFetchEmailSettings();
   try {
     const options = {
       method: "GET",
@@ -22,6 +31,7 @@ export const fetchEmailSettings = async (params?: GETParameters) => {
 };
 
 export const fetchEmailTemplate = async (params?: GETParameters) => {
+  if (isDemoMode()) return demoFetchEmailTemplate();
   try {
     const options = {
       method: "GET",
@@ -41,6 +51,7 @@ export const fetchEmailTemplate = async (params?: GETParameters) => {
 };
 
 export const sendEmail = async (params?: {}) => {
+  if (isDemoMode()) return demoSendEmail();
   try {
     const options = {
       method: "POST",
@@ -59,6 +70,7 @@ export const sendEmail = async (params?: {}) => {
 };
 
 export const sendEmailMessage = async (params?: {}) => {
+  if (isDemoMode()) return demoSendEmailMessage();
   try {
     const options = {
       method: "POST",
@@ -77,6 +89,7 @@ export const sendEmailMessage = async (params?: {}) => {
 };
 
 export const fetchEmailFlows = async () => {
+  if (isDemoMode()) return demoFetchEmailFlows();
   try {
     const options = {
       method: "GET",

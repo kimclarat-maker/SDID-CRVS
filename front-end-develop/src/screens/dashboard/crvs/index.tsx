@@ -63,6 +63,7 @@ import DeathReviewWorkspace from "./deathReview/workspace";
 
 // CRVS Supervisor death exceptions
 import DeathExceptions from "./deathExceptions";
+import DeathDuplicates from "./deathExceptions/duplicates";
 import DeathExceptionDetails from "./deathExceptions/details";
 import DeathSyncFailures from "./deathSyncFailures";
 import DeathAudit from "./deathAudit";
@@ -71,6 +72,81 @@ import DeathAudit from "./deathAudit";
 import RegisteredDeaths from "./registeredDeaths";
 import RegisteredDeathDetails from "./registeredDeaths/details";
 import SdidDeathStatus from "./registeredDeaths/sdidStatus";
+
+// Marriage dashboard
+import MarriagesDashboard from "./marriages";
+
+// Marriage applications (CRVS Registration Officer)
+import MarriageApplicationsQueue from "./marriageApplications";
+import NewMarriageApplication from "./marriageApplications/new";
+import MarriageApplicationDetails from "./marriageApplications/details";
+import EditMarriageApplication from "./marriageApplications/edit";
+
+// Civil Registrar marriage review
+import MarriageReviewQueue from "./marriageReview";
+import MarriageReviewWorkspace from "./marriageReview/workspace";
+
+// Marriage corrections
+import MarriageCorrectionsQueue from "./marriageCorrections";
+
+// Marriage appointments
+import MarriageAppointments from "./marriageAppointments";
+import MarriageAppointmentCalendar from "./marriageAppointments/calendar";
+import MarriageAppointmentDetails from "./marriageAppointments/details";
+
+// Marriage ceremonies
+import MarriageCeremonies from "./marriageCeremonies";
+import MarriageCeremonyWorkspace from "./marriageCeremonies/workspace";
+
+// Marriage objections
+import MarriageObjectionsQueue from "./marriageObjections";
+import MarriageObjectionDetails from "./marriageObjections/details";
+
+// CRVS Supervisor marriage exceptions
+import MarriageExceptions from "./marriageExceptions";
+import MarriageExceptionDetails from "./marriageExceptions/details";
+import MarriageSyncFailures from "./marriageSyncFailures";
+import MarriageAudit from "./marriageAudit";
+
+// Registered marriages
+import RegisteredMarriages from "./registeredMarriages";
+import RegisteredMarriageDetails from "./registeredMarriages/details";
+import SdidMarriageStatus from "./registeredMarriages/sdidStatus";
+
+// Divorce dashboard
+import DivorcesDashboard from "./divorces";
+
+// Divorce notifications (simulated court integration)
+import DivorceNotificationsQueue from "./divorceNotifications";
+import DivorceNotificationDetails from "./divorceNotifications/details";
+
+// Divorce registrations (Divorce Registration Officer)
+import DivorceRegistrationsQueue from "./divorceRegistrations";
+import NewDivorceRegistration from "./divorceRegistrations/new";
+import EditDivorceRegistration from "./divorceRegistrations/edit";
+import DivorceRegistrationDetails from "./divorceRegistrations/details";
+
+// Civil Registrar divorce review
+import DivorceReviewQueue from "./divorceReview";
+import DivorceReviewWorkspace from "./divorceReview/workspace";
+
+// Divorce corrections
+import DivorceCorrectionsQueue from "./divorceCorrections";
+
+// CRVS Supervisor divorce exceptions
+import DivorceExceptionsQueue from "./divorceExceptions";
+import DivorceExceptionDetails from "./divorceExceptions/details";
+
+// Foreign-divorce recognition review
+import ForeignDivorcesQueue from "./foreignDivorces";
+import ForeignDivorceDetails from "./foreignDivorces/details";
+
+import DivorceSyncFailures from "./divorceSyncFailures";
+import DivorceAudit from "./divorceAudit";
+
+// Registered divorces
+import RegisteredDivorces from "./registeredDivorces";
+import RegisteredDivorceDetails from "./registeredDivorces/details";
 
 // Birth-certificate lifecycle
 import CertificatesDashboard from "./certificates";
@@ -312,10 +388,12 @@ export default function Crvs() {
           <Route
             path="/exceptions/duplicates"
             element={
-              <RequirePermission
-                workspace="CRVS"
-                permission={[CRVS_PERMISSIONS.DUPLICATE_CHECK_RESOLVE, CRVS_PERMISSIONS.EXCEPTIONS_VIEW]}
-              >
+              // Matches the permission ExceptionDuplicates itself checks
+              // internally — a route guard broader than the page's own gate
+              // would let a EXCEPTIONS_VIEW-only user navigate here only to
+              // be turned away by the page, which is a worse experience
+              // than being redirected to the shared access-denied screen.
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DUPLICATE_CHECK_RESOLVE}>
                 <ExceptionDuplicates />
               </RequirePermission>
             }
@@ -323,7 +401,12 @@ export default function Crvs() {
           <Route
             path="/exceptions/sync-failures"
             element={
-              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.EXCEPTIONS_VIEW}>
+              // Matches SyncFailures' own internal permission check (see
+              // note above).
+              <RequirePermission
+                workspace="CRVS"
+                permission={[CRVS_PERMISSIONS.SYNC_RETRY, CRVS_PERMISSIONS.SYNC_MANUAL_REVIEW]}
+              >
                 <SyncFailures />
               </RequirePermission>
             }
@@ -583,6 +666,14 @@ export default function Crvs() {
             }
           />
           <Route
+            path="/death-exceptions/duplicates"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DEATH_DUPLICATE_RESOLVE}>
+                <DeathDuplicates />
+              </RequirePermission>
+            }
+          />
+          <Route
             path="/death-exceptions/:caseId"
             element={
               <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DEATH_EXCEPTIONS_VIEW}>
@@ -632,6 +723,375 @@ export default function Crvs() {
             element={
               <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DEATH_REGISTRATION_VIEW}>
                 <RegisteredDeathDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* Marriage dashboard */}
+          <Route
+            path="/marriages"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW}>
+                <MarriagesDashboard />
+              </RequirePermission>
+            }
+          />
+
+          {/* Marriage applications */}
+          <Route
+            path="/marriage-applications"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW}>
+                <MarriageApplicationsQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-applications/new"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_CREATE}>
+                <NewMarriageApplication />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-applications/:id/edit"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_EDIT}>
+                <EditMarriageApplication />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-applications/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW}>
+                <MarriageApplicationDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* Civil Registrar marriage review */}
+          <Route
+            path="/marriage-review"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_REVIEW}>
+                <MarriageReviewQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-review/:caseId/decision"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_REVIEW}>
+                <MarriageReviewWorkspace />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-review/:caseId"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPLICATION_REVIEW}>
+                <MarriageReviewWorkspace />
+              </RequirePermission>
+            }
+          />
+
+          {/* Marriage corrections */}
+          <Route
+            path="/marriage-corrections"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_CORRECTION_REQUEST}>
+                <MarriageCorrectionsQueue />
+              </RequirePermission>
+            }
+          />
+
+          {/* Marriage appointments */}
+          <Route
+            path="/marriage-appointments"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW}>
+                <MarriageAppointments />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-appointments/calendar"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW}>
+                <MarriageAppointmentCalendar />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-appointments/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW}>
+                <MarriageAppointmentDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* Marriage ceremonies */}
+          <Route
+            path="/marriage-ceremonies"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_CEREMONY_VIEW}>
+                <MarriageCeremonies />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-ceremonies/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_CEREMONY_VIEW}>
+                <MarriageCeremonyWorkspace />
+              </RequirePermission>
+            }
+          />
+
+          {/* Marriage objections */}
+          <Route
+            path="/marriage-objections"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_OBJECTIONS_VIEW}>
+                <MarriageObjectionsQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-objections/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_OBJECTIONS_VIEW}>
+                <MarriageObjectionDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* CRVS Supervisor marriage exceptions */}
+          <Route
+            path="/marriage-exceptions"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_EXCEPTIONS_VIEW}>
+                <MarriageExceptions />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-exceptions/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_EXCEPTIONS_VIEW}>
+                <MarriageExceptionDetails />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-sync-failures"
+            element={
+              <RequirePermission
+                workspace="CRVS"
+                permission={[CRVS_PERMISSIONS.MARRIAGE_SDID_SYNC_RETRY, CRVS_PERMISSIONS.MARRIAGE_SDID_SYNC_VIEW]}
+              >
+                <MarriageSyncFailures />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/marriage-audit"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_AUDIT_VIEW}>
+                <MarriageAudit />
+              </RequirePermission>
+            }
+          />
+
+          {/* Registered marriages */}
+          <Route
+            path="/registered-marriages"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_REGISTERED_VIEW}>
+                <RegisteredMarriages />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/registered-marriages/:id/sdid-status"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_REGISTERED_VIEW}>
+                <SdidMarriageStatus />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/registered-marriages/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.MARRIAGE_REGISTERED_VIEW}>
+                <RegisteredMarriageDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* Divorce dashboard */}
+          <Route
+            path="/divorces"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW}>
+                <DivorcesDashboard />
+              </RequirePermission>
+            }
+          />
+
+          {/* Divorce notifications (simulated court integration) */}
+          <Route
+            path="/divorce-notifications"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW}>
+                <DivorceNotificationsQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/divorce-notifications/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW}>
+                <DivorceNotificationDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* Divorce registrations */}
+          <Route
+            path="/divorce-registrations"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW}>
+                <DivorceRegistrationsQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/divorce-registrations/new"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTRATION_CREATE}>
+                <NewDivorceRegistration />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/divorce-registrations/:id/edit"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTRATION_EDIT}>
+                <EditDivorceRegistration />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/divorce-registrations/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW}>
+                <DivorceRegistrationDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* Civil Registrar divorce review */}
+          <Route
+            path="/divorce-review"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTRATION_REVIEW}>
+                <DivorceReviewQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/divorce-review/:caseId"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTRATION_REVIEW}>
+                <DivorceReviewWorkspace />
+              </RequirePermission>
+            }
+          />
+
+          {/* Divorce corrections */}
+          <Route
+            path="/divorce-corrections"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_CORRECTION_REQUEST}>
+                <DivorceCorrectionsQueue />
+              </RequirePermission>
+            }
+          />
+
+          {/* CRVS Supervisor divorce exceptions */}
+          <Route
+            path="/divorce-exceptions"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_EXCEPTIONS_VIEW}>
+                <DivorceExceptionsQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/divorce-exceptions/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_EXCEPTIONS_VIEW}>
+                <DivorceExceptionDetails />
+              </RequirePermission>
+            }
+          />
+
+          {/* Foreign-divorce recognition review */}
+          <Route
+            path="/foreign-divorces"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_FOREIGN_JUDGMENT_REVIEW}>
+                <ForeignDivorcesQueue />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/foreign-divorces/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_FOREIGN_JUDGMENT_REVIEW}>
+                <ForeignDivorceDetails />
+              </RequirePermission>
+            }
+          />
+
+          <Route
+            path="/divorce-sync-failures"
+            element={
+              <RequirePermission
+                workspace="CRVS"
+                permission={[CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_RETRY, CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_VIEW]}
+              >
+                <DivorceSyncFailures />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/divorce-audit"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW}>
+                <DivorceAudit />
+              </RequirePermission>
+            }
+          />
+
+          {/* Registered divorces */}
+          <Route
+            path="/registered-divorces"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW}>
+                <RegisteredDivorces />
+              </RequirePermission>
+            }
+          />
+          <Route
+            path="/registered-divorces/:id"
+            element={
+              <RequirePermission workspace="CRVS" permission={CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW}>
+                <RegisteredDivorceDetails />
               </RequirePermission>
             }
           />

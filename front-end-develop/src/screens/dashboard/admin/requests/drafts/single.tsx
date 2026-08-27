@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 
 import { LanguageContext } from "@/context/LanguageContext";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Identifiation from "@/components/citizenProfile/identification";
 import Loading from "@/components/loader";
 import Card from "@/components/card/PanelCard";
@@ -15,10 +15,13 @@ import Empty from "@/components/empty";
 import { useFetchDraftById } from "@/hooks/useFetchDrafts";
 import { Breadcrumb } from "rsuite";
 import Button from "@/components/button";
+import { deleteData } from "@/api/enrollments";
+import toastMessage from "@/utils/common/toastMessage";
 
 function SingleDraft() {
   const { translation } = useContext(LanguageContext);
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data, loading, fetchDraftByIdData } = useFetchDraftById();
 
   const fetchData = () => {
@@ -30,6 +33,22 @@ function SingleDraft() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleContinue = () => {
+    if (id) navigate(`/dashboard/admin/enrollment/${id}`);
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    if (!window.confirm(translation.delete_confirmation)) return;
+    try {
+      const result = await deleteData(id);
+      toastMessage("success", result.message);
+      navigate("/dashboard/admin/request/drafts");
+    } catch (error) {
+      toastMessage("error", error);
+    }
+  };
 
   if (loading) return <Loading isFullScreen />;
   if (!data)
@@ -72,13 +91,10 @@ function SingleDraft() {
       </PanelGroup>
       <br />
       <ButtonToolbar>
-        <Button
-          text={translation.continue}
-          onClick={() => alert("comming soon")}
-        />
+        <Button text={translation.continue} onClick={handleContinue} />
         <Button
           text={translation.delete}
-          onClick={() => alert("comming soon")}
+          onClick={handleDelete}
           appearance="primary"
           color={"red"}
         />

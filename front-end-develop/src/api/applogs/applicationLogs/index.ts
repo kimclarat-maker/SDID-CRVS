@@ -3,6 +3,8 @@ import { GETParameters } from "@/types/LogsType";
 import api from "../..";
 import { defineAccess } from "@/utils/common/permissions";
 import moment from "moment";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchApplicationLogs } from "@/demo/services/logs";
 
 export const fetchApplicationLogs = async (params?: GETParameters) => {
   try {
@@ -10,6 +12,8 @@ export const fetchApplicationLogs = async (params?: GETParameters) => {
     const hasAccess = defineAccess({ method: "get", module: "logs" });
 
     if (!hasAccess) return;
+
+    if (isDemoMode()) return demoFetchApplicationLogs(params);
 
     if (params && !params.fromDay) {
       params.fromDay = moment().subtract(7, "d").format("YYYY-MM-DD");

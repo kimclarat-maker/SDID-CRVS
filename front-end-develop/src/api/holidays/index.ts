@@ -2,8 +2,16 @@ import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters } from "@/types/DocumentType";
 import api from "..";
 import { getStorage } from "@/utils/storage";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchHolidays,
+  demoFetchHolidaysByYear,
+  demoFetchHolidaysAll,
+  demoUploadHolidays,
+} from "@/demo/services/referenceLookups";
 
 export const fetchHolidays = async (params?: GETParameters) => {
+  if (isDemoMode()) return demoFetchHolidays();
   try {
     const options = {
       method: "GET",
@@ -20,6 +28,7 @@ export const fetchHolidays = async (params?: GETParameters) => {
 };
 
 export const fetchHolidaysByYear = async (year?: number) => {
+  if (isDemoMode()) return demoFetchHolidaysByYear(year);
   try {
     const options = {
       method: "GET",
@@ -35,6 +44,7 @@ export const fetchHolidaysByYear = async (year?: number) => {
 };
 
 export const fetchHolidaysAll = async () => {
+  if (isDemoMode()) return demoFetchHolidaysAll();
   try {
     const options = {
       method: "GET",
@@ -50,6 +60,7 @@ export const fetchHolidaysAll = async () => {
 };
 
 export const uploadHolidays = async (formData: FormData) => {
+  if (isDemoMode()) return demoUploadHolidays();
   try {
     const { token } = await getStorage();
     const options = {

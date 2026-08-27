@@ -67,6 +67,11 @@ const toEnrollmentRecord = (app: DemoApplication) => {
     reference: app.reference,
     applicantId: app.applicantId,
     preHistoricalInfo: JSON.stringify({}),
+    // Read by src/components/profile/header.tsx and
+    // citizenProfile/enrollment/index.tsx to toggle between "Push to SDID
+    // Core" and "Push Biometric Refresh" once demoPushToSdidCore has run.
+    syncedToCore: !!app.syncedToCore,
+    sdidCoreStatus: app.syncedToCore ? "ACCEPTED" : undefined,
   };
 };
 

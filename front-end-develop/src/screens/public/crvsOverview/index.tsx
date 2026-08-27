@@ -5,12 +5,13 @@ import ServiceCardGrid from "@/components/public/ServiceCardGrid";
 import FinalCta from "@/components/public/FinalCta";
 import { platformConfig } from "@/config/platform.config";
 
-const VITAL_EVENT_IDS = ["birth", "death", "marriage"];
+const VITAL_EVENT_IDS = ["birth", "death", "marriage", "divorce"];
 
 const ICONS: Record<string, string> = {
   birth: "child_care",
   death: "sentiment_neutral",
   marriage: "favorite",
+  divorce: "heart_broken",
   certificates: "workspace_premium",
 };
 

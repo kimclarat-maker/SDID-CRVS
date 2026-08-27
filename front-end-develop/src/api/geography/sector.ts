@@ -2,9 +2,18 @@ import toastMessage from "@/utils/common/toastMessage";
 import { SectorGETParameters } from "@/types/geography";
 import api from "..";
 import { SectorTypes } from "@/types/geography";
-import sectors from "@/mocks/geo/sectors";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchSectors,
+  demoFetchSectorsByDistrict,
+  demoFetchSingleSector,
+  demoUpdateSector,
+  demoDeleteSector,
+  demoCreateSector,
+} from "@/demo/services/geography";
 
 export const fetchSectors = async (params?: SectorGETParameters) => {
+  if (isDemoMode()) return demoFetchSectors(params);
   try {
     let url = "/geo/sectors";
 
@@ -44,6 +53,8 @@ export const fetchSectorsByDistrict = async (
   offset?: number,
   limit?: number
 ) => {
+  if (isDemoMode())
+    return demoFetchSectorsByDistrict(districtId, status, offset, limit);
   try {
     const options = {
       method: "GET",
@@ -65,6 +76,7 @@ export const fetchSectorsByDistrict = async (
 };
 
 export const fetchSingleSector = async (id: string) => {
+  if (isDemoMode()) return demoFetchSingleSector(id);
   try {
     const options = {
       method: "GET",
@@ -84,6 +96,7 @@ export const fetchSingleSector = async (id: string) => {
 };
 
 export const updateSector = async (params: SectorTypes) => {
+  if (isDemoMode()) return demoUpdateSector(params);
   try {
     const options = {
       method: "PATCH",
@@ -102,6 +115,7 @@ export const updateSector = async (params: SectorTypes) => {
 };
 
 export const deleteSector = async (id: string) => {
+  if (isDemoMode()) return demoDeleteSector(id);
   try {
     const options = {
       method: "DELETE",
@@ -121,6 +135,7 @@ export const deleteSector = async (id: string) => {
 };
 
 export const createSector = async (params: SectorTypes) => {
+  if (isDemoMode()) return demoCreateSector(params);
   try {
     const options = {
       method: "POST",

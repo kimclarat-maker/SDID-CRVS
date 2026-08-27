@@ -1,5 +1,12 @@
 import { getStorage } from "@/utils/storage";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoHandleUpload,
+  demoHandleDownloadFile,
+  demoFetchSelfie,
+  demoGetMediaById,
+} from "@/demo/services/media";
 
 export const handleUpload = async (
   file: any,
@@ -7,6 +14,7 @@ export const handleUpload = async (
   referenceId?: string,
   headers?: any
 ) => {
+  if (isDemoMode()) return demoHandleUpload(file);
   try {
     const userLoggedIn = await getStorage();
     const options = {
@@ -33,6 +41,7 @@ export const handleUpload = async (
   }
 };
 export const handleDownloadFile = async (fileName: string) => {
+  if (isDemoMode()) return demoHandleDownloadFile(fileName);
   try {
     const options = {
       url: `/media`,
@@ -52,6 +61,7 @@ export const handleDownloadFile = async (fileName: string) => {
 };
 
 export const fetchSelfie = async (selfieId: string) => {
+  if (isDemoMode()) return demoFetchSelfie(selfieId);
   try {
     const options = {
       url: `/media/${selfieId}`,
@@ -68,6 +78,7 @@ export const fetchSelfie = async (selfieId: string) => {
 };
 
 export const getMediaById = async ({ mediaId }: { mediaId: string }) => {
+  if (isDemoMode()) return demoGetMediaById({ mediaId });
   try {
     const face = await api({
       url: `/media/${mediaId}`,

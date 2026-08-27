@@ -4,7 +4,7 @@ import api from "..";
 import { cfg } from "@/constants/cfg";
 import { fetchDeviceByID, fetchDevices } from "../device";
 import { isDemoMode } from "@/demo/config";
-import { demoFetchAccounts } from "@/demo/services/administration";
+import { demoFetchAccounts, demoFetchAccountByID } from "@/demo/services/administration";
 
 export const fetchAccounts = async (
   params: GETParameters,
@@ -43,6 +43,7 @@ export const fetchAccountByID = async (
   id: string,
   isStartedOnline?: boolean
 ) => {
+  if (isDemoMode()) return demoFetchAccountByID(id);
   try {
     const options = {
       method: "GET",

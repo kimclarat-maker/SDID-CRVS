@@ -1,8 +1,11 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters } from "@/types/Modules";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchModules } from "@/demo/services/referenceLookups";
 
 export const fetchModules = async (params?: GETParameters) => {
+  if (isDemoMode()) return demoFetchModules(params);
   try {
     let url = `/configuration/access-rights/modules`;
 

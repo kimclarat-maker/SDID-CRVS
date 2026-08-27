@@ -15,3 +15,15 @@ export class NotFoundError extends Error {
     this.name = "NotFoundError";
   }
 }
+
+/** Thrown when a marriage-appointment scheduling/reschedule mutation would
+ * push a office+date slot past its configured capacity — caught at write
+ * time inside the single updateDemoData() mutation, not pre-checked and
+ * then written separately, so two concurrent bookings can never both
+ * succeed against the same over-capacity slot. */
+export class SlotUnavailableError extends Error {
+  constructor(message = "This appointment slot is no longer available. Choose a different date or office.") {
+    super(message);
+    this.name = "SlotUnavailableError";
+  }
+}

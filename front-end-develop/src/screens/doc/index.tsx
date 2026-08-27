@@ -21,7 +21,7 @@ export default () => {
 
   if (!PATH.exist) return <></>;
   return (
-    <DashboardLayout>
+    <DashboardLayout retryLocalService={() => {}}>
       <Routes>
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />

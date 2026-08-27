@@ -5,6 +5,8 @@ import StatusBadge from "../components/StatusBadge";
 import Button from "@/components/button";
 import { getDemoData } from "@/demo/storage/demoStore";
 import { DeathRegistrationCase } from "@/domain/crvs/types";
+import { CRVS_PERMISSIONS } from "@/constants/crvsRoles";
+import { hasWorkspacePermission } from "@/utils/workspace";
 import { deceasedDisplayName } from "../deathShared";
 import "../shared.css";
 
@@ -20,6 +22,7 @@ export default function DeathExceptions() {
   const duplicates = db.crvsDeathRegistrations.filter((c) => c.duplicateCheck && c.duplicateCheck.overallLevel !== "NONE" && !c.duplicateCheck.resolution);
   const syncFailures = db.crvsDeathRegistrations.filter((c) => c.sdid.status === "FAILED" || c.sdid.status === "MANUAL_REVIEW");
   const combined = [...late, ...medicoLegal, ...unidentified];
+  const canResolveDuplicates = hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DEATH_DUPLICATE_RESOLVE);
 
   const columns: QueueColumn<DeathRegistrationCase>[] = [
     { key: "reference", header: "Reference", render: (c) => c.reference },
@@ -40,18 +43,43 @@ export default function DeathExceptions() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Late registrations" count={late.length} icon="schedule" color="var(--status-warning)" />
-        <CardCount name="Medico-legal" count={medicoLegal.length} icon="gavel" color="var(--status-warning)" />
-        <CardCount name="Unidentified person" count={unidentified.length} icon="person_search" color="var(--status-warning)" />
-        <CardCount name="Possible duplicates" count={duplicates.length} icon="content_copy" color="var(--status-warning)" />
+        <CardCount
+          name="Late registrations"
+          count={late.length}
+          icon="schedule"
+          color="var(--status-warning)"
+          onClick={() => document.getElementById("death-exceptions-combined-table")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        />
+        <CardCount
+          name="Medico-legal"
+          count={medicoLegal.length}
+          icon="gavel"
+          color="var(--status-warning)"
+          onClick={() => document.getElementById("death-exceptions-combined-table")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        />
+        <CardCount
+          name="Unidentified person"
+          count={unidentified.length}
+          icon="person_search"
+          color="var(--status-warning)"
+          onClick={() => document.getElementById("death-exceptions-combined-table")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        />
+        <CardCount
+          name="Possible duplicates"
+          count={duplicates.length}
+          icon="content_copy"
+          color="var(--status-warning)"
+          onClick={canResolveDuplicates ? () => navigate("/dashboard/crvs/death-exceptions/duplicates") : undefined}
+        />
         <CardCount name="Sync failures" count={syncFailures.length} icon="sync_problem" color="var(--status-danger)" onClick={() => navigate("/dashboard/crvs/death-sync-failures")} />
       </div>
 
       <div className="crvs-filter-bar">
+        {canResolveDuplicates && <Button text="Possible duplicates" appearance="ghost" onClick={() => navigate("/dashboard/crvs/death-exceptions/duplicates")} testId="tab-death-duplicates" />}
         <Button text="Sync failures" appearance="ghost" onClick={() => navigate("/dashboard/crvs/death-sync-failures")} testId="tab-death-sync-failures" />
       </div>
 
-      <div className="crvs-section">
+      <div className="crvs-section" id="death-exceptions-combined-table">
         <CaseQueueTable rows={combined} columns={columns} getRowKey={(c) => c.id} emptyTitle="No exceptions right now" emptyDescription="Every death case is progressing through the standard flow." emptyIcon="task_alt" />
       </div>
     </div>

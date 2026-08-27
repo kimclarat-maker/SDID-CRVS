@@ -11,6 +11,17 @@ import {
   DeathNotificationStatus,
   DeathRegistrationStatus,
   DeathSdidSyncStatus,
+  MarriageApplicationStatus,
+  MarriageAppointmentStatus,
+  MarriageCeremonyOutcome,
+  MarriageSpouseSdidSyncStatus,
+  MarriageSdidSyncStatus,
+  MarriageObjectionStatus,
+  DivorceNotificationStatus,
+  DivorceRegistrationStatus,
+  JudgmentVerificationStatus,
+  DivorceSpouseSdidSyncStatus,
+  DivorceSdidSyncStatus,
 } from "./types";
 
 const NOTIFICATION_TRANSITIONS: Record<BirthNotificationStatus, BirthNotificationStatus[]> = {
@@ -373,3 +384,472 @@ export const DEATH_REGISTRATION_TIMELINE_ORDER: DeathRegistrationStatus[] = [
   "APPROVED",
   "REGISTERED",
 ];
+
+// ---------------------------------------------------------------------------
+// Marriage-application / marriage-appointment / marriage-ceremony /
+// marriage-SDID-sync / marriage-objection state machines. Same "no direct
+// status assignment" rule as birth/death — every write goes through
+// canTransitionMarriage*()/assertTransitionMarriage*(). Five separate small
+// machines rather than one giant enum, mirroring how DeathSdidSyncStatus is
+// kept independent of DeathRegistrationStatus — appointment/ceremony/sync
+// each have their own lifecycle instead of exploding the application enum
+// with composite values.
+//
+// Modeling notes:
+// - CONSENT_DECLINED at the ceremony level maps the application to REJECTED
+//   (via rejectionReason.ceremonyConsentDeclined), keeping the application
+//   enum at exactly the spec's 17 values rather than adding a dedicated
+//   terminal status.
+// - NO_SHOW/POSTPONED are reachable from both APPOINTMENT_SCHEDULED (nobody
+//   showed at all) and READY_FOR_CEREMONY (check-in was underway but the
+//   ceremony still didn't proceed).
+// - Rescheduling after NO_SHOW/POSTPONED always creates a fresh
+//   MarriageAppointment record rather than reopening the old one, mirroring
+//   the immutable-attempt approach used for ceremony/registration events.
+// - An open MarriageObjection sits alongside ELIGIBILITY_REVIEW/
+//   CORRECTION_REQUIRED as a blocking side-record checked by
+//   canApproveMarriageCase() — it does not get its own top-level
+//   application status branch, unlike death's three exception-review
+//   branches.
+
+const MARRIAGE_APPLICATION_TRANSITIONS: Record<MarriageApplicationStatus, MarriageApplicationStatus[]> = {
+  DRAFT: ["PARTNER_VERIFICATION_REQUIRED", "SUBMITTED", "CANCELLED"],
+  PARTNER_VERIFICATION_REQUIRED: ["SUBMITTED", "REJECTED", "CANCELLED"],
+  SUBMITTED: ["ELIGIBILITY_REVIEW", "CANCELLED"],
+  ELIGIBILITY_REVIEW: ["CORRECTION_REQUIRED", "PAYMENT_PENDING", "APPROVED", "REJECTED", "CANCELLED"],
+  CORRECTION_REQUIRED: ["RESUBMITTED", "CANCELLED"],
+  RESUBMITTED: ["ELIGIBILITY_REVIEW"],
+  PAYMENT_PENDING: ["PAID", "CANCELLED"],
+  PAID: ["APPROVED", "REJECTED"],
+  APPROVED: ["APPOINTMENT_SCHEDULED", "CANCELLED"],
+  REJECTED: [],
+  // REJECTED is reachable directly from APPOINTMENT_SCHEDULED as well as
+  // READY_FOR_CEREMONY — consent can be declined as soon as both applicants
+  // are physically present, even before every witness has finished
+  // checking in (see crvsMarriageCeremony.ts's demoRecordMarriageConsent).
+  APPOINTMENT_SCHEDULED: ["READY_FOR_CEREMONY", "NO_SHOW", "POSTPONED", "CANCELLED", "REJECTED"],
+  READY_FOR_CEREMONY: ["CEREMONY_COMPLETED", "NO_SHOW", "POSTPONED", "REJECTED", "CANCELLED"],
+  CEREMONY_COMPLETED: ["REGISTERED"],
+  NO_SHOW: ["APPOINTMENT_SCHEDULED", "CANCELLED"],
+  POSTPONED: ["APPOINTMENT_SCHEDULED", "CANCELLED"],
+  CANCELLED: [],
+  REGISTERED: [],
+};
+
+const MARRIAGE_APPOINTMENT_TRANSITIONS: Record<MarriageAppointmentStatus, MarriageAppointmentStatus[]> = {
+  SCHEDULED: ["RESCHEDULE_REQUESTED", "CANCEL_REQUESTED", "CANCELLED", "COMPLETED", "NO_SHOW"],
+  RESCHEDULE_REQUESTED: ["SCHEDULED", "CANCELLED"],
+  CANCEL_REQUESTED: ["SCHEDULED", "CANCELLED"],
+  CANCELLED: [],
+  COMPLETED: [],
+  NO_SHOW: [],
+};
+
+const MARRIAGE_CEREMONY_TRANSITIONS: Record<MarriageCeremonyOutcome, MarriageCeremonyOutcome[]> = {
+  NOT_STARTED: ["COMPLETED", "POSTPONED", "NO_SHOW", "CONSENT_DECLINED", "CANCELLED"],
+  COMPLETED: [],
+  POSTPONED: [],
+  NO_SHOW: [],
+  CONSENT_DECLINED: [],
+  CANCELLED: [],
+};
+
+const MARRIAGE_SPOUSE_SYNC_TRANSITIONS: Record<MarriageSpouseSdidSyncStatus, MarriageSpouseSdidSyncStatus[]> = {
+  NOT_READY: ["PENDING"],
+  PENDING: ["IN_PROGRESS"],
+  IN_PROGRESS: ["IDENTITY_UPDATED", "FAILED", "MANUAL_REVIEW"],
+  FAILED: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["IN_PROGRESS"],
+  IDENTITY_UPDATED: [],
+};
+
+const MARRIAGE_SYNC_TRANSITIONS: Record<MarriageSdidSyncStatus, MarriageSdidSyncStatus[]> = {
+  NOT_READY: ["PENDING"],
+  PENDING: ["IN_PROGRESS"],
+  IN_PROGRESS: ["BOTH_IDENTITIES_UPDATED", "PARTIAL_FAILURE", "FAILED", "MANUAL_REVIEW"],
+  PARTIAL_FAILURE: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  FAILED: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["IN_PROGRESS"],
+  BOTH_IDENTITIES_UPDATED: [],
+};
+
+const MARRIAGE_OBJECTION_TRANSITIONS: Record<MarriageObjectionStatus, MarriageObjectionStatus[]> = {
+  NONE: ["PENDING"],
+  PENDING: ["UPHELD", "DISMISSED", "WITHDRAWN"],
+  UPHELD: [],
+  DISMISSED: [],
+  WITHDRAWN: [],
+};
+
+export function canTransitionMarriageApplication(from: MarriageApplicationStatus, to: MarriageApplicationStatus): boolean {
+  return MARRIAGE_APPLICATION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionMarriageApplication(from: MarriageApplicationStatus, to: MarriageApplicationStatus): void {
+  if (!canTransitionMarriageApplication(from, to)) {
+    throw new IllegalTransitionError("marriage application", from, to);
+  }
+}
+
+export function canTransitionMarriageAppointment(from: MarriageAppointmentStatus, to: MarriageAppointmentStatus): boolean {
+  return MARRIAGE_APPOINTMENT_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionMarriageAppointment(from: MarriageAppointmentStatus, to: MarriageAppointmentStatus): void {
+  if (!canTransitionMarriageAppointment(from, to)) {
+    throw new IllegalTransitionError("marriage appointment", from, to);
+  }
+}
+
+export function canTransitionMarriageCeremony(from: MarriageCeremonyOutcome, to: MarriageCeremonyOutcome): boolean {
+  return MARRIAGE_CEREMONY_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionMarriageCeremony(from: MarriageCeremonyOutcome, to: MarriageCeremonyOutcome): void {
+  if (!canTransitionMarriageCeremony(from, to)) {
+    throw new IllegalTransitionError("marriage ceremony", from, to);
+  }
+}
+
+export function canTransitionMarriageSpouseSync(from: MarriageSpouseSdidSyncStatus, to: MarriageSpouseSdidSyncStatus): boolean {
+  return MARRIAGE_SPOUSE_SYNC_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionMarriageSpouseSync(from: MarriageSpouseSdidSyncStatus, to: MarriageSpouseSdidSyncStatus): void {
+  if (!canTransitionMarriageSpouseSync(from, to)) {
+    throw new IllegalTransitionError("marriage spouse sync", from, to);
+  }
+}
+
+export function canTransitionMarriageSync(from: MarriageSdidSyncStatus, to: MarriageSdidSyncStatus): boolean {
+  return MARRIAGE_SYNC_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionMarriageSync(from: MarriageSdidSyncStatus, to: MarriageSdidSyncStatus): void {
+  if (!canTransitionMarriageSync(from, to)) {
+    throw new IllegalTransitionError("marriage sync", from, to);
+  }
+}
+
+export function canTransitionMarriageObjection(from: MarriageObjectionStatus, to: MarriageObjectionStatus): boolean {
+  return MARRIAGE_OBJECTION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionMarriageObjection(from: MarriageObjectionStatus, to: MarriageObjectionStatus): void {
+  if (!canTransitionMarriageObjection(from, to)) {
+    throw new IllegalTransitionError("marriage objection", from, to);
+  }
+}
+
+export const MARRIAGE_APPLICATION_STATUS_LABELS: Record<MarriageApplicationStatus, string> = {
+  DRAFT: "Draft",
+  PARTNER_VERIFICATION_REQUIRED: "Partner verification required",
+  SUBMITTED: "Submitted",
+  ELIGIBILITY_REVIEW: "Eligibility review",
+  CORRECTION_REQUIRED: "Correction required",
+  RESUBMITTED: "Resubmitted",
+  PAYMENT_PENDING: "Payment pending",
+  PAID: "Paid",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  APPOINTMENT_SCHEDULED: "Appointment scheduled",
+  READY_FOR_CEREMONY: "Ready for ceremony",
+  CEREMONY_COMPLETED: "Ceremony completed",
+  NO_SHOW: "No-show",
+  POSTPONED: "Postponed",
+  CANCELLED: "Cancelled",
+  REGISTERED: "Registered",
+};
+
+export const MARRIAGE_APPOINTMENT_STATUS_LABELS: Record<MarriageAppointmentStatus, string> = {
+  SCHEDULED: "Scheduled",
+  RESCHEDULE_REQUESTED: "Reschedule requested",
+  CANCEL_REQUESTED: "Cancellation requested",
+  CANCELLED: "Cancelled",
+  COMPLETED: "Completed",
+  NO_SHOW: "No-show",
+};
+
+export const MARRIAGE_CEREMONY_OUTCOME_LABELS: Record<MarriageCeremonyOutcome, string> = {
+  NOT_STARTED: "Not started",
+  COMPLETED: "Completed",
+  POSTPONED: "Postponed",
+  NO_SHOW: "No-show",
+  CONSENT_DECLINED: "Consent declined",
+  CANCELLED: "Cancelled",
+};
+
+export const MARRIAGE_SYNC_STATUS_LABELS: Record<MarriageSdidSyncStatus, string> = {
+  NOT_READY: "Not ready",
+  PENDING: "Pending",
+  IN_PROGRESS: "In progress",
+  BOTH_IDENTITIES_UPDATED: "Both identities updated",
+  PARTIAL_FAILURE: "Partial synchronization failure",
+  FAILED: "Failed",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const MARRIAGE_SPOUSE_SYNC_STATUS_LABELS: Record<MarriageSpouseSdidSyncStatus, string> = {
+  NOT_READY: "Not ready",
+  PENDING: "Pending",
+  IN_PROGRESS: "In progress",
+  IDENTITY_UPDATED: "Identity updated",
+  FAILED: "Failed",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const MARRIAGE_OBJECTION_STATUS_LABELS: Record<MarriageObjectionStatus, string> = {
+  NONE: "No objection",
+  PENDING: "Pending",
+  UPHELD: "Upheld",
+  DISMISSED: "Dismissed",
+  WITHDRAWN: "Withdrawn",
+};
+
+export const MARRIAGE_APPLICATION_TIMELINE_ORDER: MarriageApplicationStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "ELIGIBILITY_REVIEW",
+  "PAYMENT_PENDING",
+  "PAID",
+  "APPROVED",
+  "APPOINTMENT_SCHEDULED",
+  "READY_FOR_CEREMONY",
+  "CEREMONY_COMPLETED",
+  "REGISTERED",
+];
+
+/** Pure aggregator: combines both spouses' independent sync sub-statuses
+ * into the case-level MarriageSdidSyncStatus (spec §8) — never influenced by
+ * one spouse's random outcome affecting the other's. */
+export function aggregateMarriageSyncStatus(
+  applicant1: MarriageSpouseSdidSyncStatus,
+  applicant2: MarriageSpouseSdidSyncStatus
+): MarriageSdidSyncStatus {
+  if (applicant1 === "IDENTITY_UPDATED" && applicant2 === "IDENTITY_UPDATED") return "BOTH_IDENTITIES_UPDATED";
+  if (
+    (applicant1 === "IDENTITY_UPDATED" && applicant2 === "FAILED") ||
+    (applicant2 === "IDENTITY_UPDATED" && applicant1 === "FAILED")
+  ) {
+    return "PARTIAL_FAILURE";
+  }
+  if (applicant1 === "FAILED" && applicant2 === "FAILED") return "FAILED";
+  if (applicant1 === "MANUAL_REVIEW" || applicant2 === "MANUAL_REVIEW") return "MANUAL_REVIEW";
+  if (applicant1 === "IN_PROGRESS" || applicant2 === "IN_PROGRESS") return "IN_PROGRESS";
+  if (applicant1 === "PENDING" || applicant2 === "PENDING") return "PENDING";
+  return "NOT_READY";
+}
+
+// ---------------------------------------------------------------------------
+// Divorce-notification / divorce-registration / divorce-SDID-sync state
+// machines. Same "no direct status assignment" rule as every machine above.
+//
+// Modeling notes:
+// - DivorceNotificationStatus mirrors DeathNotificationStatus's shape
+//   (RECEIVED here standing in for DRAFT — a court notification always
+//   arrives already "submitted" by the mock integration, spec §5A) plus two
+//   states death/birth notifications don't need: DUPLICATE (a notification
+//   can be flagged a duplicate of an existing case without ever being
+//   returned) and the terminal CONVERTED_TO_REGISTRATION.
+// - DivorceRegistrationStatus's three review-style branches
+//   (JUDGMENT_VERIFICATION, FOREIGN_JUDGMENT_REVIEW, EXCEPTION_REVIEW) mirror
+//   DeathRegistrationStatus's LATE_REGISTRATION_REVIEW/MEDICO_LEGAL_REVIEW/
+//   UNIDENTIFIED_PERSON_REVIEW three-way split exactly — reachable from
+//   SUBMITTED/RESUBMITTED and from UNDER_REVIEW, each routing back to
+//   UNDER_REVIEW, CORRECTION_REQUIRED or REJECTED once resolved.
+// - No direct DRAFT -> REGISTERED, CORRECTION_REQUIRED -> APPROVED, or any
+//   other status-skipping jump is reachable — every path funnels back
+//   through UNDER_REVIEW before APPROVED (spec §4 "no user may directly
+//   change a registered divorce back to draft" is likewise structurally
+//   impossible: REGISTERED has no outgoing transitions at all).
+
+const DIVORCE_NOTIFICATION_TRANSITIONS: Record<DivorceNotificationStatus, DivorceNotificationStatus[]> = {
+  RECEIVED: ["VALIDATION_PENDING", "DUPLICATE", "CANCELLED"],
+  VALIDATION_PENDING: ["VALIDATED", "RETURNED", "DUPLICATE", "CANCELLED"],
+  VALIDATED: ["CONVERTED_TO_REGISTRATION", "CANCELLED"],
+  RETURNED: ["VALIDATION_PENDING", "CANCELLED"],
+  CONVERTED_TO_REGISTRATION: [],
+  DUPLICATE: [],
+  CANCELLED: [],
+};
+
+const DIVORCE_REGISTRATION_TRANSITIONS: Record<DivorceRegistrationStatus, DivorceRegistrationStatus[]> = {
+  DRAFT: ["SUBMITTED", "CANCELLED"],
+  SUBMITTED: ["UNDER_REVIEW", "JUDGMENT_VERIFICATION", "FOREIGN_JUDGMENT_REVIEW", "EXCEPTION_REVIEW", "CANCELLED"],
+  UNDER_REVIEW: [
+    "CORRECTION_REQUIRED",
+    "JUDGMENT_VERIFICATION",
+    "FOREIGN_JUDGMENT_REVIEW",
+    "EXCEPTION_REVIEW",
+    "APPROVED",
+    "REJECTED",
+    "CANCELLED",
+  ],
+  CORRECTION_REQUIRED: ["RESUBMITTED", "CANCELLED"],
+  RESUBMITTED: ["UNDER_REVIEW"],
+  JUDGMENT_VERIFICATION: ["UNDER_REVIEW", "CORRECTION_REQUIRED", "FOREIGN_JUDGMENT_REVIEW", "EXCEPTION_REVIEW", "REJECTED"],
+  FOREIGN_JUDGMENT_REVIEW: ["UNDER_REVIEW", "CORRECTION_REQUIRED", "EXCEPTION_REVIEW", "REJECTED"],
+  EXCEPTION_REVIEW: ["UNDER_REVIEW", "CORRECTION_REQUIRED", "REJECTED"],
+  APPROVED: ["REGISTERED", "CANCELLED"],
+  REJECTED: [],
+  REGISTERED: [],
+  CANCELLED: [],
+};
+
+const DIVORCE_JUDGMENT_VERIFICATION_TRANSITIONS: Record<JudgmentVerificationStatus, JudgmentVerificationStatus[]> = {
+  NOT_STARTED: ["PENDING"],
+  PENDING: ["VERIFIED", "UNVERIFIED", "CONFLICT_FOUND", "MANUAL_REVIEW"],
+  UNVERIFIED: ["PENDING", "MANUAL_REVIEW"],
+  CONFLICT_FOUND: ["PENDING", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["PENDING"],
+  VERIFIED: [],
+};
+
+const DIVORCE_SPOUSE_SYNC_TRANSITIONS: Record<DivorceSpouseSdidSyncStatus, DivorceSpouseSdidSyncStatus[]> = {
+  NOT_READY: ["PENDING"],
+  PENDING: ["IN_PROGRESS"],
+  IN_PROGRESS: ["IDENTITY_UPDATED", "FAILED", "MANUAL_REVIEW"],
+  FAILED: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["IN_PROGRESS"],
+  IDENTITY_UPDATED: [],
+};
+
+const DIVORCE_SYNC_TRANSITIONS: Record<DivorceSdidSyncStatus, DivorceSdidSyncStatus[]> = {
+  NOT_READY: ["PENDING"],
+  PENDING: ["IN_PROGRESS"],
+  IN_PROGRESS: ["BOTH_IDENTITIES_UPDATED", "PARTIAL_FAILURE", "FAILED", "MANUAL_REVIEW"],
+  PARTIAL_FAILURE: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  FAILED: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["IN_PROGRESS"],
+  BOTH_IDENTITIES_UPDATED: [],
+};
+
+export function canTransitionDivorceNotification(from: DivorceNotificationStatus, to: DivorceNotificationStatus): boolean {
+  return DIVORCE_NOTIFICATION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionDivorceNotification(from: DivorceNotificationStatus, to: DivorceNotificationStatus): void {
+  if (!canTransitionDivorceNotification(from, to)) {
+    throw new IllegalTransitionError("divorce notification", from, to);
+  }
+}
+
+export function canTransitionDivorceRegistration(from: DivorceRegistrationStatus, to: DivorceRegistrationStatus): boolean {
+  return DIVORCE_REGISTRATION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionDivorceRegistration(from: DivorceRegistrationStatus, to: DivorceRegistrationStatus): void {
+  if (!canTransitionDivorceRegistration(from, to)) {
+    throw new IllegalTransitionError("divorce registration", from, to);
+  }
+}
+
+export function canTransitionDivorceJudgmentVerification(from: JudgmentVerificationStatus, to: JudgmentVerificationStatus): boolean {
+  return DIVORCE_JUDGMENT_VERIFICATION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionDivorceJudgmentVerification(from: JudgmentVerificationStatus, to: JudgmentVerificationStatus): void {
+  if (!canTransitionDivorceJudgmentVerification(from, to)) {
+    throw new IllegalTransitionError("divorce judgment verification", from, to);
+  }
+}
+
+export function canTransitionDivorceSpouseSync(from: DivorceSpouseSdidSyncStatus, to: DivorceSpouseSdidSyncStatus): boolean {
+  return DIVORCE_SPOUSE_SYNC_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionDivorceSpouseSync(from: DivorceSpouseSdidSyncStatus, to: DivorceSpouseSdidSyncStatus): void {
+  if (!canTransitionDivorceSpouseSync(from, to)) {
+    throw new IllegalTransitionError("divorce spouse sync", from, to);
+  }
+}
+
+export function canTransitionDivorceSync(from: DivorceSdidSyncStatus, to: DivorceSdidSyncStatus): boolean {
+  return DIVORCE_SYNC_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionDivorceSync(from: DivorceSdidSyncStatus, to: DivorceSdidSyncStatus): void {
+  if (!canTransitionDivorceSync(from, to)) {
+    throw new IllegalTransitionError("divorce sync", from, to);
+  }
+}
+
+export const DIVORCE_NOTIFICATION_STATUS_LABELS: Record<DivorceNotificationStatus, string> = {
+  RECEIVED: "Received",
+  VALIDATION_PENDING: "Validation pending",
+  VALIDATED: "Validated",
+  RETURNED: "Returned",
+  CONVERTED_TO_REGISTRATION: "Converted to registration",
+  DUPLICATE: "Duplicate",
+  CANCELLED: "Cancelled",
+};
+
+export const DIVORCE_REGISTRATION_STATUS_LABELS: Record<DivorceRegistrationStatus, string> = {
+  DRAFT: "Draft",
+  SUBMITTED: "Submitted",
+  UNDER_REVIEW: "Under review",
+  CORRECTION_REQUIRED: "Correction required",
+  RESUBMITTED: "Resubmitted",
+  JUDGMENT_VERIFICATION: "Judgment verification",
+  FOREIGN_JUDGMENT_REVIEW: "Foreign judgment review",
+  EXCEPTION_REVIEW: "Exception review",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  REGISTERED: "Registered",
+  CANCELLED: "Cancelled",
+};
+
+export const DIVORCE_JUDGMENT_VERIFICATION_STATUS_LABELS: Record<JudgmentVerificationStatus, string> = {
+  NOT_STARTED: "Not started",
+  PENDING: "Pending",
+  VERIFIED: "Verified",
+  UNVERIFIED: "Unverified",
+  CONFLICT_FOUND: "Conflict found",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const DIVORCE_SYNC_STATUS_LABELS: Record<DivorceSdidSyncStatus, string> = {
+  NOT_READY: "Not ready",
+  PENDING: "Pending",
+  IN_PROGRESS: "In progress",
+  BOTH_IDENTITIES_UPDATED: "Both identities updated",
+  PARTIAL_FAILURE: "Partial synchronization failure",
+  FAILED: "Failed",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const DIVORCE_SPOUSE_SYNC_STATUS_LABELS: Record<DivorceSpouseSdidSyncStatus, string> = {
+  NOT_READY: "Not ready",
+  PENDING: "Pending",
+  IN_PROGRESS: "In progress",
+  IDENTITY_UPDATED: "Identity updated",
+  FAILED: "Failed",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const DIVORCE_REGISTRATION_TIMELINE_ORDER: DivorceRegistrationStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "REGISTERED",
+];
+
+/** Pure aggregator: combines both former spouses' independent sync
+ * sub-statuses into the case-level DivorceSdidSyncStatus (spec §23) — never
+ * lets one spouse's random outcome affect the other's. Identical shape to
+ * aggregateMarriageSyncStatus(). */
+export function aggregateDivorceSyncStatus(
+  spouse1: DivorceSpouseSdidSyncStatus,
+  spouse2: DivorceSpouseSdidSyncStatus
+): DivorceSdidSyncStatus {
+  if (spouse1 === "IDENTITY_UPDATED" && spouse2 === "IDENTITY_UPDATED") return "BOTH_IDENTITIES_UPDATED";
+  if ((spouse1 === "IDENTITY_UPDATED" && spouse2 === "FAILED") || (spouse2 === "IDENTITY_UPDATED" && spouse1 === "FAILED")) {
+    return "PARTIAL_FAILURE";
+  }
+  if (spouse1 === "FAILED" && spouse2 === "FAILED") return "FAILED";
+  if (spouse1 === "MANUAL_REVIEW" || spouse2 === "MANUAL_REVIEW") return "MANUAL_REVIEW";
+  if (spouse1 === "IN_PROGRESS" || spouse2 === "IN_PROGRESS") return "IN_PROGRESS";
+  if (spouse1 === "PENDING" || spouse2 === "PENDING") return "PENDING";
+  return "NOT_READY";
+}

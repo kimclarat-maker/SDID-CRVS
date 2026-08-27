@@ -14,6 +14,20 @@ import PublicDeathReportWizard from "@/screens/public/civilRegistration/death/re
 import DeathReportSuccess from "@/screens/public/civilRegistration/death/success";
 import PublicDeathCaseStatus from "@/screens/public/civilRegistration/death/case";
 import PublicDeathCorrectionResponse from "@/screens/public/civilRegistration/death/respond";
+import MarriageServiceLanding from "@/screens/public/civilRegistration/marriage";
+import MarriageDeclarationStart from "@/screens/public/civilRegistration/marriage/declaration";
+import PublicMarriageDeclarationWizard from "@/screens/public/civilRegistration/marriage/declaration/wizard";
+import MarriageDeclarationPayment from "@/screens/public/civilRegistration/marriage/declaration/payment";
+import MarriageDeclarationSuccess from "@/screens/public/civilRegistration/marriage/declaration/success";
+import MarriagePublicTracking from "@/screens/public/civilRegistration/marriage/tracking";
+import MarriagePartnerResponse from "@/screens/public/civilRegistration/marriage/respond";
+import MarriageAppointmentManage from "@/screens/public/civilRegistration/marriage/appointment";
+import DivorceServiceLanding from "@/screens/public/civilRegistration/divorce";
+import DivorceRegistrationStart from "@/screens/public/civilRegistration/divorce/declaration";
+import PublicDivorceRegistrationWizard from "@/screens/public/civilRegistration/divorce/declaration/wizard";
+import DivorceRegistrationSuccess from "@/screens/public/civilRegistration/divorce/declaration/success";
+import DivorcePublicTracking from "@/screens/public/civilRegistration/divorce/tracking";
+import DivorceCorrectionResponse from "@/screens/public/civilRegistration/divorce/respond";
 import Certificates from "@/screens/public/certificates";
 import BirthCertificateLanding from "@/screens/public/certificates/birth";
 import PublicBirthCertificateRequest from "@/screens/public/certificates/birth/request";
@@ -46,10 +60,22 @@ export const routes: NavigationType[] = [
   { path: "/civil-registration/death/report/:draftId/success", element: <DeathReportSuccess /> },
   { path: "/civil-registration/death/case/:reference", element: <PublicDeathCaseStatus /> },
   { path: "/civil-registration/death/respond/:token", element: <PublicDeathCorrectionResponse /> },
-  {
-    path: "/civil-registration/marriage",
-    element: <CivilRegistrationServicePage serviceId="marriage" />,
-  },
+  { path: "/civil-registration/marriage", element: <MarriageServiceLanding /> },
+  { path: "/civil-registration/marriage/declaration", element: <MarriageDeclarationStart /> },
+  { path: "/civil-registration/marriage/declaration/:draftId", element: <PublicMarriageDeclarationWizard /> },
+  { path: "/civil-registration/marriage/declaration/:draftId/review", element: <PublicMarriageDeclarationWizard /> },
+  { path: "/civil-registration/marriage/declaration/:draftId/payment", element: <MarriageDeclarationPayment /> },
+  { path: "/civil-registration/marriage/declaration/:draftId/success", element: <MarriageDeclarationSuccess /> },
+  { path: "/civil-registration/marriage/application/:reference", element: <MarriagePublicTracking /> },
+  { path: "/civil-registration/marriage/respond/:token", element: <MarriagePartnerResponse /> },
+  { path: "/civil-registration/marriage/appointment/:reference", element: <MarriageAppointmentManage /> },
+  { path: "/civil-registration/divorce", element: <DivorceServiceLanding /> },
+  { path: "/civil-registration/divorce/register", element: <DivorceRegistrationStart /> },
+  { path: "/civil-registration/divorce/register/:draftId", element: <PublicDivorceRegistrationWizard /> },
+  { path: "/civil-registration/divorce/register/:draftId/review", element: <PublicDivorceRegistrationWizard /> },
+  { path: "/civil-registration/divorce/register/:draftId/success", element: <DivorceRegistrationSuccess /> },
+  { path: "/civil-registration/divorce/case/:reference", element: <DivorcePublicTracking /> },
+  { path: "/civil-registration/divorce/respond/:token", element: <DivorceCorrectionResponse /> },
   { path: "/certificates", element: <Certificates /> },
   { path: "/certificates/birth", element: <BirthCertificateLanding /> },
   { path: "/certificates/birth/request", element: <PublicBirthCertificateRequest /> },

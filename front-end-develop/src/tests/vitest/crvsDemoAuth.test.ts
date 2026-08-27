@@ -23,8 +23,8 @@ describe("Existing SDID demo credentials are untouched", () => {
 });
 
 describe("CRVS demo credentials", () => {
-  it("documents exactly the eight CRVS roles (five birth-era plus three death-workflow roles), plus one dual-workspace account", () => {
-    expect(crvsDemoCredentials).toHaveLength(8);
+  it("documents exactly the thirteen CRVS roles (five birth-era, three death-workflow, two marriage-workflow, and three divorce-workflow roles), plus one dual-workspace account", () => {
+    expect(crvsDemoCredentials).toHaveLength(13);
     expect(crvsDemoCredentials.every((c) => c.workspaces.length === 1 && c.workspaces[0] === "CRVS")).toBe(
       true
     );

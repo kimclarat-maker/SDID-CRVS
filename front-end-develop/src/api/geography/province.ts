@@ -2,8 +2,17 @@ import toastMessage from "@/utils/common/toastMessage";
 import { ProvinceGETParameters } from "@/types/geography";
 import api from "..";
 import { ProvinceTypes } from "@/types/geography";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchProvinces,
+  demoFetchSingleProvince,
+  demoUpdateProvince,
+  demoDeleteProvince,
+  demoCreateProvince,
+} from "@/demo/services/geography";
 
 export const fetchProvinces = async (params?: ProvinceGETParameters) => {
+  if (isDemoMode()) return demoFetchProvinces(params);
   try {
     if (params && params?.offset && params?.offset > 0) {
       params.offset -= 1;
@@ -33,6 +42,7 @@ export const fetchProvinces = async (params?: ProvinceGETParameters) => {
 };
 
 export const fetchSingleProvince = async (id: string) => {
+  if (isDemoMode()) return demoFetchSingleProvince(id);
   try {
     const options = {
       method: "GET",
@@ -52,6 +62,7 @@ export const fetchSingleProvince = async (id: string) => {
 };
 
 export const updateProvince = async (params: ProvinceTypes) => {
+  if (isDemoMode()) return demoUpdateProvince(params);
   try {
     const options = {
       method: "PATCH",
@@ -68,6 +79,7 @@ export const updateProvince = async (params: ProvinceTypes) => {
 };
 
 export const deleteProvince = async (id: string) => {
+  if (isDemoMode()) return demoDeleteProvince(id);
   try {
     const options = {
       method: "DELETE",
@@ -85,6 +97,7 @@ export const deleteProvince = async (id: string) => {
 };
 
 export const createProvince = async (params: ProvinceTypes) => {
+  if (isDemoMode()) return demoCreateProvince(params);
   try {
     const options = {
       method: "POST",

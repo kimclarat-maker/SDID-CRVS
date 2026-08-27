@@ -1,5 +1,14 @@
 import { IrisTypes } from "@/types/IrisTypes";
 import axios from "axios";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoOpenIrisDevice,
+  demoCloseIrisDevice,
+  demoStartIrisDevice,
+  demoFetchLastAsBase64,
+  demoAbortIrisDevice,
+  demoManualCaptureIrisDevice,
+} from "@/demo/services/deviceServices";
 
 const IRIS_BASE = "https://localhost:9991/api/v1";
 
@@ -20,6 +29,7 @@ const abortIrisApi = `${IRIS_BASE}/iris/devices/abort`;
 const manualCaptureIrisApi = `${IRIS_BASE}/iris/devices/manual-capture`;
 
 export const openIrisDevice = async () => {
+  if (isDemoMode()) return demoOpenIrisDevice();
   try {
     const response = await axios(openIrisApi, {
       method: "POST",
@@ -39,6 +49,7 @@ export const openIrisDevice = async () => {
 };
 
 export const closeIrisDevice = async () => {
+  if (isDemoMode()) return demoCloseIrisDevice();
   try {
     const response = await axios(closeIrisApi, {
       method: "POST",
@@ -58,6 +69,7 @@ export const closeIrisDevice = async () => {
 };
 
 export const startIrisDevice = async (params: IrisTypes) => {
+  if (isDemoMode()) return demoStartIrisDevice();
   try {
     delete params.whiteLED;
     const response = await axios(startIrisApi, {
@@ -77,6 +89,7 @@ export const startIrisDevice = async (params: IrisTypes) => {
 };
 
 export const fetchLastAsBase64 = async (position: string) => {
+  if (isDemoMode()) return demoFetchLastAsBase64();
   try {
     const response = await axios(lastBase64Api + `?eye=${position}`, {
       method: "GET",
@@ -94,6 +107,7 @@ export const fetchLastAsBase64 = async (position: string) => {
 };
 
 export const abortIrisDevice = async () => {
+  if (isDemoMode()) return demoAbortIrisDevice();
   try {
     const response = await axios(abortIrisApi, {
       method: "POST",
@@ -113,6 +127,7 @@ export const abortIrisDevice = async () => {
 };
 
 export const manualCaptureIrisDevice = async () => {
+  if (isDemoMode()) return demoManualCaptureIrisDevice();
   try {
     const response = await axios(manualCaptureIrisApi, {
       method: "POST",

@@ -14,10 +14,10 @@ export const isDemoMode = (): boolean => {
 };
 
 export const DEMO_STORAGE_PREFIX = "sdid-demo";
-// Bumped from "3": DemoDatabase gained crvsDeathNotifications/
-// crvsDeathRegistrations — any localStorage blob seeded before that shape
+// Bumped from "5": DemoDatabase gained crvsDivorceNotifications/
+// crvsDivorceRegistrations — any localStorage blob seeded before that shape
 // existed must be force-reseeded rather than crash on missing fields.
-export const DEMO_DATA_VERSION = "4";
+export const DEMO_DATA_VERSION = "6";
 
 // Simulated network latency so loading states are visible, per spec section 22.
 export const demoDelay = <T>(value: T, ms?: number): Promise<T> =>

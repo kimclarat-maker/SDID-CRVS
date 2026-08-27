@@ -17,10 +17,60 @@ const toAccountRecord = (account: DemoAccount) => {
     email: account.email,
     phoneNumber: account.phoneNumber,
     status: account.status,
-    accessRole: { name: account.role, value: account.role },
+    accessRole: { _id: account.role, name: account.role, value: account.role },
     center: center ? { _id: center.id, name: center.name } : undefined,
     createdAt: account.createdAt,
+    idNumber: `DEMO-ACC-${account.id}`,
   };
+};
+
+export const demoFetchAccountByID = async (id: string) => {
+  const db = getDemoData();
+  const account = db.accounts.find((a) => a.id === id);
+  return demoDelay({ data: account ? toAccountRecord(account) : undefined });
+};
+
+export const demoRemoveAccountCenter = async (id: string) => {
+  let result: ReturnType<typeof toAccountRecord> | undefined;
+  updateDemoData((db) => {
+    const account = db.accounts.find((a) => a.id === id);
+    if (!account) return db;
+    account.centerId = "";
+    logAdminAction(db, "updated", "accounts", account.email, `Center removed from ${account.email}.`);
+    result = toAccountRecord(account);
+    return db;
+  });
+  return demoDelay({ data: { message: "Center removed successfully.", ...result } });
+};
+
+export const demoDeleteAccount = async (id: string) => {
+  updateDemoData((db) => {
+    const account = db.accounts.find((a) => a.id === id);
+    if (account) logAdminAction(db, "deleted", "accounts", account.email, `Account ${account.email} deleted.`);
+    db.accounts = db.accounts.filter((a) => a.id !== id);
+    return db;
+  });
+  return demoDelay({ data: { message: "Account deleted successfully." } });
+};
+
+export const demoDeleteCenter = async (id: string) => {
+  updateDemoData((db) => {
+    const center = db.centers.find((c) => c.id === id);
+    if (center) logAdminAction(db, "deleted", "centers", center.name, `Center ${center.name} deleted.`);
+    db.centers = db.centers.filter((c) => c.id !== id);
+    return db;
+  });
+  return demoDelay({ data: { message: "Center deleted successfully." } });
+};
+
+export const demoDeleteDevice = async (id: string) => {
+  updateDemoData((db) => {
+    const device = db.devices.find((d) => d.id === id);
+    if (device) logAdminAction(db, "deleted", "device", device.serialNumber, `Device ${device.serialNumber} deleted.`);
+    db.devices = db.devices.filter((d) => d.id !== id);
+    return db;
+  });
+  return demoDelay({ data: { message: "Device deleted successfully." } });
 };
 
 export const demoFetchAccounts = async (params: {
@@ -73,13 +123,26 @@ export const demoFetchCenters = async (params: {
   return demoDelay({ data: data.map(toCenterRecord), total });
 };
 
+// src/constants/deviceTypes.ts is the real taxonomy the biometric-capture
+// wizard keys off (getDeviceSerialNumber("FACE"/"IRIS"/"FINGERPRINT"/
+// "SIGNATURE") in biometricCapture/index.tsx) — the seeded DemoDeviceType
+// values are an unrelated lowercase naming used only for admin device-list
+// display, so map between the two here rather than renaming the seed type.
+const DEVICE_TYPE_TO_WIZARD_TYPE: Record<DemoDevice["type"], string> = {
+  camera: "FACE",
+  iris: "IRIS",
+  fingerprint: "FINGERPRINT",
+  signature_pad: "SIGNATURE",
+  laptop: "LAPTOP",
+};
+
 const toDeviceRecord = (device: DemoDevice) => {
   const db = getDemoData();
   const center = db.centers.find((c) => c.id === device.centerId);
   return {
     _id: device.id,
     serialNumber: device.serialNumber,
-    deviceType: device.type,
+    deviceType: DEVICE_TYPE_TO_WIZARD_TYPE[device.type] || device.type,
     item: device.type,
     status: device.status,
     center: center ? { _id: center.id, name: center.name } : undefined,

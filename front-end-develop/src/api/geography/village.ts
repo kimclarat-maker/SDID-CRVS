@@ -2,9 +2,18 @@ import toastMessage from "@/utils/common/toastMessage";
 import { VillageGETParameters } from "@/types/geography";
 import api from "..";
 import { VillageTypes } from "@/types/geography";
-import villages from "@/mocks/geo/villages";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchVillages,
+  demoFetchVillagesByCell,
+  demoFetchSingleVillages,
+  demoUpdateVillages,
+  demoDeleteVillages,
+  demoCreateVillages,
+} from "@/demo/services/geography";
 
 export const fetchVillages = async (params?: VillageGETParameters) => {
+  if (isDemoMode()) return demoFetchVillages(params);
   try {
     if (params && params?.offset && params?.offset > 0) {
       params.offset -= 1;
@@ -39,6 +48,8 @@ export const fetchVillagesByCell = async (
   offset?: number,
   limit?: number
 ) => {
+  if (isDemoMode())
+    return demoFetchVillagesByCell(cellId, status, offset, limit);
   try {
     const options = {
       method: "GET",
@@ -61,6 +72,7 @@ export const fetchVillagesByCell = async (
 };
 
 export const fetchSingleVillages = async (id: string) => {
+  if (isDemoMode()) return demoFetchSingleVillages(id);
   try {
     const options = {
       method: "GET",
@@ -80,6 +92,7 @@ export const fetchSingleVillages = async (id: string) => {
 };
 
 export const updateVillages = async (params: VillageTypes) => {
+  if (isDemoMode()) return demoUpdateVillages(params);
   try {
     const options = {
       method: "PATCH",
@@ -98,6 +111,7 @@ export const updateVillages = async (params: VillageTypes) => {
 };
 
 export const deleteVillages = async (id: string) => {
+  if (isDemoMode()) return demoDeleteVillages(id);
   try {
     const options = {
       method: "DELETE",
@@ -117,6 +131,7 @@ export const deleteVillages = async (id: string) => {
 };
 
 export const createVillages = async (params: VillageTypes) => {
+  if (isDemoMode()) return demoCreateVillages(params);
   try {
     const options = {
       method: "POST",

@@ -5,6 +5,7 @@ import { LanguageContext } from "@/context/LanguageContext";
 
 import { get } from "lodash";
 import ButtonCell from "@/components/table/button/buttonCell";
+import toastMessage from "@/utils/common/toastMessage";
 
 const { Column, HeaderCell, Cell } = LibTable;
 
@@ -37,7 +38,11 @@ function SupportingDocuments({ data, loading }: ListProps) {
           <HeaderCell>{translation.action}</HeaderCell>
           <ButtonCell
             dataKey="_id"
-            onClick={(rowData) => alert("Connected soon")}
+            onClick={(rowData) =>
+              rowData?.url
+                ? window.open(rowData.url, "_blank")
+                : toastMessage("info", `No file is attached to "${rowData?.name || "this document"}" in the demo environment.`)
+            }
           />
         </Column>
       </Table>

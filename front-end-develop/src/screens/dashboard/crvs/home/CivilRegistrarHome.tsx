@@ -28,9 +28,9 @@ export default function CivilRegistrarHome() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Unassigned" count={unassigned.length} icon="assignment_late" color="var(--status-info)" />
-        <CardCount name="Under review" count={underReview.length} icon="fact_check" color="var(--brand-primary-500, var(--status-info))" />
-        <CardCount name="Resubmitted" count={resubmitted.length} icon="outgoing_mail" color="var(--status-warning)" />
+        <CardCount name="Unassigned" count={unassigned.length} icon="assignment_late" color="var(--status-info)" onClick={() => navigate("/dashboard/crvs/review/unassigned")} />
+        <CardCount name="Under review" count={underReview.length} icon="fact_check" color="var(--brand-primary-500, var(--status-info))" onClick={() => navigate("/dashboard/crvs/review/my-reviews")} />
+        <CardCount name="Resubmitted" count={resubmitted.length} icon="outgoing_mail" color="var(--status-warning)" onClick={() => navigate("/dashboard/crvs/review/resubmitted")} />
       </div>
 
       <div className="crvs-section">

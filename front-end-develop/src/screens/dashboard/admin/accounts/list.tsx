@@ -54,6 +54,7 @@ const LinkCell = ({ rowData, dataKey, onClick, ...props }: any) => {
 
 function List({ data, totalPages, loading, fetchData }: ListProps) {
   const { translation } = useContext(LanguageContext);
+  const navigate = useNavigate();
   const [sortColumn, setSortColumn] = useState<keyof AccountType>();
   const [sortType, setSortType] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
@@ -110,6 +111,12 @@ function List({ data, totalPages, loading, fetchData }: ListProps) {
   };
 
   const actions: ActionType[] = [];
+
+  actions.push({
+    name: translation.view || "View profile",
+    icon: "visibility",
+    onClick: (rowData: any) => navigate(`/dashboard/admin/accounts/${rowData._id}`),
+  });
 
   if (defineAccess({ method: "UPDATE", module: "account" })) {
     actions.push({

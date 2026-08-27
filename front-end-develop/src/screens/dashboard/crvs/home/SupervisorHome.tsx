@@ -30,9 +30,9 @@ export default function SupervisorHome() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Late registrations" count={lateRegistrations.length} icon="schedule" color="var(--status-warning)" />
-        <CardCount name="Open exceptions" count={exceptions.length} icon="warning" color="var(--status-warning)" />
-        <CardCount name="Sync failures" count={syncFailures.length} icon="sync_problem" color="var(--status-danger)" />
+        <CardCount name="Late registrations" count={lateRegistrations.length} icon="schedule" color="var(--status-warning)" onClick={() => navigate("/dashboard/crvs/exceptions/late-registrations")} />
+        <CardCount name="Open exceptions" count={exceptions.length} icon="warning" color="var(--status-warning)" onClick={() => navigate("/dashboard/crvs/exceptions")} />
+        <CardCount name="Sync failures" count={syncFailures.length} icon="sync_problem" color="var(--status-danger)" onClick={() => navigate("/dashboard/crvs/exceptions/sync-failures")} />
       </div>
 
       <div className="crvs-section">

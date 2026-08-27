@@ -486,3 +486,136 @@
     border-top: 1px solid var(--border-default);
   }
 }
+
+/* Shared sticky action bar for long forms/review workspaces (marriage
+ * eligibility review, ceremony workspace, appointment detail) — a thin
+ * layout primitive (StickyActionBar.tsx) rather than per-page CSS, since
+ * marriage needs this pattern on more pages than death did. */
+.crvs-sticky-actionbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  gap: var(--content-gap-sm);
+  align-items: center;
+  padding: var(--content-gap-sm) var(--content-gap-md);
+  margin-top: var(--content-gap-lg);
+  background: var(--surface-card);
+  border-top: 1px solid var(--border-default);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.crvs-sticky-actionbar-start {
+  justify-content: flex-start;
+}
+
+.crvs-sticky-actionbar-end {
+  justify-content: flex-end;
+}
+
+.crvs-sticky-actionbar-between {
+  justify-content: space-between;
+}
+
+@media (max-width: 640px) {
+  .crvs-sticky-actionbar {
+    padding: var(--content-gap-xs) 16px;
+    margin: var(--content-gap-md) -16px 0;
+    flex-wrap: wrap;
+  }
+}
+
+/* Marriage-appointment calendar (month/week/agenda grid) — no calendar
+ * library, plain CSS grid; cell tones reuse the same --status-* tokens as
+ * crvs-status-pill rather than inventing new colors. */
+.crvs-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: var(--font-size-caption);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.crvs-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.crvs-calendar-cell {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-size: var(--font-size-caption);
+  cursor: default;
+}
+
+.crvs-calendar-cell.is-clickable {
+  cursor: pointer;
+}
+
+.crvs-calendar-cell.is-clickable:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.crvs-calendar-cell:disabled {
+  cursor: not-allowed;
+}
+
+.crvs-calendar-cell.is-outside {
+  opacity: 0.45;
+}
+
+.crvs-calendar-cell.is-today {
+  border-width: 2px;
+  border-color: var(--status-info);
+}
+
+.crvs-calendar-cell.is-special {
+  box-shadow: inset 0 0 0 2px var(--status-warning);
+}
+
+.crvs-calendar-cell-date {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-body-sm);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.crvs-calendar-cell-status {
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+
+.crvs-calendar-cell.status-available {
+  background: var(--status-success-bg);
+}
+
+.crvs-calendar-cell.status-reserved {
+  background: var(--status-info-bg);
+}
+
+.crvs-calendar-cell.status-full {
+  background: var(--status-warning-bg);
+}
+
+.crvs-calendar-cell.status-blocked,
+.crvs-calendar-cell.status-holiday {
+  background: var(--status-neutral-bg);
+}
+
+.crvs-calendar-agenda-row {
+  min-height: auto;
+  width: 100%;
+}

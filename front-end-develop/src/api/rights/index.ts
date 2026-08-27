@@ -1,8 +1,11 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters } from "@/types/AccessRight";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchAccessRights } from "@/demo/services/referenceLookups";
 
 export const fetchAccessRights = async (params?: GETParameters) => {
+  if (isDemoMode()) return demoFetchAccessRights(params);
   try {
     let url = `/configuration/access-rights`;
 

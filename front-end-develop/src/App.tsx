@@ -6,6 +6,7 @@ import "@/common/styles/bio-capture-styles.css";
 import Public from "@/navigation/Public";
 import Private from "@/navigation/Private";
 import PublicSite from "@/navigation/PublicSite";
+import Doc from "@/navigation/Doc";
 import { Suspense, useContext, useEffect, useState, useRef } from "react";
 import { LanguageContext } from "@/context/LanguageContext";
 import { translations } from "@/internationalization";
@@ -203,6 +204,7 @@ function App() {
                     <>
                       <PublicSite />
                       <Public />
+                      <Doc />
                       <SelfieProvider>
                         <Private />
                       </SelfieProvider>

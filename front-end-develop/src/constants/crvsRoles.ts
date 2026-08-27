@@ -17,6 +17,27 @@ export const CRVS_ROLES = {
   DEATH_NOTIFICATION_OFFICER: "DEATH_NOTIFICATION_OFFICER",
   MEDICAL_CERTIFIER: "MEDICAL_CERTIFIER",
   CRVS_AUDITOR: "CRVS_AUDITOR",
+  // Marriage-workflow roles. CIVIL_REGISTRAR/CRVS_SUPERVISOR/CRVS_AUDITOR are
+  // reused (extended below). MARRIAGE_REGISTRATION_OFFICER prepares/submits
+  // declarations. MARRIAGE_OFFICIANT is kept distinct from CIVIL_REGISTRAR —
+  // mirroring MEDICAL_CERTIFIER's separation from CIVIL_REGISTRAR for death —
+  // so the demo can exercise a genuine three-party maker-checker chain
+  // (preparing officer, conducting officiant, approving registrar).
+  MARRIAGE_REGISTRATION_OFFICER: "MARRIAGE_REGISTRATION_OFFICER",
+  MARRIAGE_OFFICIANT: "MARRIAGE_OFFICIANT",
+  // Divorce-workflow roles. CIVIL_REGISTRAR/CRVS_SUPERVISOR/CRVS_AUDITOR are
+  // reused (extended below) — only the genuinely new divorce-specific roles
+  // are added here. DIVORCE_REGISTRATION_OFFICER prepares/submits
+  // registration requests and validates/converts court notifications, mirror-
+  // ing MARRIAGE_REGISTRATION_OFFICER's shape. CRVS_RECORDS_OFFICER is a
+  // narrow read/certificate-request role over registered divorces (spec §3).
+  // COURT_NOTIFICATION_OFFICER is optional/demo-only — it stands in for the
+  // simulated court integration actor that pushes DivorceNotification
+  // records in (spec §3 "optional integration/demo role"), never a real
+  // court API caller.
+  DIVORCE_REGISTRATION_OFFICER: "DIVORCE_REGISTRATION_OFFICER",
+  CRVS_RECORDS_OFFICER: "CRVS_RECORDS_OFFICER",
+  COURT_NOTIFICATION_OFFICER: "COURT_NOTIFICATION_OFFICER",
 } as const;
 
 export type CrvsRole = (typeof CRVS_ROLES)[keyof typeof CRVS_ROLES];
@@ -121,6 +142,80 @@ export const CRVS_PERMISSIONS = {
   DEATH_EXCEPTIONS_VIEW: "crvs.death.exceptions.view",
   DEATH_DUPLICATE_RESOLVE: "crvs.death.duplicate.resolve",
   DEATH_IDENTITY_SEARCH: "crvs.death.identity_search.run",
+
+  // Marriage-declaration / eligibility-review / appointment / ceremony /
+  // registration lifecycle. Spec §3 lists these as marriage.x.y — translated
+  // into the existing crvs.marriage_x.y dot-namespace convention for
+  // consistency with every permission above, not adopted verbatim.
+  MARRIAGE_APPLICATION_CREATE: "crvs.marriage_application.create",
+  MARRIAGE_APPLICATION_EDIT: "crvs.marriage_application.edit",
+  MARRIAGE_APPLICATION_SUBMIT: "crvs.marriage_application.submit",
+  MARRIAGE_APPLICATION_VIEW: "crvs.marriage_application.view",
+  MARRIAGE_APPLICATION_REVIEW: "crvs.marriage_application.review",
+  MARRIAGE_CORRECTION_REQUEST: "crvs.marriage_application.request_correction",
+  MARRIAGE_CORRECTION_RESPOND: "crvs.marriage_application.respond_correction",
+  MARRIAGE_APPLICATION_APPROVE: "crvs.marriage_application.approve",
+  MARRIAGE_APPLICATION_REJECT: "crvs.marriage_application.reject",
+  MARRIAGE_IDENTITY_SEARCH: "crvs.marriage.identity_search.run",
+  MARRIAGE_DUPLICATE_RESOLVE: "crvs.marriage.duplicate.resolve",
+  MARRIAGE_PAYMENT_RECORD: "crvs.marriage.payment.record",
+  MARRIAGE_PAYMENT_WAIVE: "crvs.marriage.payment.waive",
+  MARRIAGE_APPOINTMENT_VIEW: "crvs.marriage_appointment.view",
+  MARRIAGE_APPOINTMENT_CREATE: "crvs.marriage_appointment.create",
+  MARRIAGE_APPOINTMENT_RESCHEDULE: "crvs.marriage_appointment.reschedule",
+  MARRIAGE_APPOINTMENT_CANCEL: "crvs.marriage_appointment.cancel",
+  MARRIAGE_CHECKIN_MANAGE: "crvs.marriage.checkin.manage",
+  MARRIAGE_CEREMONY_VIEW: "crvs.marriage_ceremony.view",
+  MARRIAGE_CEREMONY_CONDUCT: "crvs.marriage_ceremony.conduct",
+  MARRIAGE_CEREMONY_RECORD_OUTCOME: "crvs.marriage_ceremony.record_outcome",
+  MARRIAGE_REGISTRATION_CREATE: "crvs.marriage_registration.create",
+  MARRIAGE_REGISTRATION_APPROVE: "crvs.marriage_registration.approve",
+  MARRIAGE_REGISTERED_VIEW: "crvs.marriage_registered.view",
+  MARRIAGE_EXCEPTION_REVIEW: "crvs.marriage.exception.review",
+  MARRIAGE_EXCEPTIONS_VIEW: "crvs.marriage.exceptions.view",
+  MARRIAGE_OBJECTION_REVIEW: "crvs.marriage.objection.review",
+  MARRIAGE_OBJECTIONS_VIEW: "crvs.marriage.objections.view",
+  MARRIAGE_SDID_SYNC_VIEW: "crvs.marriage.sdid_sync.view",
+  MARRIAGE_SDID_SYNC_RETRY: "crvs.marriage.sdid_sync.retry",
+  MARRIAGE_CERTIFICATE_REQUEST: "crvs.marriage.certificate.request",
+  MARRIAGE_AUDIT_VIEW: "crvs.marriage.audit.view",
+  MARRIAGE_CASE_REASSIGN: "crvs.marriage.case.reassign",
+
+  // Divorce-notification / divorce-registration / judgment-verification /
+  // foreign-judgment-review / exception / SDID-sync / certificate lifecycle.
+  // Spec §3 lists these as divorce.x.y — translated into the existing
+  // crvs.divorce_x.y dot-namespace convention for consistency with every
+  // permission above, not adopted verbatim.
+  DIVORCE_NOTIFICATION_CREATE: "crvs.divorce_notification.create",
+  DIVORCE_NOTIFICATION_VIEW: "crvs.divorce_notification.view",
+  DIVORCE_NOTIFICATION_EDIT: "crvs.divorce_notification.edit",
+  DIVORCE_NOTIFICATION_SUBMIT: "crvs.divorce_notification.submit",
+  DIVORCE_NOTIFICATION_VALIDATE: "crvs.divorce_notification.validate",
+  DIVORCE_NOTIFICATION_RETURN: "crvs.divorce_notification.return",
+  DIVORCE_NOTIFICATION_MARK_DUPLICATE: "crvs.divorce_notification.mark_duplicate",
+  DIVORCE_NOTIFICATION_CONVERT: "crvs.divorce_notification.convert",
+  DIVORCE_REGISTRATION_CREATE: "crvs.divorce_registration.create",
+  DIVORCE_REGISTRATION_EDIT: "crvs.divorce_registration.edit",
+  DIVORCE_REGISTRATION_SUBMIT: "crvs.divorce_registration.submit",
+  DIVORCE_REGISTRATION_VIEW: "crvs.divorce_registration.view",
+  DIVORCE_REGISTRATION_REVIEW: "crvs.divorce_registration.review",
+  DIVORCE_CORRECTION_REQUEST: "crvs.divorce_registration.request_correction",
+  DIVORCE_CORRECTION_RESPOND: "crvs.divorce_registration.respond_correction",
+  DIVORCE_REGISTRATION_APPROVE: "crvs.divorce_registration.approve",
+  DIVORCE_REGISTRATION_REJECT: "crvs.divorce_registration.reject",
+  DIVORCE_REGISTRATION_REGISTER: "crvs.divorce_registration.register",
+  DIVORCE_JUDGMENT_VERIFY: "crvs.divorce.judgment.verify",
+  DIVORCE_FOREIGN_JUDGMENT_REVIEW: "crvs.divorce.foreign_judgment.review",
+  DIVORCE_EXCEPTION_REVIEW: "crvs.divorce.exception.review",
+  DIVORCE_EXCEPTIONS_VIEW: "crvs.divorce.exceptions.view",
+  DIVORCE_IDENTITY_SEARCH: "crvs.divorce.identity_search.run",
+  DIVORCE_DUPLICATE_RESOLVE: "crvs.divorce.duplicate.resolve",
+  DIVORCE_CASE_REASSIGN: "crvs.divorce.case.reassign",
+  DIVORCE_SDID_SYNC_VIEW: "crvs.divorce.sdid_sync.view",
+  DIVORCE_SDID_SYNC_RETRY: "crvs.divorce.sdid_sync.retry",
+  DIVORCE_CERTIFICATE_REQUEST: "crvs.divorce.certificate.request",
+  DIVORCE_AUDIT_VIEW: "crvs.divorce.audit.view",
+  DIVORCE_REGISTERED_VIEW: "crvs.divorce_registered.view",
 } as const;
 
 export type CrvsPermission = (typeof CRVS_PERMISSIONS)[keyof typeof CRVS_PERMISSIONS];
@@ -231,6 +326,45 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DEATH_MEDICO_LEGAL_REVIEW,
     CRVS_PERMISSIONS.DEATH_UNIDENTIFIED_REVIEW,
     CRVS_PERMISSIONS.DEATH_AUDIT_VIEW,
+    // Marriage workflow: review applications, request correction, approve/
+    // reject, route to exception or objection review, perform the final
+    // registration action, view registered marriages/sync status/audit
+    // history. Subject to the same maker-checker/jurisdiction/separation-of-
+    // duties gates as death — see canApproveMarriageCase(). Deliberately
+    // does NOT include ceremony conduct/record-outcome — that belongs to
+    // MARRIAGE_OFFICIANT, not the approving registrar.
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_REVIEW,
+    CRVS_PERMISSIONS.MARRIAGE_CORRECTION_REQUEST,
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_APPROVE,
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_REJECT,
+    CRVS_PERMISSIONS.MARRIAGE_EXCEPTION_REVIEW,
+    CRVS_PERMISSIONS.MARRIAGE_OBJECTION_REVIEW,
+    CRVS_PERMISSIONS.MARRIAGE_REGISTRATION_CREATE,
+    CRVS_PERMISSIONS.MARRIAGE_REGISTRATION_APPROVE,
+    CRVS_PERMISSIONS.MARRIAGE_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_CEREMONY_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_AUDIT_VIEW,
+    // Divorce workflow: review registrations, request correction, verify
+    // judgments, review foreign decisions, approve/reject/register, route to
+    // exception review, view registered divorces/sync status/audit history.
+    // Subject to the same maker-checker/jurisdiction/conflict-of-interest
+    // gates as marriage — see canApproveDivorceCase().
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_REVIEW,
+    CRVS_PERMISSIONS.DIVORCE_CORRECTION_REQUEST,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_APPROVE,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_REJECT,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_REGISTER,
+    CRVS_PERMISSIONS.DIVORCE_JUDGMENT_VERIFY,
+    CRVS_PERMISSIONS.DIVORCE_FOREIGN_JUDGMENT_REVIEW,
+    CRVS_PERMISSIONS.DIVORCE_EXCEPTION_REVIEW,
+    CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW,
   ],
   // Review late registrations and exceptions, resolve potential duplicates,
   // reassign cases, view workload, retry failed SDID synchronization, place
@@ -279,6 +413,42 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DEATH_SDID_SYNC_RETRY,
     CRVS_PERMISSIONS.DEATH_EXCEPTIONS_VIEW,
     CRVS_PERMISSIONS.DEATH_AUDIT_VIEW,
+    // Marriage workflow: exception/objection review and queue visibility,
+    // case reassignment, duplicate/conflict resolution, SDID sync oversight
+    // + retry, fee-waiver authority, appointment reschedule/cancel escalation,
+    // audit history. No routine application drafting or registration
+    // approval unless separately assigned.
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_EXCEPTION_REVIEW,
+    CRVS_PERMISSIONS.MARRIAGE_EXCEPTIONS_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_OBJECTION_REVIEW,
+    CRVS_PERMISSIONS.MARRIAGE_OBJECTIONS_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_CASE_REASSIGN,
+    CRVS_PERMISSIONS.MARRIAGE_DUPLICATE_RESOLVE,
+    CRVS_PERMISSIONS.MARRIAGE_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_SDID_SYNC_RETRY,
+    CRVS_PERMISSIONS.MARRIAGE_PAYMENT_WAIVE,
+    CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_RESCHEDULE,
+    CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_CANCEL,
+    CRVS_PERMISSIONS.MARRIAGE_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_AUDIT_VIEW,
+    // Divorce workflow: exception queue visibility and resolution, case
+    // reassignment (with its own audit entry, spec §4), duplicate
+    // resolution, SDID sync oversight + retry, foreign-judgment legal
+    // review, audit history. No routine registration drafting or approval
+    // unless separately assigned.
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_EXCEPTION_REVIEW,
+    CRVS_PERMISSIONS.DIVORCE_EXCEPTIONS_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_FOREIGN_JUDGMENT_REVIEW,
+    CRVS_PERMISSIONS.DIVORCE_CASE_REASSIGN,
+    CRVS_PERMISSIONS.DIVORCE_DUPLICATE_RESOLVE,
+    CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_RETRY,
+    CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW,
   ],
   // Configure certificate templates, fee rules, validity/verification
   // settings, delivery channels; manage permissions. Deliberately carries
@@ -318,6 +488,88 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DEATH_REGISTRATION_VIEW,
     CRVS_PERMISSIONS.DEATH_AUDIT_VIEW,
     CRVS_PERMISSIONS.AUDIT_VIEW,
+    // Read-only oversight of the marriage workflow — same shape as death
+    // above, no create/edit/approve authority.
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_AUDIT_VIEW,
+    // Read-only oversight of the divorce workflow — same shape as marriage
+    // above, no create/edit/approve authority.
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW,
+  ],
+  // Prepares, edits, and submits marriage declarations; runs identity search
+  // and resolves duplicate/near-duplicate flags; records demo payments;
+  // schedules appointments once an application is approved; responds to
+  // corrections; requests marriage certificates. No approval, no
+  // registration, no ceremony authority (spec §3).
+  MARRIAGE_REGISTRATION_OFFICER: [
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_CREATE,
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_EDIT,
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_SUBMIT,
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_CORRECTION_RESPOND,
+    CRVS_PERMISSIONS.MARRIAGE_IDENTITY_SEARCH,
+    CRVS_PERMISSIONS.MARRIAGE_DUPLICATE_RESOLVE,
+    CRVS_PERMISSIONS.MARRIAGE_PAYMENT_RECORD,
+    CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_CREATE,
+    CRVS_PERMISSIONS.MARRIAGE_CERTIFICATE_REQUEST,
+  ],
+  // Conducts the civil ceremony and manages physical check-in — kept
+  // distinct from CIVIL_REGISTRAR (spec §3 "if officiation is operationally
+  // separate") so a ceremony's conductor and the case's final approver can
+  // always be different people when marriagePolicyConfig.ceremony.
+  // separationOfDutiesRequired is set. No application approval/rejection, no
+  // registration authority.
+  MARRIAGE_OFFICIANT: [
+    CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_CHECKIN_MANAGE,
+    CRVS_PERMISSIONS.MARRIAGE_CEREMONY_VIEW,
+    CRVS_PERMISSIONS.MARRIAGE_CEREMONY_CONDUCT,
+    CRVS_PERMISSIONS.MARRIAGE_CEREMONY_RECORD_OUTCOME,
+  ],
+  // Prepares, edits, and submits divorce registration requests across every
+  // submission source (applicant, both former spouses, interested person,
+  // staff-assisted, foreign decision); validates and converts court
+  // notifications into registrations; runs identity/marriage search and
+  // resolves duplicate flags; responds to corrections; requests divorce
+  // certificates. No approval, no judgment verification/foreign-review
+  // authority, no registration authority (spec §3).
+  DIVORCE_REGISTRATION_OFFICER: [
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VALIDATE,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_RETURN,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_MARK_DUPLICATE,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_CONVERT,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_CREATE,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_EDIT,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_SUBMIT,
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_CORRECTION_RESPOND,
+    CRVS_PERMISSIONS.DIVORCE_IDENTITY_SEARCH,
+    CRVS_PERMISSIONS.DIVORCE_DUPLICATE_RESOLVE,
+    CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_CERTIFICATE_REQUEST,
+  ],
+  // Narrow read/certificate-request role over registered divorces (spec §3
+  // "divorce-eligible for a divorce record or certificate") — no drafting,
+  // review, or approval authority at all.
+  CRVS_RECORDS_OFFICER: [
+    CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_CERTIFICATE_REQUEST,
+  ],
+  // Optional/demo-only role standing in for the simulated court integration
+  // (spec §3, §5A) — creates and submits DivorceNotification records only,
+  // never a registration, never any review/approval authority.
+  COURT_NOTIFICATION_OFFICER: [
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_CREATE,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_EDIT,
+    CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_SUBMIT,
   ],
 };
 
@@ -330,4 +582,9 @@ export const CRVS_ROLE_LABELS: Record<CrvsRole, string> = {
   DEATH_NOTIFICATION_OFFICER: "Death Notification Officer",
   MEDICAL_CERTIFIER: "Medical Certifier",
   CRVS_AUDITOR: "CRVS Auditor",
+  MARRIAGE_REGISTRATION_OFFICER: "Marriage Registration Officer",
+  MARRIAGE_OFFICIANT: "Marriage Officiant",
+  DIVORCE_REGISTRATION_OFFICER: "Divorce Registration Officer",
+  CRVS_RECORDS_OFFICER: "CRVS Records Officer",
+  COURT_NOTIFICATION_OFFICER: "Court Notification Officer",
 };

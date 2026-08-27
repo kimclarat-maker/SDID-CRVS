@@ -27,6 +27,9 @@ import { citizenships } from "@/constants/citizenship";
 import capitalizeText from "@/utils/common/capitalizeText";
 import AcountLogs from "./accLogs";
 import { getStorage } from "@/utils/storage";
+import { isDemoMode } from "@/demo/config";
+import { demoSaveAccount, demoRemoveAccountCenter } from "@/demo/services/administration";
+import { DemoRole } from "@/demo/types";
 
 function Profile() {
   const { translation } = useContext(LanguageContext);
@@ -118,6 +121,21 @@ function Profile() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
+        if (isDemoMode()) {
+          const res = await demoSaveAccount({
+            _id: data._id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            phoneNumber: data.phoneNumber,
+            role: (values.accessRole?.value as DemoRole) || (data.accessRole?._id as DemoRole),
+            centerId: values?.center?.value || "",
+            status: data.status,
+          });
+          onSuccess(res.data);
+          return;
+        }
+
         let method = "PATCH";
         let url = `/accounts/${data._id}`;
         let body = {
@@ -184,6 +202,12 @@ function Profile() {
     try {
       if (data && data._id) {
         setRemoveLoader(true);
+
+        if (isDemoMode()) {
+          const res = await demoRemoveAccountCenter(data._id);
+          onSuccess(res.data);
+          return;
+        }
 
         let body = {
           centerId: "",

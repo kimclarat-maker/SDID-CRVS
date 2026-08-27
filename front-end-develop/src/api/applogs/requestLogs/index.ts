@@ -2,6 +2,8 @@ import toastMessage from "@/utils/common/toastMessage";
 import { GETByRequestIdentifierLogsParameters } from "@/types/LogsType";
 import api from "../..";
 import { defineAccess } from "@/utils/common/permissions";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchRequestByIdentifierLogs } from "@/demo/services/logs";
 
 export const fetchRequestByIdentifierLogs = async (
   params?: GETByRequestIdentifierLogsParameters
@@ -11,6 +13,8 @@ export const fetchRequestByIdentifierLogs = async (
     const hasAccess = defineAccess({ method: "get", module: "logs" });
 
     if (!hasAccess) return;
+
+    if (isDemoMode()) return demoFetchRequestByIdentifierLogs();
 
     if (!params?.identifier)
       return toastMessage("error", "MISSING PARAMS: identifier ");

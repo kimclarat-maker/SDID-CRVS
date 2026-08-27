@@ -1,6 +1,8 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters, ReportType } from "@/types/Report";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import { demoFetchReports } from "@/demo/services/adminOps";
 
 interface ApiResponse {
   data: ReportType[];
@@ -10,6 +12,7 @@ interface ApiResponse {
 export const fetchReports = async (
   params: GETParameters
 ): Promise<ApiResponse | undefined> => {
+  if (isDemoMode()) return demoFetchReports();
   try {
     const options = {
       method: "GET",

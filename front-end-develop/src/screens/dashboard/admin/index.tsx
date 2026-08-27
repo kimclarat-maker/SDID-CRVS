@@ -17,6 +17,7 @@ import Notifications from "./notifications";
 import Alerts from "./alerts";
 import Centers from "./center";
 import AppAccounts from "./accounts";
+import AccountProfile from "./accounts/profile";
 import Devices from "./devices";
 import Logs from "./applogs";
 import Settings from "./settings";
@@ -95,6 +96,10 @@ export const routes: NavigationType[] = [
   {
     path: "/accounts",
     element: <AppAccounts />
+  },
+  {
+    path: "/accounts/:accountId",
+    element: <AccountProfile />
   },
   {
     path: "/devices",

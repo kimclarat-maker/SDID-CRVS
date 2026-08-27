@@ -14,6 +14,9 @@ import { seedCrvsRegistrations, seedCrvsFoundationalIdentities } from "./crvsReg
 import { seedCrvsCertificateRequests, seedCrvsCertificates, seedCrvsCertificateConfig } from "./crvsCertificates";
 import { seedCrvsDeathNotifications } from "./crvsDeathNotifications";
 import { seedCrvsDeathRegistrations, seedDeathLinkedFoundationalIdentities } from "./crvsDeathRegistrations";
+import { seedCrvsMarriageApplications, seedMarriageLinkedFoundationalIdentities } from "./crvsMarriageApplications";
+import { seedCrvsMarriageAppointments, seedCrvsMarriageCeremonies } from "./crvsMarriageAppointments";
+import { seedCrvsDivorceNotifications, seedCrvsDivorceRegistrations, seedDivorceLinkedFoundationalIdentities } from "./crvsDivorceRegistrations";
 
 export const buildDemoDatabase = (): DemoDatabase => {
   const centers = seedCenters();
@@ -35,12 +38,19 @@ export const buildDemoDatabase = (): DemoDatabase => {
   const crvsFoundationalIdentities = [
     ...seedCrvsFoundationalIdentities(),
     ...seedDeathLinkedFoundationalIdentities(),
+    ...seedMarriageLinkedFoundationalIdentities(),
+    ...seedDivorceLinkedFoundationalIdentities(),
   ];
   const crvsCertificateRequests = seedCrvsCertificateRequests();
   const crvsCertificates = seedCrvsCertificates();
   const crvsCertificateConfig = seedCrvsCertificateConfig();
   const crvsDeathNotifications = seedCrvsDeathNotifications();
   const crvsDeathRegistrations = seedCrvsDeathRegistrations();
+  const crvsMarriageApplications = seedCrvsMarriageApplications();
+  const crvsMarriageAppointments = seedCrvsMarriageAppointments();
+  const crvsMarriageCeremonies = seedCrvsMarriageCeremonies();
+  const crvsDivorceNotifications = seedCrvsDivorceNotifications();
+  const crvsDivorceRegistrations = seedCrvsDivorceRegistrations();
 
   return {
     version: DEMO_DATA_VERSION,
@@ -61,5 +71,10 @@ export const buildDemoDatabase = (): DemoDatabase => {
     crvsCertificateConfig,
     crvsDeathNotifications,
     crvsDeathRegistrations,
+    crvsMarriageApplications,
+    crvsMarriageAppointments,
+    crvsMarriageCeremonies,
+    crvsDivorceNotifications,
+    crvsDivorceRegistrations,
   };
 };

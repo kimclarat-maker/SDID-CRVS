@@ -7,6 +7,11 @@ import type {
   CertificateConfig,
   DeathNotification,
   DeathRegistrationCase,
+  MarriageApplication,
+  MarriageAppointment,
+  MarriageCeremony,
+  DivorceNotification,
+  DivorceRegistration,
 } from "@/domain/crvs/types";
 
 export type {
@@ -18,6 +23,11 @@ export type {
   CertificateConfig,
   DeathNotification,
   DeathRegistrationCase,
+  MarriageApplication,
+  MarriageAppointment,
+  MarriageCeremony,
+  DivorceNotification,
+  DivorceRegistration,
 };
 
 export type DemoRole =
@@ -155,6 +165,11 @@ export type DemoApplication = {
   processingDays?: number;
   exceptionReason?: string;
   syncedToCentral?: boolean;
+  // Set by demoPushToSdidCore/demoPushBiometricRefreshToCore
+  // (src/demo/services/enrollmentBiometrics.ts) so the citizen-profile
+  // header's "Push to SDID Core" vs "Push Biometric Refresh" toggle
+  // (src/components/profile/header.tsx) reflects reality after either push.
+  syncedToCore?: boolean;
 };
 
 export type DemoAppointmentStatus =
@@ -222,4 +237,9 @@ export type DemoDatabase = {
   crvsCertificateConfig: CertificateConfig;
   crvsDeathNotifications: DeathNotification[];
   crvsDeathRegistrations: DeathRegistrationCase[];
+  crvsMarriageApplications: MarriageApplication[];
+  crvsMarriageAppointments: MarriageAppointment[];
+  crvsMarriageCeremonies: MarriageCeremony[];
+  crvsDivorceNotifications: DivorceNotification[];
+  crvsDivorceRegistrations: DivorceRegistration[];
 };

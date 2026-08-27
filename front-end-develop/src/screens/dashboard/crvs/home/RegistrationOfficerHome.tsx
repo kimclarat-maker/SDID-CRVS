@@ -26,9 +26,9 @@ export default function RegistrationOfficerHome() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Drafts" count={drafts.length} icon="edit_document" color="var(--status-neutral)" />
-        <CardCount name="Correction required" count={correctionRequired.length} icon="undo" color="var(--status-warning)" />
-        <CardCount name="Submitted" count={submitted.length} icon="send" color="var(--status-info)" />
+        <CardCount name="Drafts" count={drafts.length} icon="edit_document" color="var(--status-neutral)" onClick={() => navigate("/dashboard/crvs/births/drafts")} />
+        <CardCount name="Correction required" count={correctionRequired.length} icon="undo" color="var(--status-warning)" onClick={() => navigate("/dashboard/crvs/births/corrections")} />
+        <CardCount name="Submitted" count={submitted.length} icon="send" color="var(--status-info)" onClick={() => navigate("/dashboard/crvs/births/submitted")} />
       </div>
 
       <div className="crvs-section">

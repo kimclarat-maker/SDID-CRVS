@@ -22,10 +22,10 @@ export default function BirthNotificationOfficerHome() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Drafts" count={drafts.length} icon="edit_document" color="var(--status-neutral)" />
-        <CardCount name="Submitted" count={submitted.length} icon="outgoing_mail" color="var(--status-info)" />
-        <CardCount name="Returned" count={returned.length} icon="undo" color="var(--status-warning)" />
-        <CardCount name="Accepted" count={accepted.length} icon="check_circle" color="var(--status-success)" />
+        <CardCount name="Drafts" count={drafts.length} icon="edit_document" color="var(--status-neutral)" onClick={() => navigate("/dashboard/crvs/notifications/drafts")} />
+        <CardCount name="Submitted" count={submitted.length} icon="outgoing_mail" color="var(--status-info)" onClick={() => navigate("/dashboard/crvs/notifications/submitted")} />
+        <CardCount name="Returned" count={returned.length} icon="undo" color="var(--status-warning)" onClick={() => navigate("/dashboard/crvs/notifications/returned")} />
+        <CardCount name="Accepted" count={accepted.length} icon="check_circle" color="var(--status-success)" onClick={() => navigate("/dashboard/crvs/notifications/accepted")} />
       </div>
 
       <div className="crvs-section">

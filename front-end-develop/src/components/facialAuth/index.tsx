@@ -23,6 +23,8 @@ import { defineAccess } from "@/utils/common/permissions";
 import { pairValidatorDirectSkipRequestCode } from "@/api/skipSelfie";
 import { getStorage } from "@/utils/storage";
 import Checkbox from "../checkbox";
+import { isDemoMode } from "@/demo/config";
+import { DEMO_PLACEHOLDER_IMAGE } from "@/demo/services/enrollmentBiometrics";
 
 interface Props {
   prenrollmentId?: string;
@@ -123,7 +125,12 @@ const FacialAuth: React.FC<Props> = ({
   const handleCapture = async () => {
     try {
       setCanRessign(false);
-      const imageSrc: any = webcamRef.current?.getScreenshot();
+      // No real webcam is available in demo mode — fall back to a
+      // placeholder photo so the facial-auth step can still be completed
+      // (spec: auto-simulate capture steps with dummy data).
+      const imageSrc: any =
+        webcamRef.current?.getScreenshot() ||
+        (isDemoMode() ? DEMO_PLACEHOLDER_IMAGE : undefined);
 
       setLoading(true);
 

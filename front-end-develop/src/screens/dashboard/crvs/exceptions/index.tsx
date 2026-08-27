@@ -38,9 +38,15 @@ export default function Exceptions() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Late registrations" count={lateRegistrations.length} icon="schedule" color="var(--status-warning)" />
-        <CardCount name="Exception review" count={exceptionReview.length} icon="report" color="var(--status-warning)" />
-        <CardCount name="Sync failures" count={syncFailures.length} icon="sync_problem" color="var(--status-danger)" />
+        <CardCount name="Late registrations" count={lateRegistrations.length} icon="schedule" color="var(--status-warning)" onClick={() => navigate("/dashboard/crvs/exceptions/late-registrations")} />
+        <CardCount
+          name="Exception review"
+          count={exceptionReview.length}
+          icon="report"
+          color="var(--status-warning)"
+          onClick={() => document.getElementById("exceptions-combined-table")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        />
+        <CardCount name="Sync failures" count={syncFailures.length} icon="sync_problem" color="var(--status-danger)" onClick={() => navigate("/dashboard/crvs/exceptions/sync-failures")} />
       </div>
 
       <div className="crvs-filter-bar">
@@ -49,7 +55,7 @@ export default function Exceptions() {
         <Button text="Sync failures" appearance="ghost" onClick={() => navigate("/dashboard/crvs/exceptions/sync-failures")} testId="tab-sync-failures" />
       </div>
 
-      <div className="crvs-section">
+      <div className="crvs-section" id="exceptions-combined-table">
         <CaseQueueTable
           rows={combined}
           columns={columns}

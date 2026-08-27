@@ -153,6 +153,128 @@ export default function CrvsSidebar() {
       icon: "history",
       route: "/dashboard/crvs/death-audit",
     },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW) && {
+      name: "Marriage registration",
+      icon: "favorite",
+      route: "/dashboard/crvs/marriages",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_APPLICATION_VIEW) && {
+      name: "Marriage applications",
+      icon: "assignment",
+      route: "/dashboard/crvs/marriage-applications",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_APPLICATION_CREATE) && {
+      name: "New marriage declaration",
+      icon: "add_circle",
+      route: "/dashboard/crvs/marriage-applications/new",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_APPLICATION_REVIEW) && {
+      name: "Marriage review queue",
+      icon: "fact_check",
+      route: "/dashboard/crvs/marriage-review",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_CORRECTION_REQUEST) && {
+      name: "Marriage corrections",
+      icon: "edit_note",
+      route: "/dashboard/crvs/marriage-corrections",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW) && {
+      name: "Marriage appointments",
+      icon: "event",
+      route: "/dashboard/crvs/marriage-appointments",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_APPOINTMENT_VIEW) && {
+      name: "Appointment calendar",
+      icon: "calendar_month",
+      route: "/dashboard/crvs/marriage-appointments/calendar",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_CEREMONY_VIEW) && {
+      name: "Today's ceremonies",
+      icon: "celebration",
+      route: "/dashboard/crvs/marriage-ceremonies",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_OBJECTIONS_VIEW) && {
+      name: "Marriage objections",
+      icon: "flag",
+      route: "/dashboard/crvs/marriage-objections",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_EXCEPTIONS_VIEW) && {
+      name: "Marriage exceptions",
+      icon: "warning",
+      route: "/dashboard/crvs/marriage-exceptions",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_REGISTERED_VIEW) && {
+      name: "Registered marriages",
+      icon: "verified",
+      route: "/dashboard/crvs/registered-marriages",
+    },
+    (hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_SDID_SYNC_RETRY) ||
+      hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_SDID_SYNC_VIEW)) && {
+      name: "Marriage sync failures",
+      icon: "sync_problem",
+      route: "/dashboard/crvs/marriage-sync-failures",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.MARRIAGE_AUDIT_VIEW) && {
+      name: "Marriage audit history",
+      icon: "history",
+      route: "/dashboard/crvs/marriage-audit",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW) && {
+      name: "Divorce registration",
+      icon: "heart_broken",
+      route: "/dashboard/crvs/divorces",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW) && {
+      name: "Divorce notifications",
+      icon: "gavel",
+      route: "/dashboard/crvs/divorce-notifications",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW) && {
+      name: "Divorce registrations",
+      icon: "assignment",
+      route: "/dashboard/crvs/divorce-registrations",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_REGISTRATION_CREATE) && {
+      name: "New divorce registration",
+      icon: "add_circle",
+      route: "/dashboard/crvs/divorce-registrations/new",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_REGISTRATION_REVIEW) && {
+      name: "Divorce review queue",
+      icon: "fact_check",
+      route: "/dashboard/crvs/divorce-review",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_CORRECTION_REQUEST) && {
+      name: "Divorce corrections",
+      icon: "edit_note",
+      route: "/dashboard/crvs/divorce-corrections",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_FOREIGN_JUDGMENT_REVIEW) && {
+      name: "Foreign divorces",
+      icon: "public",
+      route: "/dashboard/crvs/foreign-divorces",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_EXCEPTIONS_VIEW) && {
+      name: "Divorce exceptions",
+      icon: "warning",
+      route: "/dashboard/crvs/divorce-exceptions",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW) && {
+      name: "Registered divorces",
+      icon: "verified",
+      route: "/dashboard/crvs/registered-divorces",
+    },
+    (hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_RETRY) ||
+      hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_VIEW)) && {
+      name: "Divorce sync failures",
+      icon: "sync_problem",
+      route: "/dashboard/crvs/divorce-sync-failures",
+    },
+    hasWorkspacePermission("CRVS", CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW) && {
+      name: "Divorce audit history",
+      icon: "history",
+      route: "/dashboard/crvs/divorce-audit",
+    },
   ].filter(Boolean) as CrvsMenuItem[];
 
   const isSmallScreen = isPhone || isTablet;

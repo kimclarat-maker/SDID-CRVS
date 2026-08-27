@@ -29,6 +29,16 @@ export const DEATH_NOTIFICATION_OFFICER_DEMO_NAME = "Death Notification Officer"
 export const MEDICAL_CERTIFIER_DEMO_NAME = "Medical Certifier";
 export const CRVS_AUDITOR_DEMO_NAME = "CRVS Auditor";
 
+// Marriage-workflow demo actors. CIVIL_REGISTRAR_DEMO_ID/
+// CRVS_SUPERVISOR_DEMO_ID/CRVS_AUDITOR_DEMO_ID above are reused for marriage
+// too (see constants/crvsRoles.ts) — only the two genuinely new
+// marriage-specific roles get new ids.
+export const MARRIAGE_REGISTRATION_OFFICER_DEMO_ID = "marriage.officer@demo.identity.local";
+export const MARRIAGE_OFFICIANT_DEMO_ID = "marriage.officiant@demo.identity.local";
+
+export const MARRIAGE_REGISTRATION_OFFICER_DEMO_NAME = "Marriage Registration Officer";
+export const MARRIAGE_OFFICIANT_DEMO_NAME = "Marriage Officiant";
+
 // Matches DEMO_CRVS_FACILITY in demo/session.ts so jurisdiction/facility
 // guard checks agree between the logged-in assignment and seeded case data.
 export const DEMO_FACILITY_ID = "FAC-DEMO-01";
@@ -36,3 +46,20 @@ export const DEMO_FACILITY_NAME = "Demo District Health Centre";
 export const DEMO_JURISDICTION = "Demo District";
 export const OTHER_JURISDICTION = "Other District";
 export const DEMO_PROCESSING_OFFICE = "Demo District Registration Office";
+export const DEMO_MARRIAGE_OFFICE_ID = "OFF-MARRIAGE-DEMO-01";
+export const DEMO_MARRIAGE_OFFICE_NAME = "Demo Sector Civil Registration Office";
+
+// Divorce-workflow demo actors. CIVIL_REGISTRAR_DEMO_ID/CRVS_SUPERVISOR_DEMO_ID/
+// CRVS_AUDITOR_DEMO_ID above are reused for divorce too (see
+// constants/crvsRoles.ts) — only the genuinely new divorce-specific roles
+// get new ids.
+export const DIVORCE_REGISTRATION_OFFICER_DEMO_ID = "divorce.officer@demo.identity.local";
+export const CRVS_RECORDS_OFFICER_DEMO_ID = "crvs.records@demo.identity.local";
+export const COURT_NOTIFICATION_OFFICER_DEMO_ID = "court.notifier@demo.identity.local";
+
+export const DIVORCE_REGISTRATION_OFFICER_DEMO_NAME = "Divorce Registration Officer";
+export const CRVS_RECORDS_OFFICER_DEMO_NAME = "CRVS Records Officer";
+export const COURT_NOTIFICATION_OFFICER_DEMO_NAME = "Court Notification Officer";
+
+export const DEMO_DIVORCE_OFFICE_ID = "OFF-DIVORCE-DEMO-01";
+export const DEMO_DIVORCE_OFFICE_NAME = "Demo Sector Civil Registration Office";

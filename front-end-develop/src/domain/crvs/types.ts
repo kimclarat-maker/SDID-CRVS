@@ -425,6 +425,17 @@ export type FoundationalIdentity = {
   idempotencyKey: string;
   deceasedAt?: string;
   deceasedByDeathRegistrationReference?: string;
+  // Marriage-SDID-sync fields (spec §8). Never used to merge two identities
+  // together — see demo/services/crvsMarriageSdidSync.ts: only this
+  // identity's own marital-status field and relationship list are mutated,
+  // in place, never its name/NIN/nationality/address.
+  maritalStatus?: "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED";
+  maritalStatusUpdatedAt?: string;
+  maritalStatusUpdatedByMarriageReference?: string;
+  // Doubles as this identity's visible "SDID history" entry for each
+  // marriage event (spec §8.6 "display the event in each identity's SDID
+  // history") — rendered directly, not a separate history log.
+  relationships?: MarriageRelationship[];
 };
 
 // ---------------------------------------------------------------------------
@@ -1194,4 +1205,1282 @@ export type DeathRegistrationCase = {
 
   statusHistory: DeathRegistrationStatusHistoryEntry[];
   version: number;
+};
+
+// ---------------------------------------------------------------------------
+// Marriage-declaration / marriage-registration workflow types. Reuses shared
+// shapes (Witness, EvidenceItem, VerificationState, IdentityDocumentType,
+// DuplicateMatchLevel) the same way birth/death do, but is genuinely
+// two-party throughout — every identity, verification, witness list and SDID
+// sync result exists once per spouse, not once per case. Appointment and
+// ceremony are modeled as their own sub-entities with their own small status
+// machines (see statusMachines.ts) rather than folded into the application
+// status, mirroring how SdidSyncStatus is kept separate from the birth/death
+// registration status.
+
+export type MarriageApplicationStatus =
+  | "DRAFT"
+  | "PARTNER_VERIFICATION_REQUIRED"
+  | "SUBMITTED"
+  | "ELIGIBILITY_REVIEW"
+  | "CORRECTION_REQUIRED"
+  | "RESUBMITTED"
+  | "PAYMENT_PENDING"
+  | "PAID"
+  | "APPROVED"
+  | "REJECTED"
+  | "APPOINTMENT_SCHEDULED"
+  | "READY_FOR_CEREMONY"
+  | "CEREMONY_COMPLETED"
+  | "NO_SHOW"
+  | "POSTPONED"
+  | "CANCELLED"
+  | "REGISTERED";
+
+export type MarriageAppointmentStatus =
+  | "SCHEDULED"
+  | "RESCHEDULE_REQUESTED"
+  | "CANCEL_REQUESTED"
+  | "CANCELLED"
+  | "COMPLETED"
+  | "NO_SHOW";
+
+export type MarriageCeremonyOutcome =
+  | "NOT_STARTED"
+  | "COMPLETED"
+  | "POSTPONED"
+  | "NO_SHOW"
+  | "CONSENT_DECLINED"
+  | "CANCELLED";
+
+/** Per-spouse SDID sync sub-status. Shape mirrors DeathSdidSyncStatus exactly
+ * — only the success terminal differs (IDENTITY_UPDATED, since marital
+ * status is updated rather than the person marked deceased). */
+export type MarriageSpouseSdidSyncStatus =
+  | "NOT_READY"
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "IDENTITY_UPDATED"
+  | "FAILED"
+  | "MANUAL_REVIEW";
+
+/** Case-level aggregate, derived from both spouses' sub-statuses via
+ * aggregateMarriageSyncStatus() — never assigned directly, always computed
+ * then routed through assertTransitionMarriageSync(). */
+export type MarriageSdidSyncStatus =
+  | "NOT_READY"
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "BOTH_IDENTITIES_UPDATED"
+  | "PARTIAL_FAILURE"
+  | "FAILED"
+  | "MANUAL_REVIEW";
+
+export type MarriageObjectionStatus = "NONE" | "PENDING" | "UPHELD" | "DISMISSED" | "WITHDRAWN";
+
+export type CivilStatusCategory = "SINGLE" | "DIVORCED" | "WIDOWED";
+
+export type PropertyRegime =
+  | "COMMUNITY_OF_PROPERTY"
+  | "SEPARATION_OF_PROPERTY"
+  | "LIMITED_COMMUNITY_OF_PROPERTY";
+
+export type NationalityCategory = "CITIZEN" | "FOREIGN_NATIONAL";
+
+export type SpouseRole = "APPLICANT1" | "APPLICANT2";
+
+export type MarriageOfficeType = "DISTRICT_SECTOR_OFFICE" | "EMBASSY_CONSULATE";
+
+/** Discrete identity-verification result for one applicant — deliberately
+ * never collapsed into a single pass/fail (spec §12: "must not claim legally
+ * eligible merely because a mock identity lookup succeeded"). */
+export type ApplicantIdentityVerification = {
+  checkedAt: string;
+  checkedBy: string;
+  matchLevel: "NO_MATCH" | "LOW_CONFIDENCE" | "PROBABLE" | "CONFIRMED";
+  confidenceScore?: number;
+  matchedSdidIdentityId?: string;
+  matchedFields: string[];
+  requiresManualReview: boolean;
+  resolution?: {
+    type: "CONFIRMED_MATCH" | "NO_MATCH_CONTINUE" | "MANUAL_REVIEW";
+    resolvedBy: string;
+    resolvedAt: string;
+    note?: string;
+  };
+};
+
+/** Verifies the applicant's declared current civil status against SDID/CRVS
+ * records — distinct from ApplicantIdentityVerification, which only confirms
+ * who the person is, not whether they are free to marry. */
+export type CivilStatusVerification = {
+  declaredStatus: CivilStatusCategory;
+  verifiedAgainstSdid: boolean;
+  consistent: boolean;
+  verifiedAt?: string;
+  verifiedBy?: string;
+  sourceReference?: string;
+  notes?: string;
+};
+
+export type MarriageApplicant = {
+  spouseRole: SpouseRole;
+  nationalityCategory: NationalityCategory;
+  documentType: IdentityDocumentType;
+  documentNumber?: string;
+  nin?: string;
+  sdidIdentityId?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  sex: Sex;
+  dateOfBirth?: string;
+  nationality?: string;
+  residence?: string;
+  phone?: string;
+  email?: string;
+  civilStatus: CivilStatusCategory;
+  civilStatusVerification?: CivilStatusVerification;
+  identityVerification?: ApplicantIdentityVerification;
+  verification: VerificationState;
+  // Only meaningful for the second applicant — whether they have confirmed
+  // participation via their own /respond/:token session (spec §6).
+  partnerConfirmationStatus: "NOT_REQUIRED" | "PENDING" | "CONFIRMED" | "DECLINED";
+  partnerConfirmedAt?: string;
+  partnerDeclinedAt?: string;
+  partnerDeclineReason?: string;
+};
+
+/** Minimal partner-summary projection — used only where the OTHER applicant
+ * needs to see who they are responding about, never the partner's full
+ * record (spec §6 applicant-response page, §7.2 public tracking redaction). */
+export type MarriagePartner = {
+  spouseRole: SpouseRole;
+  firstName?: string;
+  lastName?: string;
+  proposedMarriageDate?: string;
+  officeName?: string;
+};
+
+export type MarriageWitness = Witness & {
+  spouseRole: SpouseRole;
+  dateOfBirth: string;
+  replaced?: boolean;
+  replacedAt?: string;
+  replacedReason?: string;
+};
+
+export type MarriageEvidence = EvidenceItem;
+
+export type MarriageEligibilityRuleKey =
+  | "AGE"
+  | "ADVANCE_NOTICE"
+  | "EXISTING_MARRIAGE_CONFLICT"
+  | "CIVIL_STATUS_CONSISTENCY"
+  | "JURISDICTION"
+  | "RESIDENCE_DOMICILE"
+  | "REQUIRED_DOCUMENTS"
+  | "WITNESS_REQUIREMENTS"
+  | "IDENTITY_MATCH_CONFIDENCE"
+  | "RELATIONSHIP_PROHIBITED_CHECK"
+  | "DUPLICATE_DECLARATION";
+
+/** One discrete rule outcome — the eligibility screen always renders the
+ * full array, never a collapsed verdict (spec §12). */
+export type MarriageEligibilityRuleResult = {
+  rule: MarriageEligibilityRuleKey;
+  passed: boolean;
+  severity: "BLOCKING" | "REVIEW" | "INFO";
+  message: string;
+  affectedSpouse?: SpouseRole | "BOTH";
+};
+
+export type MarriageExistingConflictCandidate = {
+  applicationId?: string;
+  registrationId?: string;
+  reference: string;
+  matchedSpouseRole: SpouseRole;
+  status: string;
+  maskedSummary: string;
+};
+
+export type MarriageEligibilityCheck = {
+  checkedAt: string;
+  checkedBy: string;
+  results: MarriageEligibilityRuleResult[];
+  existingMarriageConflicts: { spouseRole: SpouseRole; candidate: MarriageExistingConflictCandidate }[];
+  overallOutcome: "ELIGIBLE" | "REQUIRES_CORRECTION" | "REQUIRES_EXCEPTION" | "INELIGIBLE";
+};
+
+export type MarriageDuplicateCandidate = {
+  applicationId: string;
+  reference: string;
+  matchLevel: DuplicateMatchLevel;
+  matchedFields: string[];
+  maskedSummary: string;
+  existingRecordStatus: MarriageApplicationStatus;
+};
+
+export type MarriageDuplicateCheckResult = {
+  checkedAt: string;
+  checkedBy: string;
+  candidates: MarriageDuplicateCandidate[];
+  overallLevel: DuplicateMatchLevel;
+  resolution?: DuplicateResolution;
+};
+
+export type MarriageRescheduleEntry = {
+  requestedBy: "APPLICANT" | "STAFF";
+  requestedAt: string;
+  previousDate: string;
+  previousTimeSlot: string;
+  reason: string;
+  approvedBy?: string;
+  approvedAt?: string;
+};
+
+export type MarriageCancellationEntry = {
+  requestedBy: "APPLICANT" | "STAFF";
+  reason: string;
+  at: string;
+  by: string;
+};
+
+export type MarriageAppointment = {
+  id: string;
+  reference: string;
+  applicationId: string;
+  applicationReference: string;
+  status: MarriageAppointmentStatus;
+  officeId: string;
+  officeName: string;
+  date: string;
+  timeSlot: string;
+  isSpecialDay: boolean;
+  officiantId?: string;
+  officiantName?: string;
+  room?: string;
+  scheduledBy: string;
+  scheduledByName: string;
+  scheduledAt: string;
+  rescheduleHistory: MarriageRescheduleEntry[];
+  cancellationHistory: MarriageCancellationEntry[];
+  pendingRescheduleRequest?: { requestedBy: "APPLICANT" | "STAFF"; requestedAt: string; reason: string; preferredDate?: string };
+  pendingCancelRequest?: { requestedBy: "APPLICANT" | "STAFF"; requestedAt: string; reason: string };
+  notes?: string;
+};
+
+export type MarriagePaymentAttempt = {
+  at: string;
+  outcome: "SUCCESS" | "FAILED" | "CANCELLED";
+  failureReason?: string;
+};
+
+export type MarriagePayment = {
+  status: "NOT_REQUIRED" | "PENDING" | "PAID" | "FAILED" | "CANCELLED" | "WAIVED";
+  amount: number;
+  currency: string;
+  isSpecialDayFee: boolean;
+  method?: "DEMO_MOBILE_MONEY" | "DEMO_CARD" | "DEMO_BANK_TRANSFER";
+  reference?: string;
+  paidAt?: string;
+  attempts: MarriagePaymentAttempt[];
+  waivedBy?: string;
+  waivedReason?: string;
+};
+
+export type MarriageReviewSectionKey =
+  | "APPLICANT1"
+  | "APPLICANT2"
+  | "PROPOSED_MARRIAGE"
+  | "ELIGIBILITY"
+  | "EVIDENCE"
+  | "WITNESSES"
+  | "PAYMENT"
+  | "OFFICER_DECLARATION";
+
+export const emptyMarriageReviewSections = (): Record<MarriageReviewSectionKey, ReviewSectionStatus> => ({
+  APPLICANT1: "NOT_REVIEWED",
+  APPLICANT2: "NOT_REVIEWED",
+  PROPOSED_MARRIAGE: "NOT_REVIEWED",
+  ELIGIBILITY: "NOT_REVIEWED",
+  EVIDENCE: "NOT_REVIEWED",
+  WITNESSES: "NOT_REVIEWED",
+  PAYMENT: "NOT_REVIEWED",
+  OFFICER_DECLARATION: "NOT_REVIEWED",
+});
+
+export type MarriageReviewDecisionType = "APPROVE" | "REJECT" | "REQUEST_CORRECTION" | "ROUTE_EXCEPTION" | "OPEN_OBJECTION";
+
+export type MarriageReviewDecision = {
+  type: MarriageReviewDecisionType;
+  decidedBy: string;
+  decidedAt: string;
+  reason?: string;
+  note?: string;
+  // Set true only on APPROVE — mirrors DeathReviewDecision's maker-checker
+  // confirmation (spec §3 "must not perform its final legal approval").
+  confirmedNoConflict?: boolean;
+};
+
+export type MarriageCorrectionItem = {
+  id: string;
+  section: MarriageReviewSectionKey;
+  fields: string[];
+  affectedSpouse?: SpouseRole | "BOTH";
+  reason: string;
+  note?: string;
+  requiredEvidenceReplacement: boolean;
+  dueDate?: string;
+  addressed: boolean;
+  response?: string;
+};
+
+export type MarriageCorrectionRequest = {
+  id: string;
+  requestedBy: string;
+  requestedAt: string;
+  items: MarriageCorrectionItem[];
+  notifyApplicants: boolean;
+  resolvedAt?: string;
+  // Public /civil-registration/marriage/respond/:token route looks the
+  // application up by this token rather than requiring a staff sign-in.
+  responseToken: string;
+};
+
+export type MarriageObjection = {
+  id: string;
+  raisedBy: string;
+  raisedByRelationship?: string;
+  raisedAt: string;
+  reason: string;
+  evidenceRefs?: string[];
+  status: MarriageObjectionStatus;
+  resolution?: {
+    type: "UPHOLD" | "DISMISS";
+    reason: string;
+    note?: string;
+    resolvedBy: string;
+    resolvedAt: string;
+  };
+  withdrawnAt?: string;
+};
+
+export type MarriageRejectionReason = {
+  reason: string;
+  explanation: string;
+  evidenceRefs: string[];
+  applicantsNotified: boolean;
+  // Set when the application was auto-rejected as a consequence of a
+  // ceremony-level consent decline (statusMachines.ts keeps the top-level
+  // enum at exactly the spec's 17 values by folding this case into REJECTED
+  // rather than adding a dedicated status).
+  ceremonyConsentDeclined?: boolean;
+};
+
+export type MarriageConsent = {
+  applicant1Consented: boolean;
+  applicant1ConsentedAt?: string;
+  applicant2Consented: boolean;
+  applicant2ConsentedAt?: string;
+  declinedBy?: SpouseRole;
+  declineReason?: string;
+  declinedAt?: string;
+};
+
+export type MarriageWitnessCheckIn = {
+  witnessId: string;
+  checkedIn: boolean;
+  checkedInAt?: string;
+  checkedInBy?: string;
+};
+
+/** One ceremony attempt. Postponed/no-show ceremonies are never re-mutated —
+ * a fresh MarriageCeremony record is created for the rescheduled attempt,
+ * mirroring the immutable-attempt pattern already used for registration
+ * events elsewhere in this file. */
+export type MarriageCeremony = {
+  id: string;
+  applicationId: string;
+  appointmentId: string;
+  attemptNumber: number;
+  officiantId?: string;
+  officiantName?: string;
+  startedAt?: string;
+  applicant1CheckedIn: boolean;
+  applicant1CheckedInAt?: string;
+  applicant2CheckedIn: boolean;
+  applicant2CheckedInAt?: string;
+  witnessCheckIns: MarriageWitnessCheckIn[];
+  requiredDocumentsConfirmed: boolean;
+  eligibilityRecheckPassed?: boolean;
+  existingMarriageRecheckPassed?: boolean;
+  consent: MarriageConsent;
+  propertyRegime?: PropertyRegime;
+  outcome: MarriageCeremonyOutcome;
+  completedAt?: string;
+  postponedReason?: string;
+  noShowNote?: string;
+  cancellationReason?: string;
+};
+
+/** Immutable snapshot written the moment an application transitions to
+ * REGISTERED (spec §7 "the legal record must be read-only") — later legal
+ * changes go through the correction/amendment or dissolution workflow, never
+ * a direct edit of this event or the application's registered fields. */
+export type MarriageRegistrationEvent = {
+  id: string;
+  registrationNumber: string;
+  registeredAt: string;
+  registeredBy: string;
+  registeredByName: string;
+  officeId: string;
+  officeName: string;
+  ceremonyId: string;
+  appointmentId: string;
+  marriageDate: string;
+  spouse1Summary: { firstName?: string; lastName?: string; sex: Sex };
+  spouse2Summary: { firstName?: string; lastName?: string; sex: Sex };
+  propertyRegime?: PropertyRegime;
+  officiantName?: string;
+};
+
+export type MarriageExceptionType =
+  | "UNDERAGE_WITHOUT_APPROVED_EXCEPTION"
+  | "FOREIGN_DOCUMENT_REVIEW"
+  | "ADVANCE_NOTICE_WAIVED"
+  | "EXISTING_MARRIAGE_CONFLICT"
+  | "CIVIL_STATUS_MISMATCH"
+  | "OTHER";
+
+export type MarriageExceptionRecord = {
+  type: MarriageExceptionType;
+  reason: string;
+  triggeringRule?: string;
+  assignedTo?: string;
+  priority?: "LOW" | "MEDIUM" | "HIGH";
+  status: "OPEN" | "RESOLVED";
+  resolution?: {
+    type: string;
+    reason: string;
+    note?: string;
+    nextStatus: MarriageApplicationStatus;
+    resolvedBy: string;
+    resolvedAt: string;
+  };
+};
+
+export type MarriageManualReviewAssignment = {
+  reason: string;
+  assignedTo: string;
+  priority: "LOW" | "MEDIUM" | "HIGH";
+  notes?: string;
+  at: string;
+};
+
+/** The relationship link created between both verified SDID identities on a
+ * successful sync (spec §8.2/§8.4) — a link record, never a merge of the two
+ * identities. Stored on both linked FoundationalIdentity.relationships[]
+ * entries (symmetric) and carries the CRVS registration reference that
+ * caused it. */
+export type MarriageRelationship = {
+  id: string;
+  type: "SPOUSE";
+  identityAId: string;
+  identityBId: string;
+  marriageRegistrationReference: string;
+  createdAt: string;
+  status: "ACTIVE" | "DISSOLVED";
+};
+
+/** Per-spouse SDID sync sub-record — shape mirrors SdidDeathSyncRecord. */
+export type SdidMarriageSpouseSyncRecord = {
+  status: MarriageSpouseSdidSyncStatus;
+  idempotencyKey?: string;
+  attempts: DeathSyncAttempt[];
+  lastAttemptAt?: string;
+  lastFailureCode?: string;
+  linkedFoundationalIdentityId?: string;
+  linkedNin?: string;
+  manualReview?: MarriageManualReviewAssignment;
+  completedAt?: string;
+};
+
+/** Case-level aggregate wrapping both spouses' independent sync sub-records
+ * (spec §8: "record separate synchronization results for each identity").
+ * `status` is derived via aggregateMarriageSyncStatus() in
+ * crvsMarriageSdidSync.ts, never assigned directly. */
+export type SdidMarriageSyncRecord = {
+  status: MarriageSdidSyncStatus;
+  applicant1: SdidMarriageSpouseSyncRecord;
+  applicant2: SdidMarriageSpouseSyncRecord;
+  // The relationship link created between both verified SDID identities
+  // (spec §8.2) — never a merge of the two identities.
+  relationshipId?: string;
+  manualReview?: MarriageManualReviewAssignment;
+};
+
+export type MarriageCertificateEligibilityStatus = "NOT_CHECKED" | "ELIGIBLE" | "INELIGIBLE" | "MANUAL_REVIEW";
+
+export type MarriageCertificateEligibility = {
+  status: MarriageCertificateEligibilityStatus;
+  checkedAt?: string;
+  reasons: string[];
+};
+
+/** Presentation-shape mirror of DemoAuditEvent, scoped to the marriage
+ * workflow — the actual store is the same shared db.auditEvents collection
+ * written by logCrvsAudit(). */
+export type MarriageAuditEntry = {
+  id: string;
+  actor: string;
+  action: string;
+  module: string;
+  targetRef: string;
+  at: string;
+  details?: string;
+};
+
+export type MarriageApplicationStatusHistoryEntry = {
+  status: MarriageApplicationStatus;
+  at: string;
+  by: string;
+  note?: string;
+};
+
+export type MarriageApplication = {
+  id: string;
+  reference: string;
+  status: MarriageApplicationStatus;
+
+  officeId: string;
+  officeName: string;
+  officeType: MarriageOfficeType;
+  jurisdiction: string;
+
+  applicant1: MarriageApplicant;
+  applicant2: MarriageApplicant;
+  // Token for the public /civil-registration/marriage/respond/:token page —
+  // reused for both the pre-submission partner-verification stage and any
+  // later applicant-facing response need. Distinct from a correction
+  // request's own responseToken, which is scoped to that one correction.
+  partnerResponseToken?: string;
+
+  proposedMarriageDate?: string;
+  preferredTimeWindow?: string;
+  ceremonyType: "CIVIL" | "CIVIL_WITH_RELIGIOUS_RECOGNITION";
+  propertyRegime?: PropertyRegime;
+  languageOrAccessibilityNote?: string;
+  isSpecialDayRequest: boolean;
+
+  eligibility?: MarriageEligibilityCheck;
+  duplicateCheck?: MarriageDuplicateCheckResult;
+
+  evidence: MarriageEvidence[];
+  witnesses: MarriageWitness[];
+
+  payment: MarriagePayment;
+
+  reviewSections: Record<MarriageReviewSectionKey, ReviewSectionStatus>;
+  reviewerId?: string;
+  reviewerName?: string;
+  reviewLockedAt?: string;
+  reviewDecisions: MarriageReviewDecision[];
+
+  correctionRequests: MarriageCorrectionRequest[];
+  objection?: MarriageObjection;
+  exception?: MarriageExceptionRecord;
+
+  appointmentId?: string;
+  appointmentReference?: string;
+  ceremonyId?: string;
+
+  officerId: string;
+  officerName: string;
+  declarationConfirmed: boolean;
+  consentToVerification: boolean;
+  privacyAcknowledged: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  approvedByName?: string;
+  registeredAt?: string;
+  rejectedAt?: string;
+  rejectedBy?: string;
+  rejectionReason?: MarriageRejectionReason;
+  cancelledAt?: string;
+  cancellationReason?: string;
+
+  registrationEvent?: MarriageRegistrationEvent;
+
+  sdid: SdidMarriageSyncRecord;
+  certificateEligibility?: MarriageCertificateEligibility;
+
+  // Set by demoRegisterDivorce() (crvsDivorceRegistrations.ts) on a
+  // registered divorce — deliberately NOT a new MarriageApplicationStatus
+  // value (status stays "REGISTERED" forever: the marriage's own
+  // registration is an immutable historical fact — see statusHistory above)
+  // but an annotation recording that the marriage is now dissolved, per
+  // spec §11/§21 "update the existing marriage record... never delete the
+  // original marriage record." UI reads this alongside status ===
+  // "REGISTERED" to render a "Dissolved by divorce" state.
+  dissolution?: {
+    divorceRegistrationId: string;
+    divorceRegistrationReference: string;
+    effectiveDate: string;
+    recordedAt: string;
+    recordedBy: string;
+  };
+
+  statusHistory: MarriageApplicationStatusHistoryEntry[];
+  version: number;
+};
+
+/** Redacted projection for the unauthenticated public tracking page (spec
+ * §6 "must NOT reveal the partner's protected identity details through an
+ * unverified tracking session"). Masks both spouses symmetrically — never
+ * the full MarriageApplication. Built by demoGetMarriagePublicTrackingView()
+ * in crvsMarriagePublicTracking.ts. */
+export type MarriagePublicTrackingView = {
+  reference: string;
+  status: MarriageApplicationStatus;
+  submittedAt?: string;
+  officeName: string;
+  maskedSpouseSummary: string;
+  timeline: { status: MarriageApplicationStatus; label: string; at?: string }[];
+  hasOpenCorrection: boolean;
+  hasOpenObjection: boolean;
+  appointment?: { date: string; timeSlot: string; officeName: string };
+  nextAction: string;
+  certificateEligible: boolean;
+};
+
+/** Scoped projection for the token-based /respond/:token page — the
+ * responding applicant's own full editable data, plus only a minimal
+ * MarriagePartner summary of the other spouse (never their documents,
+ * contact details, or witnesses). */
+export type MarriageApplicantResponseView = {
+  applicationReference: string;
+  respondingSpouseRole: SpouseRole;
+  ownData: MarriageApplicant;
+  partner: MarriagePartner;
+  proposedMarriageDate?: string;
+  officeName: string;
+  correctionRequest?: MarriageCorrectionRequest;
+};
+
+// ---------------------------------------------------------------------------
+// Divorce-notification / divorce-registration workflow types. This module
+// begins only after a court or other competent authority has already
+// granted the divorce — it registers a completed legal decision, never a
+// court proceeding, so there is deliberately no "grounds", "custody",
+// "maintenance" or "property division" field anywhere below (spec §1).
+//
+// Two entities, mirroring birth/death's notification-then-registration split
+// rather than marriage's single-application model, because divorce
+// genuinely has an inbound-notice concept the other two-party workflow
+// doesn't (a simulated court integration pushing case data in — spec §5A):
+// - DivorceNotification: a court's mock notification, validated then
+//   converted into a DivorceRegistration (or returned/marked duplicate).
+// - DivorceRegistration: the actual case file, used for every submission
+//   source (court-converted, applicant, both-former-spouses, interested
+//   person, staff-assisted, foreign) — reuses shared shapes (EvidenceItem,
+//   VerificationState, IdentityDocumentType, DuplicateMatchLevel,
+//   ReviewSectionStatus, DeathSyncAttempt, MarriageManualReviewAssignment)
+//   the same way marriage/death do.
+//
+// Critical integration point (spec §1, §23): a divorce registration must
+// NEVER delete or overwrite the original MarriageApplication — it only (a)
+// flips that record's registrationEvent-linked MarriageRelationship.status
+// to "DISSOLVED" and (b) flips each former spouse's own
+// FoundationalIdentity.maritalStatus to "DIVORCED", exactly mirroring how
+// crvsMarriageSdidSync.ts already never merges identities or deletes prior
+// history when it sets maritalStatus to "MARRIED".
+
+export type DivorceSubmissionSource =
+  | "APPLICANT"
+  | "BOTH_FORMER_SPOUSES"
+  | "INTERESTED_PERSON"
+  | "COURT_NOTIFICATION"
+  | "STAFF_ASSISTED"
+  | "FOREIGN_DECISION";
+
+export type DivorceNotificationStatus =
+  | "RECEIVED"
+  | "VALIDATION_PENDING"
+  | "VALIDATED"
+  | "RETURNED"
+  | "CONVERTED_TO_REGISTRATION"
+  | "DUPLICATE"
+  | "CANCELLED";
+
+export type DivorceRegistrationStatus =
+  | "DRAFT"
+  | "SUBMITTED"
+  | "UNDER_REVIEW"
+  | "CORRECTION_REQUIRED"
+  | "RESUBMITTED"
+  | "JUDGMENT_VERIFICATION"
+  | "FOREIGN_JUDGMENT_REVIEW"
+  | "EXCEPTION_REVIEW"
+  | "APPROVED"
+  | "REJECTED"
+  | "REGISTERED"
+  | "CANCELLED";
+
+export type JudgmentVerificationStatus =
+  | "NOT_STARTED"
+  | "PENDING"
+  | "VERIFIED"
+  | "UNVERIFIED"
+  | "CONFLICT_FOUND"
+  | "MANUAL_REVIEW";
+
+/** Per-spouse SDID sync sub-status — same shape as MarriageSpouseSdidSyncStatus,
+ * only the success terminal's meaning differs (marital status flips to
+ * DIVORCED rather than MARRIED, and the existing relationship is dissolved
+ * rather than a new one created). */
+export type DivorceSpouseSdidSyncStatus =
+  | "NOT_READY"
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "IDENTITY_UPDATED"
+  | "FAILED"
+  | "MANUAL_REVIEW";
+
+/** Case-level aggregate, derived from both former spouses' sub-statuses via
+ * aggregateDivorceSyncStatus() — never assigned directly. */
+export type DivorceSdidSyncStatus =
+  | "NOT_READY"
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "BOTH_IDENTITIES_UPDATED"
+  | "PARTIAL_FAILURE"
+  | "FAILED"
+  | "MANUAL_REVIEW";
+
+export type FormerSpouseKey = "SPOUSE1" | "SPOUSE2";
+
+export type DivorceApplicantRelationship =
+  | "FORMER_SPOUSE_1"
+  | "FORMER_SPOUSE_2"
+  | "BOTH_FORMER_SPOUSES"
+  | "INTERESTED_PERSON"
+  | "STAFF";
+
+export type DivorceApplicant = {
+  documentType: IdentityDocumentType;
+  documentNumber?: string;
+  nin?: string;
+  sdidIdentityId?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  nationality?: string;
+  residence?: string;
+  phone?: string;
+  email?: string;
+  relationshipToCase: DivorceApplicantRelationship;
+  // Required whenever relationshipToCase is not one of the two former
+  // spouses (spec §2 "authorization basis where the applicant is not one of
+  // the spouses").
+  authorizationBasis?: string;
+  identityVerification: VerificationState;
+};
+
+export type ExistingMarriageMatchStatus = "NOT_SEARCHED" | "MATCHED" | "MULTIPLE_CANDIDATES" | "NOT_FOUND";
+
+export type ExistingMarriageSearchCriteria = {
+  marriageRegistrationNumber?: string;
+  marriageCertificateNumber?: string;
+  spouse1Nin?: string;
+  spouse2Nin?: string;
+  spouse1Name?: string;
+  spouse2Name?: string;
+  marriageDate?: string;
+  marriagePlace?: string;
+};
+
+export type ExistingMarriageCandidate = {
+  // Links back to a real MarriageApplication.id in demo data whenever the
+  // registered marriage exists there — undefined only for hand-authored
+  // NOT_FOUND-path evidence.
+  marriageApplicationId?: string;
+  registrationNumber: string;
+  marriageDate: string;
+  marriagePlace?: string;
+  spouse1Name: string;
+  spouse2Name: string;
+  officeName?: string;
+  matchConfidence: "LOW" | "MEDIUM" | "HIGH";
+};
+
+/** Spec §3 Step 3 — the applicant must select a verified ACTIVE marriage
+ * before continuing; if it cannot be found, the case routes to a
+ * MARRIAGE_RECORD_NOT_FOUND exception rather than fabricating an unverified
+ * marriage record. */
+export type ExistingMarriageMatch = {
+  status: ExistingMarriageMatchStatus;
+  searchedAt?: string;
+  searchedBy?: string;
+  searchCriteria?: ExistingMarriageSearchCriteria;
+  candidates: ExistingMarriageCandidate[];
+  selected?: ExistingMarriageCandidate;
+  notFoundEvidence: DivorceEvidence[];
+};
+
+export type FormerSpouse = {
+  spouseKey: FormerSpouseKey;
+  sdidIdentityId?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  nin?: string;
+  documentType?: IdentityDocumentType;
+  documentNumber?: string;
+  dateOfBirth?: string;
+  nationality?: string;
+  sex: Sex;
+  phone?: string;
+  email?: string;
+  currentCivilStatus?: "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED";
+  identityMatchConfidence: "NO_MATCH" | "LOW_CONFIDENCE" | "PROBABLE" | "CONFIRMED";
+  identityVerification: VerificationState;
+  linkedToSelectedMarriage: boolean;
+};
+
+export type DivorceDecisionType = "MUTUAL_CONSENT" | "CONTESTED" | "DEFAULT_JUDGMENT" | "OTHER";
+
+/** Deliberately narrow — captures only what's needed to register a decision
+ * already made by a court, never grounds, custody, maintenance or property
+ * division narrative (spec §1, §6 "do not collect unnecessary narrative
+ * concerning allegations or private court testimony"). */
+export type DivorceJudgment = {
+  country: string;
+  courtOrAuthorityName: string;
+  courtCaseNumber: string;
+  judgmentNumber: string;
+  judgmentDate: string;
+  finalityDate?: string;
+  decisionType: DivorceDecisionType;
+  registrationEffectiveDate?: string;
+  courtRegistryReference?: string;
+  verificationSource?: string;
+  notesForStaff?: string;
+  isForeign: boolean;
+};
+
+export type JudgmentVerificationRuleKey =
+  | "COURT_REFERENCE"
+  | "JUDGMENT_AUTHENTICITY_PLACEHOLDER"
+  | "JUDGMENT_FINALITY"
+  | "MARRIAGE_MATCH"
+  | "FORMER_SPOUSE_1_IDENTITY"
+  | "FORMER_SPOUSE_2_IDENTITY"
+  | "EXISTING_CIVIL_STATUS"
+  | "DUPLICATE_DIVORCE"
+  | "COURT_REFERENCE_DUPLICATE"
+  | "JUDGMENT_NUMBER_DUPLICATE"
+  | "CONFLICTING_ACTIVE_MARRIAGE"
+  | "POSSIBLE_ANNULMENT"
+  | "POSSIBLE_JUDICIAL_SEPARATION"
+  | "FOREIGN_JUDGMENT_REVIEW_REQUIRED"
+  | "JURISDICTION"
+  | "MAKER_CHECKER"
+  | "CONFLICT_OF_INTEREST";
+
+/** One discrete rule outcome — spec §8 "must not show a single generic
+ * 'verified' result; display each rule separately." */
+export type JudgmentVerificationRuleResult = {
+  rule: JudgmentVerificationRuleKey;
+  passed: boolean;
+  severity: "BLOCKING" | "REVIEW" | "INFO";
+  message: string;
+};
+
+export type JudgmentVerification = {
+  status: JudgmentVerificationStatus;
+  checkedAt?: string;
+  checkedBy?: string;
+  results: JudgmentVerificationRuleResult[];
+  overallOutcome?: "VERIFIED" | "REQUIRES_CORRECTION" | "REQUIRES_EXCEPTION" | "UNVERIFIED";
+};
+
+export type ForeignDivorceRecognitionStatus =
+  | "NOT_APPLICABLE"
+  | "PENDING"
+  | "REQUIREMENTS_SATISFIED"
+  | "REQUIRES_LEGAL_REVIEW"
+  | "REJECTED";
+
+/** Spec §5D/§19 — a frontend policy workflow only; never claims to make a
+ * binding legal determination beyond this configured demo process. */
+export type ForeignDivorceRecognition = {
+  status: ForeignDivorceRecognitionStatus;
+  country: string;
+  foreignCourtOrAuthority: string;
+  spouse1Nationality?: string;
+  spouse2Nationality?: string;
+  translationRequired: boolean;
+  translationProvided: boolean;
+  authenticationRequired: boolean;
+  authenticationProvided: boolean;
+  exequaturOrRecognitionRequired: boolean;
+  exequaturOrRecognitionProvided: boolean;
+  missingRequirements: string[];
+  supervisorNotes?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+};
+
+export type DivorceEvidence = EvidenceItem;
+
+export type DivorceReviewSectionKey =
+  | "APPLICANT"
+  | "EXISTING_MARRIAGE"
+  | "FORMER_SPOUSE_1"
+  | "FORMER_SPOUSE_2"
+  | "COURT_DECISION"
+  | "EVIDENCE"
+  | "IDENTITY_CHECKS"
+  | "PROCESSING_OFFICE"
+  | "OFFICER_DECLARATION";
+
+export const emptyDivorceReviewSections = (): Record<DivorceReviewSectionKey, ReviewSectionStatus> => ({
+  APPLICANT: "NOT_REVIEWED",
+  EXISTING_MARRIAGE: "NOT_REVIEWED",
+  FORMER_SPOUSE_1: "NOT_REVIEWED",
+  FORMER_SPOUSE_2: "NOT_REVIEWED",
+  COURT_DECISION: "NOT_REVIEWED",
+  EVIDENCE: "NOT_REVIEWED",
+  IDENTITY_CHECKS: "NOT_REVIEWED",
+  PROCESSING_OFFICE: "NOT_REVIEWED",
+  OFFICER_DECLARATION: "NOT_REVIEWED",
+});
+
+export type DivorceReviewDecisionType =
+  | "APPROVE"
+  | "REJECT"
+  | "REQUEST_CORRECTION"
+  | "ROUTE_JUDGMENT_VERIFICATION"
+  | "ROUTE_FOREIGN_REVIEW"
+  | "ROUTE_EXCEPTION";
+
+export type DivorceReview = {
+  type: DivorceReviewDecisionType;
+  decidedBy: string;
+  decidedAt: string;
+  reason?: string;
+  note?: string;
+  // Both set true only on APPROVE — the Registrar's explicit maker-checker
+  // confirmation (spec §4/§17/§21) plus a declared conflict-of-interest
+  // check, required in addition to the automatic canApproveDivorceCase()
+  // gate, never instead of it.
+  confirmedDidNotPrepare?: boolean;
+  confirmedNoConflictOfInterest?: boolean;
+};
+
+export type DivorceCorrectionItem = {
+  id: string;
+  section: DivorceReviewSectionKey;
+  fields: string[];
+  reason: string;
+  note?: string;
+  documentsRequired: boolean;
+  dueDate?: string;
+  addressed: boolean;
+  response?: string;
+};
+
+export type DivorceCorrectionRequest = {
+  id: string;
+  requestedBy: string;
+  requestedAt: string;
+  items: DivorceCorrectionItem[];
+  responseDeadline?: string;
+  notifyApplicants: boolean;
+  resolvedAt?: string;
+  // Public /civil-registration/divorce/respond/:token route looks the
+  // registration up by this token rather than requiring a staff sign-in.
+  responseToken: string;
+};
+
+export type DivorceExceptionType =
+  | "MARRIAGE_RECORD_NOT_FOUND"
+  | "IDENTITY_NOT_FOUND_ONE"
+  | "IDENTITY_NOT_FOUND_BOTH"
+  | "MARRIAGE_IDENTITY_MISMATCH"
+  | "DUPLICATE_DIVORCE"
+  | "JUDGMENT_NUMBER_DUPLICATE"
+  | "JUDGMENT_NOT_FINAL"
+  | "COURT_DETAILS_CANNOT_BE_VERIFIED"
+  | "CONFLICTING_MARITAL_STATUS"
+  | "EXISTING_ANNULMENT"
+  | "EXISTING_JUDICIAL_SEPARATION"
+  | "FOREIGN_DOCUMENT_ISSUE"
+  | "WRONG_PROCESSING_OFFICE"
+  | "LATE_REGISTRATION"
+  | "APPLICANT_AUTHORITY_UNCLEAR"
+  | "SDID_RELATIONSHIP_MISSING"
+  | "OTHER";
+
+export type DivorceExceptionRecord = {
+  type: DivorceExceptionType;
+  reason: string;
+  triggeringRule?: string;
+  affectedData?: string;
+  assignedTo?: string;
+  priority?: "LOW" | "MEDIUM" | "HIGH";
+  status: "OPEN" | "RESOLVED";
+  resolution?: {
+    type: string;
+    reason: string;
+    note?: string;
+    nextStatus: DivorceRegistrationStatus;
+    resolvedBy: string;
+    resolvedAt: string;
+  };
+};
+
+/** Immutable snapshot written the moment a registration transitions to
+ * REGISTERED (spec §21/§22 "the registered record must be read-only") —
+ * later legal changes go through the general CRVS rectification workflow,
+ * never a direct edit of this event. */
+export type DivorceRegistrationEvent = {
+  id: string;
+  registrationNumber: string;
+  registeredAt: string;
+  registeredBy: string;
+  registeredByName: string;
+  officeId: string;
+  officeName: string;
+  effectiveDate: string;
+  courtCaseNumber: string;
+  judgmentNumber: string;
+  marriageRegistrationReference: string;
+  formerSpouse1Summary: { firstName?: string; lastName?: string };
+  formerSpouse2Summary: { firstName?: string; lastName?: string };
+};
+
+/** Records the effect of registration on the existing MarriageApplication —
+ * spec §11/§21 "update the existing marriage record... never delete the
+ * original". Applied to the marriage record itself (status ->
+ * DISSOLVED_BY_DIVORCE) by demoRegisterDivorce(); this is a receipt of that
+ * mutation, not a duplicate of the marriage record. */
+export type MarriageStatusUpdateResult = {
+  applied: boolean;
+  marriageApplicationId?: string;
+  marriageApplicationReference?: string;
+  previousStatus?: string;
+  newStatus: "DISSOLVED_BY_DIVORCE";
+  updatedAt: string;
+  divorceRegistrationReference: string;
+};
+
+/** Per-former-spouse SDID sync sub-record — shape mirrors
+ * SdidMarriageSpouseSyncRecord/SdidDeathSyncRecord. */
+export type SdidDivorceSpouseSyncRecord = {
+  status: DivorceSpouseSdidSyncStatus;
+  idempotencyKey?: string;
+  attempts: DeathSyncAttempt[];
+  lastAttemptAt?: string;
+  lastFailureCode?: string;
+  linkedFoundationalIdentityId?: string;
+  linkedNin?: string;
+  manualReview?: MarriageManualReviewAssignment;
+  completedAt?: string;
+};
+
+/** Case-level aggregate wrapping both former spouses' independent sync
+ * sub-records (spec §23: "create separate updates for both former
+ * spouses"). `status` is derived via aggregateDivorceSyncStatus() in
+ * crvsDivorceSdidSync.ts, never assigned directly. */
+export type SDIDDivorceSync = {
+  status: DivorceSdidSyncStatus;
+  spouse1: SdidDivorceSpouseSyncRecord;
+  spouse2: SdidDivorceSpouseSyncRecord;
+  // Whether the existing MarriageRelationship (on both identities) has been
+  // flipped from ACTIVE to DISSOLVED — spec §23 "end the active marriage
+  // relationship using the divorce effective date... do not delete the
+  // former spouse relationship."
+  relationshipDissolved?: boolean;
+  manualReview?: MarriageManualReviewAssignment;
+};
+
+export type DivorceCertificateEligibilityStatus = "NOT_CHECKED" | "ELIGIBLE" | "INELIGIBLE" | "MANUAL_REVIEW";
+
+export type DivorceCertificateEligibility = {
+  status: DivorceCertificateEligibilityStatus;
+  checkedAt?: string;
+  reasons: string[];
+};
+
+/** Presentation-shape mirror of DemoAuditEvent, scoped to the divorce
+ * workflow — the actual store is the same shared db.auditEvents collection
+ * written by logCrvsAudit(). */
+export type DivorceAuditEntry = {
+  id: string;
+  actor: string;
+  action: string;
+  module: string;
+  targetRef: string;
+  at: string;
+  details?: string;
+};
+
+export type DivorceRejectionReason = {
+  reason: string;
+  explanation: string;
+  evidenceRefs: string[];
+  applicantsNotified: boolean;
+};
+
+export type DivorceRegistrationStatusHistoryEntry = {
+  status: DivorceRegistrationStatus;
+  at: string;
+  by: string;
+  note?: string;
+};
+
+export type DivorceProcessingOfficeJurisdictionResult = "CONFIRMED" | "ALTERNATIVE_REQUIRES_REASON" | "UNRESOLVED";
+
+export type DivorceProcessingOffice = {
+  marriageRegisteredOfficeName?: string;
+  applicantDomicileOfficeName?: string;
+  selectedProcessingOfficeId: string;
+  selectedProcessingOfficeName: string;
+  embassyOrForeignOfficePath: boolean;
+  jurisdictionResult: DivorceProcessingOfficeJurisdictionResult;
+  alternativeReason?: string;
+};
+
+export type DivorceRegistration = {
+  id: string;
+  reference: string;
+  status: DivorceRegistrationStatus;
+  source: DivorceSubmissionSource;
+  // Set only when source === "COURT_NOTIFICATION" — links back to the
+  // DivorceNotification this case was converted from (spec §14 "convert to
+  // registration").
+  sourceNotificationId?: string;
+  sourceNotificationReference?: string;
+
+  applicant: DivorceApplicant;
+  existingMarriage: ExistingMarriageMatch;
+  formerSpouse1: FormerSpouse;
+  formerSpouse2: FormerSpouse;
+
+  judgment: DivorceJudgment;
+  judgmentVerification: JudgmentVerification;
+  // Present whenever judgment.isForeign is true (spec §5D/§19) — created
+  // empty (status NOT_APPLICABLE) otherwise rather than left undefined, so
+  // the foreign-review tab always has a stable shape to render.
+  foreignRecognition: ForeignDivorceRecognition;
+
+  evidence: DivorceEvidence[];
+
+  processingOffice: DivorceProcessingOffice;
+  jurisdiction: string;
+
+  reviewSections: Record<DivorceReviewSectionKey, ReviewSectionStatus>;
+  reviewerId?: string;
+  reviewerName?: string;
+  reviewLockedAt?: string;
+  reviewDecisions: DivorceReview[];
+
+  correctionRequests: DivorceCorrectionRequest[];
+  exception?: DivorceExceptionRecord;
+
+  officerId: string;
+  officerName: string;
+  accuracyDeclarationConfirmed: boolean;
+  authorityToSubmitConfirmed: boolean;
+  judgmentFinalConfirmed: boolean;
+  privacyAcknowledged: boolean;
+  electronicSubmissionConfirmed: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  approvedByName?: string;
+  registeredAt?: string;
+  rejectedAt?: string;
+  rejectedBy?: string;
+  rejectionReason?: DivorceRejectionReason;
+  cancelledAt?: string;
+  cancellationReason?: string;
+
+  registrationEvent?: DivorceRegistrationEvent;
+  marriageStatusUpdate?: MarriageStatusUpdateResult;
+
+  sdid: SDIDDivorceSync;
+  certificateEligibility?: DivorceCertificateEligibility;
+
+  statusHistory: DivorceRegistrationStatusHistoryEntry[];
+  version: number;
+};
+
+/** A simulated court-integration notice (spec §5A) — never a real court API
+ * call, always this typed mock shape. Validated then either converted into
+ * a DivorceRegistration, returned to the (simulated) court contact, or
+ * marked a duplicate of an existing notification/registration. */
+export type DivorceNotification = {
+  id: string;
+  reference: string;
+  status: DivorceNotificationStatus;
+  courtName: string;
+  courtCaseNumber: string;
+  judgmentNumber: string;
+  judgmentDate: string;
+  finalityDate?: string;
+  applicantNamesAsReported: string;
+  marriageReferenceAsReported?: string;
+  signedJudgmentDocument?: DivorceEvidence;
+  notifiedAt: string;
+  marriageMatch: ExistingMarriageMatch;
+  duplicateWarning: boolean;
+  assignedOfficerId?: string;
+  assignedOfficerName?: string;
+  validationNotes?: string;
+  returnReason?: { reason: string; note?: string };
+  convertedRegistrationId?: string;
+  convertedRegistrationReference?: string;
+  createdAt: string;
+  updatedAt: string;
+  statusHistory: { status: DivorceNotificationStatus; at: string; by: string; note?: string }[];
+  version: number;
+};
+
+/** Redacted projection for the unauthenticated public tracking page (spec
+ * §11 — must never reveal private judgment narrative, restricted
+ * attachments, internal staff notes, audit metadata, or sensitive
+ * information about the other former spouse). */
+export type DivorcePublicTrackingView = {
+  reference: string;
+  status: DivorceRegistrationStatus;
+  submittedAt?: string;
+  processingOfficeName: string;
+  timeline: { status: DivorceRegistrationStatus; label: string; at?: string }[];
+  hasOpenCorrection: boolean;
+  additionalEvidenceRequested: boolean;
+  applicantActionRequired: boolean;
+  registrationCompleted: boolean;
+  certificateEligible: boolean;
+  nextAction: string;
+};
+
+/** Scoped projection for the token-based /respond/:token page — the
+ * requested corrections plus only the originally submitted values needed to
+ * respond, never the full case file. */
+export type DivorceApplicantResponseView = {
+  registrationReference: string;
+  correctionRequest?: DivorceCorrectionRequest;
+  applicant: DivorceApplicant;
+  evidence: DivorceEvidence[];
 };

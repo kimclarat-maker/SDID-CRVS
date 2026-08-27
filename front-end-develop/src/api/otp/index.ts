@@ -5,8 +5,17 @@ import {
   VerifyOTPType,
 } from "@/types/OTP";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoSendOTP,
+  demoVerifyOTP,
+  demoRequestSelfieSkipVerificationCode,
+  demoResumeBySelfieSkipCode,
+  demoLegalGuardianResumeBySelfieSkipCode,
+} from "@/demo/services/otp";
 
 export const sendOTP = async (params?: SendOTPType) => {
+  if (isDemoMode()) return demoSendOTP();
   const {
     type,
     preEnrollmentTempId,
@@ -58,6 +67,7 @@ export const sendOTP = async (params?: SendOTPType) => {
 };
 
 export const verifyOTP = async (params?: VerifyOTPType) => {
+  if (isDemoMode()) return demoVerifyOTP();
   const {
     type,
     maskedPhoneNumberKey,
@@ -105,6 +115,7 @@ export const verifyOTP = async (params?: VerifyOTPType) => {
 export const requestSelfieSkipVerificationCode = async (
   params?: SkipVerificationCodeWithExisting
 ) => {
+  if (isDemoMode()) return demoRequestSelfieSkipVerificationCode();
   try {
     const method = "POST";
     let url = "/requests/selfie";
@@ -125,6 +136,7 @@ export const requestSelfieSkipVerificationCode = async (
 };
 
 export const resumeBySelfieSkipCode = async (code: string) => {
+  if (isDemoMode()) return demoResumeBySelfieSkipCode();
   try {
     const method = "POST";
     let url = "/requests/skip-face-verification";
@@ -145,6 +157,7 @@ export const resumeBySelfieSkipCode = async (code: string) => {
 };
 
 export const legalGuardianResumeBySelfieSkipCode = async (code: string) => {
+  if (isDemoMode()) return demoLegalGuardianResumeBySelfieSkipCode();
   try {
     const method = "POST";
     let url = "/requests/legal-guardian/skip-selfie-verification";

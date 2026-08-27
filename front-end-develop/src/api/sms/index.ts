@@ -1,8 +1,16 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { GETParameters, SMSTemplateGETParameters } from "@/types/SMS";
 import api from "..";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchSMSSettings,
+  demoFetchSMSTemplates,
+  demoSendSMS,
+  demoFetchSMSFlows,
+} from "@/demo/services/messaging";
 
 export const fetchSMSSettings = async (params?: GETParameters) => {
+  if (isDemoMode()) return demoFetchSMSSettings();
   try {
     if (params && params?.offset && params?.offset > 0) {
       params.offset -= 1;
@@ -26,6 +34,7 @@ export const fetchSMSSettings = async (params?: GETParameters) => {
 };
 
 export const fetchSMSTemplates = async (params?: SMSTemplateGETParameters) => {
+  if (isDemoMode()) return demoFetchSMSTemplates();
   try {
     const options = {
       method: "GET",
@@ -48,6 +57,7 @@ export const sendSMS = async (params?: {
   phoneNumber: string;
   textMessage: string;
 }) => {
+  if (isDemoMode()) return demoSendSMS(params);
   try {
     const options = {
       method: "POST",
@@ -66,6 +76,7 @@ export const sendSMS = async (params?: {
 };
 
 export const fetchSMSFlows = async () => {
+  if (isDemoMode()) return demoFetchSMSFlows();
   try {
     const options = {
       method: "GET",

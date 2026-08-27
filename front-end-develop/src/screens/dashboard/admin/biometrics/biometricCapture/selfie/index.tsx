@@ -17,6 +17,8 @@ import { selfieComments } from "@/constants/comments";
 import { useUploadBioData } from "@/hooks/useUploadMedia";
 import { isUUID } from "@/utils/common/uuid";
 import { cfg } from "@/constants/cfg";
+import { isDemoMode } from "@/demo/config";
+import { DEMO_PLACEHOLDER_IMAGE } from "@/demo/services/enrollmentBiometrics";
 
 interface Props {
   setTab: (tab: string) => void;
@@ -109,6 +111,17 @@ const Selfie: React.FC<Props> = ({
     };
     getInfo();
   }, [enrollmentData]);
+
+  // Demo mode has no real webcam, and this screen's "Next"/"Submit" button
+  // is gated on selfieImage being set — auto-fill a placeholder photo so the
+  // wizard can still be clicked through end-to-end (spec: auto-simulate
+  // capture steps with dummy data).
+  useEffect(() => {
+    if (isDemoMode() && !selfieImage) {
+      setSelfieImage(DEMO_PLACEHOLDER_IMAGE);
+      setOriginalImage(DEMO_PLACEHOLDER_IMAGE);
+    }
+  }, [selfieImage]);
 
   const onReset = () => {
     // setSelfieImage(null);

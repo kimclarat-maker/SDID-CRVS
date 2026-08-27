@@ -1,5 +1,15 @@
 import api from "..";
 import toastMessage from "@/utils/common/toastMessage";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFaceMatchProbability,
+  demoVerifyEmbedding,
+  demoFaceEmbedding,
+  demoMfaFacialVerification,
+  demoApplicantSelfieMatch,
+  demoApplicantSelfieEmbedding,
+  demoApplicantSelfieWithoutMatch,
+} from "@/demo/services/deviceServices";
 
 const AI_LOCAL_SERVICE_API = "http://localhost:12213";
 
@@ -10,6 +20,7 @@ export const faceMatchProbability = async ({
   photoOne: string;
   photoTwo: string;
 }) => {
+  if (isDemoMode()) return demoFaceMatchProbability();
   try {
     let url = `${AI_LOCAL_SERVICE_API}/match-probability`;
 
@@ -43,6 +54,7 @@ export const verifyEmbedding = async ({
   address: any;
   isLocalServiceEnabled?: boolean;
 }) => {
+  if (isDemoMode()) return demoVerifyEmbedding();
   try {
     let url = `/auth/mfa/verify-embedding`;
 
@@ -66,6 +78,7 @@ export const verifyEmbedding = async ({
 };
 
 export const faceEmbedding = async ({ image }: { image: string }) => {
+  if (isDemoMode()) return demoFaceEmbedding();
   try {
     let url = `${AI_LOCAL_SERVICE_API}/face-embedding`;
 
@@ -93,6 +106,7 @@ export const mfaFacialVerification = async (
   address?: any,
   isLocalServiceEnabled?: boolean
 ) => {
+  if (isDemoMode()) return demoMfaFacialVerification();
   try {
     let url = `/auth/mfa/verify-face`;
 
@@ -143,6 +157,7 @@ export const applicantSelfieMatch = async ({
   isLocalServiceEnabled?: boolean;
   embedding?: any;
 }) => {
+  if (isDemoMode()) return demoApplicantSelfieMatch();
   try {
     let body: any = {
       selfie: image,
@@ -181,6 +196,7 @@ export const applicantSelfieEmbedding = async ({
   preEnrollmentId: string;
   embedding: any;
 }) => {
+  if (isDemoMode()) return demoApplicantSelfieEmbedding();
   try {
     let url = `/pre-enrollment/search/applicant-selfie-match-embedding`;
 
@@ -214,6 +230,7 @@ export const applicantSelfieWithoutMatch = async ({
   skipSelfieVerification?: boolean;
   isBioRefresh?: boolean;
 }) => {
+  if (isDemoMode()) return demoApplicantSelfieWithoutMatch();
   try {
     let body: any = {
       selfie: image,

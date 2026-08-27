@@ -1,9 +1,18 @@
 import toastMessage from "@/utils/common/toastMessage";
 import { CellGETParameters, CellTypes } from "@/types/geography";
 import api from "..";
-import cells from "@/mocks/geo/cells";
+import { isDemoMode } from "@/demo/config";
+import {
+  demoFetchCells,
+  demoFetchCellsBySector,
+  demoFetchSingleCell,
+  demoUpdateCell,
+  demoDeleteCell,
+  demoCreateCell,
+} from "@/demo/services/geography";
 
 export const fetchCells = async (params?: CellGETParameters) => {
+  if (isDemoMode()) return demoFetchCells(params);
   try {
     if (params && params?.offset && params?.offset > 0) {
       params.offset -= 1;
@@ -38,6 +47,8 @@ export const fetchCellsBySector = async (
   offset?: number,
   limit?: number
 ) => {
+  if (isDemoMode())
+    return demoFetchCellsBySector(sectorId, status, offset, limit);
   try {
     const options = {
       method: "GET",
@@ -62,6 +73,7 @@ export const fetchCellsBySector = async (
 };
 
 export const fetchSingleCell = async (id: string) => {
+  if (isDemoMode()) return demoFetchSingleCell(id);
   try {
     const options = {
       method: "GET",
@@ -81,6 +93,7 @@ export const fetchSingleCell = async (id: string) => {
 };
 
 export const updateCell = async (params: CellTypes) => {
+  if (isDemoMode()) return demoUpdateCell(params);
   try {
     const options = {
       method: "PATCH",
@@ -99,6 +112,7 @@ export const updateCell = async (params: CellTypes) => {
 };
 
 export const deleteCell = async (id: string) => {
+  if (isDemoMode()) return demoDeleteCell(id);
   try {
     const options = {
       method: "DELETE",
@@ -118,6 +132,7 @@ export const deleteCell = async (id: string) => {
 };
 
 export const createCell = async (params: CellTypes) => {
+  if (isDemoMode()) return demoCreateCell(params);
   try {
     const options = {
       method: "POST",

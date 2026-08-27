@@ -33,6 +33,7 @@ import IrisSpecsForm from "@/components/forms/irisSpecs";
 import "@/socket/iris";
 import { onAddIRIS } from "@/api/enrollments";
 import Upload from "@/components/supportingDocuments/upload";
+import { isDemoMode } from "@/demo/config";
 import Modal from "@/components/Modal";
 import { EnrollmentType } from "@/types/Enrollment";
 import Alert from "@/components/alert";
@@ -157,6 +158,18 @@ const Iris: React.FC<Props> = ({
       console.error("Error parse preview:", error);
     }
   }, [enrollmentData]);
+
+  // Demo mode has no real iris scanner, and this screen's "Next" button is
+  // gated on supportingDocuments being non-empty (not on an actual scan) —
+  // auto-attach a placeholder document so the wizard can still be clicked
+  // through end-to-end (spec: auto-simulate capture steps with dummy data).
+  useEffect(() => {
+    if (isDemoMode() && (!supportingDocuments || supportingDocuments.length === 0)) {
+      setSupportingDocuments([
+        { _id: "demo-iris-doc", name: "Demo supporting document.pdf" },
+      ] as any);
+    }
+  }, [supportingDocuments]);
 
   const resetCanvas = useCallback(() => {
     // Clear all canvases

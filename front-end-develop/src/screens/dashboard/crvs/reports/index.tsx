@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import CardCount from "@/components/card/count";
 import { getDemoData } from "@/demo/storage/demoStore";
 import "../shared.css";
 
 /** Supervisor workload/analytics view (spec §16 "View staff workload"). */
 export default function Reports() {
+  const navigate = useNavigate();
   const db = getDemoData();
   const registrations = db.crvsRegistrations;
   const notifications = db.crvsNotifications;
@@ -32,9 +34,9 @@ export default function Reports() {
       </div>
 
       <div className="crvs-tile-grid">
-        <CardCount name="Notifications" count={notifications.length} icon="campaign" color="var(--status-info)" />
-        <CardCount name="Registrations" count={registrations.length} icon="folder" color="var(--status-info)" />
-        <CardCount name="Registered" count={registered.length} icon="verified" color="var(--status-success)" />
+        <CardCount name="Notifications" count={notifications.length} icon="campaign" color="var(--status-info)" onClick={() => navigate("/dashboard/crvs/notifications")} />
+        <CardCount name="Registrations" count={registrations.length} icon="folder" color="var(--status-info)" onClick={() => navigate("/dashboard/crvs/births")} />
+        <CardCount name="Registered" count={registered.length} icon="verified" color="var(--status-success)" onClick={() => navigate("/dashboard/crvs/registered-births")} />
         <CardCount name="Avg. days to register" count={avgProcessingDays} icon="timer" color="var(--status-neutral)" />
       </div>
 
