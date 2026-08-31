@@ -22,6 +22,11 @@ import {
   JudgmentVerificationStatus,
   DivorceSpouseSdidSyncStatus,
   DivorceSdidSyncStatus,
+  AnnulmentNotificationStatus,
+  AnnulmentRegistrationStatus,
+  AnnulmentDecisionVerificationStatus,
+  AnnulmentPartySdidSyncStatus,
+  AnnulmentSdidSyncStatus,
 } from "./types";
 
 const NOTIFICATION_TRANSITIONS: Record<BirthNotificationStatus, BirthNotificationStatus[]> = {
@@ -851,5 +856,229 @@ export function aggregateDivorceSyncStatus(
   if (spouse1 === "MANUAL_REVIEW" || spouse2 === "MANUAL_REVIEW") return "MANUAL_REVIEW";
   if (spouse1 === "IN_PROGRESS" || spouse2 === "IN_PROGRESS") return "IN_PROGRESS";
   if (spouse1 === "PENDING" || spouse2 === "PENDING") return "PENDING";
+  return "NOT_READY";
+}
+
+// ---------------------------------------------------------------------------
+// Marriage-annulment-notification / annulment-registration / annulment-SDID-
+// sync state machines. Same "no direct status assignment" rule as every
+// machine above, and the same shape as the divorce block, plus one extra
+// review branch: LEGAL_EFFECT_REVIEW (annulment's legal-effect classification
+// has no divorce analog — see AnnulmentLegalEffect in types.ts). As with
+// divorce, REGISTERED has no outgoing transitions at all, so "no user may
+// return a registered annulment directly to draft" is structurally
+// impossible, and every path to APPROVED funnels through UNDER_REVIEW.
+
+const ANNULMENT_NOTIFICATION_TRANSITIONS: Record<AnnulmentNotificationStatus, AnnulmentNotificationStatus[]> = {
+  RECEIVED: ["VALIDATION_PENDING", "DUPLICATE", "CANCELLED"],
+  VALIDATION_PENDING: ["VALIDATED", "RETURNED", "DUPLICATE", "CANCELLED"],
+  VALIDATED: ["CONVERTED_TO_REGISTRATION", "CANCELLED"],
+  RETURNED: ["VALIDATION_PENDING", "CANCELLED"],
+  CONVERTED_TO_REGISTRATION: [],
+  DUPLICATE: [],
+  CANCELLED: [],
+};
+
+const ANNULMENT_REGISTRATION_TRANSITIONS: Record<AnnulmentRegistrationStatus, AnnulmentRegistrationStatus[]> = {
+  DRAFT: ["SUBMITTED", "CANCELLED"],
+  SUBMITTED: [
+    "UNDER_REVIEW",
+    "DECISION_VERIFICATION",
+    "LEGAL_EFFECT_REVIEW",
+    "FOREIGN_DECISION_REVIEW",
+    "EXCEPTION_REVIEW",
+    "CANCELLED",
+  ],
+  UNDER_REVIEW: [
+    "CORRECTION_REQUIRED",
+    "DECISION_VERIFICATION",
+    "LEGAL_EFFECT_REVIEW",
+    "FOREIGN_DECISION_REVIEW",
+    "EXCEPTION_REVIEW",
+    "APPROVED",
+    "REJECTED",
+    "CANCELLED",
+  ],
+  CORRECTION_REQUIRED: ["RESUBMITTED", "CANCELLED"],
+  RESUBMITTED: ["UNDER_REVIEW"],
+  DECISION_VERIFICATION: [
+    "UNDER_REVIEW",
+    "CORRECTION_REQUIRED",
+    "LEGAL_EFFECT_REVIEW",
+    "FOREIGN_DECISION_REVIEW",
+    "EXCEPTION_REVIEW",
+    "REJECTED",
+  ],
+  LEGAL_EFFECT_REVIEW: ["UNDER_REVIEW", "CORRECTION_REQUIRED", "FOREIGN_DECISION_REVIEW", "EXCEPTION_REVIEW", "REJECTED"],
+  FOREIGN_DECISION_REVIEW: ["UNDER_REVIEW", "CORRECTION_REQUIRED", "LEGAL_EFFECT_REVIEW", "EXCEPTION_REVIEW", "REJECTED"],
+  EXCEPTION_REVIEW: ["UNDER_REVIEW", "CORRECTION_REQUIRED", "REJECTED"],
+  APPROVED: ["REGISTERED", "CANCELLED"],
+  REJECTED: [],
+  REGISTERED: [],
+  CANCELLED: [],
+};
+
+const ANNULMENT_DECISION_VERIFICATION_TRANSITIONS: Record<AnnulmentDecisionVerificationStatus, AnnulmentDecisionVerificationStatus[]> = {
+  NOT_STARTED: ["PENDING"],
+  PENDING: ["VERIFIED", "UNVERIFIED", "CONFLICT_FOUND", "MANUAL_REVIEW"],
+  UNVERIFIED: ["PENDING", "MANUAL_REVIEW"],
+  CONFLICT_FOUND: ["PENDING", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["PENDING"],
+  VERIFIED: [],
+};
+
+const ANNULMENT_PARTY_SYNC_TRANSITIONS: Record<AnnulmentPartySdidSyncStatus, AnnulmentPartySdidSyncStatus[]> = {
+  NOT_READY: ["PENDING"],
+  PENDING: ["IN_PROGRESS"],
+  IN_PROGRESS: ["IDENTITY_UPDATED", "FAILED", "MANUAL_REVIEW"],
+  FAILED: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["IN_PROGRESS"],
+  IDENTITY_UPDATED: [],
+};
+
+const ANNULMENT_SYNC_TRANSITIONS: Record<AnnulmentSdidSyncStatus, AnnulmentSdidSyncStatus[]> = {
+  NOT_READY: ["PENDING"],
+  PENDING: ["IN_PROGRESS"],
+  IN_PROGRESS: ["BOTH_IDENTITIES_UPDATED", "PARTIAL_FAILURE", "FAILED", "MANUAL_REVIEW"],
+  PARTIAL_FAILURE: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  FAILED: ["IN_PROGRESS", "MANUAL_REVIEW"],
+  MANUAL_REVIEW: ["IN_PROGRESS"],
+  BOTH_IDENTITIES_UPDATED: [],
+};
+
+export function canTransitionAnnulmentNotification(from: AnnulmentNotificationStatus, to: AnnulmentNotificationStatus): boolean {
+  return ANNULMENT_NOTIFICATION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionAnnulmentNotification(from: AnnulmentNotificationStatus, to: AnnulmentNotificationStatus): void {
+  if (!canTransitionAnnulmentNotification(from, to)) {
+    throw new IllegalTransitionError("annulment notification", from, to);
+  }
+}
+
+export function canTransitionAnnulmentRegistration(from: AnnulmentRegistrationStatus, to: AnnulmentRegistrationStatus): boolean {
+  return ANNULMENT_REGISTRATION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionAnnulmentRegistration(from: AnnulmentRegistrationStatus, to: AnnulmentRegistrationStatus): void {
+  if (!canTransitionAnnulmentRegistration(from, to)) {
+    throw new IllegalTransitionError("annulment registration", from, to);
+  }
+}
+
+export function canTransitionAnnulmentDecisionVerification(
+  from: AnnulmentDecisionVerificationStatus,
+  to: AnnulmentDecisionVerificationStatus
+): boolean {
+  return ANNULMENT_DECISION_VERIFICATION_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionAnnulmentDecisionVerification(
+  from: AnnulmentDecisionVerificationStatus,
+  to: AnnulmentDecisionVerificationStatus
+): void {
+  if (!canTransitionAnnulmentDecisionVerification(from, to)) {
+    throw new IllegalTransitionError("annulment decision verification", from, to);
+  }
+}
+
+export function canTransitionAnnulmentPartySync(from: AnnulmentPartySdidSyncStatus, to: AnnulmentPartySdidSyncStatus): boolean {
+  return ANNULMENT_PARTY_SYNC_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionAnnulmentPartySync(from: AnnulmentPartySdidSyncStatus, to: AnnulmentPartySdidSyncStatus): void {
+  if (!canTransitionAnnulmentPartySync(from, to)) {
+    throw new IllegalTransitionError("annulment party sync", from, to);
+  }
+}
+
+export function canTransitionAnnulmentSync(from: AnnulmentSdidSyncStatus, to: AnnulmentSdidSyncStatus): boolean {
+  return ANNULMENT_SYNC_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function assertTransitionAnnulmentSync(from: AnnulmentSdidSyncStatus, to: AnnulmentSdidSyncStatus): void {
+  if (!canTransitionAnnulmentSync(from, to)) {
+    throw new IllegalTransitionError("annulment sync", from, to);
+  }
+}
+
+export const ANNULMENT_NOTIFICATION_STATUS_LABELS: Record<AnnulmentNotificationStatus, string> = {
+  RECEIVED: "Received",
+  VALIDATION_PENDING: "Validation pending",
+  VALIDATED: "Validated",
+  RETURNED: "Returned",
+  CONVERTED_TO_REGISTRATION: "Converted to registration",
+  DUPLICATE: "Duplicate",
+  CANCELLED: "Cancelled",
+};
+
+export const ANNULMENT_REGISTRATION_STATUS_LABELS: Record<AnnulmentRegistrationStatus, string> = {
+  DRAFT: "Draft",
+  SUBMITTED: "Submitted",
+  UNDER_REVIEW: "Under review",
+  CORRECTION_REQUIRED: "Correction required",
+  RESUBMITTED: "Resubmitted",
+  DECISION_VERIFICATION: "Decision verification",
+  LEGAL_EFFECT_REVIEW: "Legal-effect review",
+  FOREIGN_DECISION_REVIEW: "Foreign decision review",
+  EXCEPTION_REVIEW: "Exception review",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  REGISTERED: "Registered",
+  CANCELLED: "Cancelled",
+};
+
+export const ANNULMENT_DECISION_VERIFICATION_STATUS_LABELS: Record<AnnulmentDecisionVerificationStatus, string> = {
+  NOT_STARTED: "Not started",
+  PENDING: "Pending",
+  VERIFIED: "Verified",
+  UNVERIFIED: "Unverified",
+  CONFLICT_FOUND: "Conflict found",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const ANNULMENT_SYNC_STATUS_LABELS: Record<AnnulmentSdidSyncStatus, string> = {
+  NOT_READY: "Not ready",
+  PENDING: "Pending",
+  IN_PROGRESS: "In progress",
+  BOTH_IDENTITIES_UPDATED: "Both identities updated",
+  PARTIAL_FAILURE: "Partial synchronization failure",
+  FAILED: "Failed",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const ANNULMENT_PARTY_SYNC_STATUS_LABELS: Record<AnnulmentPartySdidSyncStatus, string> = {
+  NOT_READY: "Not ready",
+  PENDING: "Pending",
+  IN_PROGRESS: "In progress",
+  IDENTITY_UPDATED: "Identity updated",
+  FAILED: "Failed",
+  MANUAL_REVIEW: "Manual review",
+};
+
+export const ANNULMENT_REGISTRATION_TIMELINE_ORDER: AnnulmentRegistrationStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "REGISTERED",
+];
+
+/** Pure aggregator: combines both affected parties' independent sync
+ * sub-statuses into the case-level AnnulmentSdidSyncStatus (spec §18/§24) —
+ * never lets one party's outcome affect the other's. Identical shape to
+ * aggregateDivorceSyncStatus(). */
+export function aggregateAnnulmentSyncStatus(
+  party1: AnnulmentPartySdidSyncStatus,
+  party2: AnnulmentPartySdidSyncStatus
+): AnnulmentSdidSyncStatus {
+  if (party1 === "IDENTITY_UPDATED" && party2 === "IDENTITY_UPDATED") return "BOTH_IDENTITIES_UPDATED";
+  if ((party1 === "IDENTITY_UPDATED" && party2 === "FAILED") || (party2 === "IDENTITY_UPDATED" && party1 === "FAILED")) {
+    return "PARTIAL_FAILURE";
+  }
+  if (party1 === "FAILED" && party2 === "FAILED") return "FAILED";
+  if (party1 === "MANUAL_REVIEW" || party2 === "MANUAL_REVIEW") return "MANUAL_REVIEW";
+  if (party1 === "IN_PROGRESS" || party2 === "IN_PROGRESS") return "IN_PROGRESS";
+  if (party1 === "PENDING" || party2 === "PENDING") return "PENDING";
   return "NOT_READY";
 }

@@ -62,7 +62,23 @@ export type CrvsAuditModule =
   | "crvs.divorce_registration_event"
   | "crvs.divorce_marriage_status_update"
   | "crvs.divorce_sync"
-  | "crvs.divorce_certificate";
+  | "crvs.divorce_certificate"
+  | "crvs.annulment_notification"
+  | "crvs.annulment_registration"
+  | "crvs.annulment_evidence"
+  | "crvs.annulment_identity_search"
+  | "crvs.annulment_duplicate_check"
+  | "crvs.annulment_review"
+  | "crvs.annulment_decision_verification"
+  | "crvs.annulment_legal_effect"
+  | "crvs.annulment_foreign_review"
+  | "crvs.annulment_correction"
+  | "crvs.annulment_reassignment"
+  | "crvs.annulment_exception"
+  | "crvs.annulment_registration_event"
+  | "crvs.annulment_marriage_status_update"
+  | "crvs.annulment_sync"
+  | "crvs.annulment_certificate";
 
 export const logCrvsAudit = (
   db: DemoDatabase,

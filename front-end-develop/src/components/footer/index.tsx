@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import "./styles.css";
 import { LanguageContext } from "@/context/LanguageContext";
-import LOGO from "@/assets/logo.png";
+import LOGO from "@/assets/logo.svg";
 import Icon from "../icon";
 import useScreenSize from "@/hooks/useScreenSize";
 import { platformConfig } from "@/config/platform.config";

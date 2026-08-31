@@ -17,7 +17,10 @@ export const DEMO_STORAGE_PREFIX = "sdid-demo";
 // Bumped from "5": DemoDatabase gained crvsDivorceNotifications/
 // crvsDivorceRegistrations — any localStorage blob seeded before that shape
 // existed must be force-reseeded rather than crash on missing fields.
-export const DEMO_DATA_VERSION = "6";
+// Bumped from "6": DemoDatabase gained crvsAnnulmentNotifications/
+// crvsAnnulmentRegistrations, and MarriageApplication gained the additive
+// annulment/judicialSeparation/correctionPending annotation fields.
+export const DEMO_DATA_VERSION = "7";
 
 // Simulated network latency so loading states are visible, per spec section 22.
 export const demoDelay = <T>(value: T, ms?: number): Promise<T> =>

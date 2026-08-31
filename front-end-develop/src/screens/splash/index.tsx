@@ -2,7 +2,7 @@ import { getStorage } from "@/utils/storage";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles.css";
-import logoImage from "@/assets/logo.png";
+import logoImage from "@/assets/logo.svg";
 import toastMessage from "@/utils/common/toastMessage";
 import { platformConfig } from "@/config/platform.config";
 import { resolvePostLoginRoute } from "@/utils/workspace";

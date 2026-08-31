@@ -12,6 +12,8 @@ import type {
   MarriageCeremony,
   DivorceNotification,
   DivorceRegistration,
+  AnnulmentNotification,
+  AnnulmentRegistration,
 } from "@/domain/crvs/types";
 
 export type {
@@ -28,6 +30,8 @@ export type {
   MarriageCeremony,
   DivorceNotification,
   DivorceRegistration,
+  AnnulmentNotification,
+  AnnulmentRegistration,
 };
 
 export type DemoRole =
@@ -242,4 +246,6 @@ export type DemoDatabase = {
   crvsMarriageCeremonies: MarriageCeremony[];
   crvsDivorceNotifications: DivorceNotification[];
   crvsDivorceRegistrations: DivorceRegistration[];
+  crvsAnnulmentNotifications: AnnulmentNotification[];
+  crvsAnnulmentRegistrations: AnnulmentRegistration[];
 };

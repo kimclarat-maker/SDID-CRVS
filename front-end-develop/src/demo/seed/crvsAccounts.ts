@@ -63,3 +63,17 @@ export const COURT_NOTIFICATION_OFFICER_DEMO_NAME = "Court Notification Officer"
 
 export const DEMO_DIVORCE_OFFICE_ID = "OFF-DIVORCE-DEMO-01";
 export const DEMO_DIVORCE_OFFICE_NAME = "Demo Sector Civil Registration Office";
+
+// Marriage-annulment-workflow demo actors. CIVIL_REGISTRAR_DEMO_ID/
+// CRVS_SUPERVISOR_DEMO_ID/CRVS_AUDITOR_DEMO_ID/CRVS_RECORDS_OFFICER_DEMO_ID/
+// COURT_NOTIFICATION_OFFICER_DEMO_ID above are reused for annulment too (see
+// constants/crvsRoles.ts) — only the two genuinely new annulment-specific
+// roles get new ids.
+export const ANNULMENT_REGISTRATION_OFFICER_DEMO_ID = "annulment.officer@demo.identity.local";
+export const FOREIGN_DECISION_REVIEWER_DEMO_ID = "foreign.reviewer@demo.identity.local";
+
+export const ANNULMENT_REGISTRATION_OFFICER_DEMO_NAME = "Annulment Registration Officer";
+export const FOREIGN_DECISION_REVIEWER_DEMO_NAME = "Foreign Decision Reviewer";
+
+export const DEMO_ANNULMENT_OFFICE_ID = "OFF-ANNULMENT-DEMO-01";
+export const DEMO_ANNULMENT_OFFICE_NAME = "Demo Sector Civil Registration Office";

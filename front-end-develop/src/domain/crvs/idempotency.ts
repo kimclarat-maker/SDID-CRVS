@@ -18,3 +18,9 @@ export function marriageSyncIdempotencyKey(caseId: string, spouse: "APPLICANT1" 
 export function divorceSyncIdempotencyKey(caseId: string, spouse: "SPOUSE1" | "SPOUSE2"): string {
   return `DIVORCE-${syncIdempotencyKey(caseId)}-${spouse}`;
 }
+
+// Annulment sync also runs twice per case — once per affected party — same
+// per-party scoping reasoning as marriageSyncIdempotencyKey() above.
+export function annulmentSyncIdempotencyKey(caseId: string, party: "PARTY_1" | "PARTY_2"): string {
+  return `ANNULMENT-${syncIdempotencyKey(caseId)}-${party}`;
+}

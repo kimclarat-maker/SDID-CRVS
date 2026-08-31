@@ -1835,6 +1835,23 @@ export type MarriageApplication = {
     recordedBy: string;
   };
 
+  // Set by demoRegisterAnnulment() (crvsAnnulmentRegistrations.ts) on a
+  // registered annulment — same non-destructive annotation pattern as
+  // `dissolution` above (status stays "REGISTERED" forever; see
+  // MarriageAnnulmentAnnotation in the annulment section below). UI derives
+  // the display-only MarriageCivilStatus from this via
+  // deriveMarriageCivilStatus() rather than reading it directly.
+  annulment?: MarriageAnnulmentAnnotation;
+
+  // Demo-only conflict-detection markers — this application does not
+  // implement judicial separation or post-registration marriage correction
+  // as workflows (see annulmentPolicyConfig.ts's documented scope boundary).
+  // These exist solely so seed data can exercise the
+  // EXISTING_JUDICIAL_SEPARATION_CONFLICT / MARRIAGE_CORRECTION_IN_PROGRESS
+  // exception detectors and their UI.
+  judicialSeparation?: { recordedAt: string; note?: string };
+  correctionPending?: boolean;
+
   statusHistory: MarriageApplicationStatusHistoryEntry[];
   version: number;
 };
@@ -2483,4 +2500,779 @@ export type DivorceApplicantResponseView = {
   correctionRequest?: DivorceCorrectionRequest;
   applicant: DivorceApplicant;
   evidence: DivorceEvidence[];
+};
+
+// ---------------------------------------------------------------------------
+// Marriage-annulment notification / registration workflow types. This module
+// only ever REGISTERS an annulment decision a competent court or legally
+// recognized authority has already made — it never starts proceedings,
+// evaluates grounds, or decides whether a marriage was void/voidable itself
+// (spec §1). It reuses the shared shapes (Sex, IdentityDocumentType,
+// VerificationState, EvidenceItem, DuplicateMatchLevel, SyncAttempt,
+// ManualReviewAssignment, ReviewSectionStatus) the same way Divorce does, and
+// is genuinely two-party throughout. The one concept with no Divorce analog
+// is the configured "legal-effect classification" (spec §2) — a
+// classification the application never determines itself; it is stated in
+// the decision, selected by authorized staff, evidenced, reviewed, and only
+// then stored immutably (see AnnulmentLegalEffect below).
+
+export type AnnulmentSubmissionSource =
+  | "APPLICANT"
+  | "BOTH_AFFECTED_PARTIES"
+  | "INTERESTED_PERSON"
+  | "COURT_NOTIFICATION"
+  | "STAFF_ASSISTED"
+  | "FOREIGN_DECISION";
+
+export type AnnulmentNotificationStatus =
+  | "RECEIVED"
+  | "VALIDATION_PENDING"
+  | "VALIDATED"
+  | "RETURNED"
+  | "CONVERTED_TO_REGISTRATION"
+  | "DUPLICATE"
+  | "CANCELLED";
+
+export type AnnulmentRegistrationStatus =
+  | "DRAFT"
+  | "SUBMITTED"
+  | "UNDER_REVIEW"
+  | "CORRECTION_REQUIRED"
+  | "RESUBMITTED"
+  | "DECISION_VERIFICATION"
+  | "LEGAL_EFFECT_REVIEW"
+  | "FOREIGN_DECISION_REVIEW"
+  | "EXCEPTION_REVIEW"
+  | "APPROVED"
+  | "REJECTED"
+  | "REGISTERED"
+  | "CANCELLED";
+
+export type AnnulmentDecisionVerificationStatus =
+  | "NOT_STARTED"
+  | "PENDING"
+  | "VERIFIED"
+  | "UNVERIFIED"
+  | "CONFLICT_FOUND"
+  | "MANUAL_REVIEW";
+
+/** Per-party SDID sync sub-status — same shape as DivorceSpouseSdidSyncStatus.
+ * The success terminal never implies a specific resulting marital status;
+ * what gets written is whatever annulmentPolicyConfig.sdidSync maps the
+ * confirmed legal-effect classification to (see crvsAnnulmentSdidSync.ts) —
+ * never a hardcoded assumption that annulment always results in SINGLE. */
+export type AnnulmentPartySdidSyncStatus =
+  | "NOT_READY"
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "IDENTITY_UPDATED"
+  | "FAILED"
+  | "MANUAL_REVIEW";
+
+/** Case-level aggregate, derived from both affected parties' sub-statuses via
+ * aggregateAnnulmentSyncStatus() — never assigned directly. */
+export type AnnulmentSdidSyncStatus =
+  | "NOT_READY"
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "BOTH_IDENTITIES_UPDATED"
+  | "PARTIAL_FAILURE"
+  | "FAILED"
+  | "MANUAL_REVIEW";
+
+export type AffectedPartyKey = "PARTY_1" | "PARTY_2";
+
+export type AnnulmentApplicantRelationship =
+  | "AFFECTED_PARTY_1"
+  | "AFFECTED_PARTY_2"
+  | "BOTH_AFFECTED_PARTIES"
+  | "INTERESTED_PERSON"
+  | "STAFF";
+
+export type AnnulmentApplicant = {
+  documentType: IdentityDocumentType;
+  documentNumber?: string;
+  nin?: string;
+  sdidIdentityId?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  nationality?: string;
+  residence?: string;
+  phone?: string;
+  email?: string;
+  // Spec §11 Step 2 asks for both "relationship to the marriage" (which
+  // party, if either) and "relationship to the annulment proceeding"
+  // (relationshipToCase below) as distinct fields.
+  relationshipToMarriage?: "PARTY_1" | "PARTY_2" | "NEITHER_PARTY";
+  relationshipToCase: AnnulmentApplicantRelationship;
+  // Required whenever relationshipToCase is not one of the two affected
+  // parties (spec §2, §5B).
+  authorizationBasis?: string;
+  identityVerification: VerificationState;
+};
+
+export type AnnulmentExistingMarriageMatchStatus = "NOT_SEARCHED" | "MATCHED" | "MULTIPLE_CANDIDATES" | "NOT_FOUND";
+
+export type AnnulmentMarriageSearchCriteria = {
+  marriageRegistrationNumber?: string;
+  marriageCertificateNumber?: string;
+  party1Nin?: string;
+  party2Nin?: string;
+  party1Name?: string;
+  party2Name?: string;
+  marriageDate?: string;
+  marriagePlace?: string;
+};
+
+export type AnnulmentMarriageCandidate = {
+  // Links back to a real MarriageApplication.id in demo data whenever the
+  // registered marriage exists there — undefined only for hand-authored
+  // NOT_FOUND-path evidence.
+  marriageApplicationId?: string;
+  registrationNumber: string;
+  marriageDate: string;
+  marriagePlace?: string;
+  party1Name: string;
+  party2Name: string;
+  officeName?: string;
+  currentCivilStatus: MarriageCivilStatus;
+  matchConfidence: "LOW" | "MEDIUM" | "HIGH";
+};
+
+/** Spec §11 Step 3 — staff/applicant must select a verified marriage before
+ * continuing; if it cannot be found, the case routes to a
+ * MARRIAGE_RECORD_NOT_FOUND exception rather than fabricating an unverified
+ * marriage record (spec §1 "must not... declare a marriage invalid without
+ * an authoritative decision" extends to never inventing the marriage
+ * itself). */
+export type AnnulmentExistingMarriageMatch = {
+  status: AnnulmentExistingMarriageMatchStatus;
+  searchedAt?: string;
+  searchedBy?: string;
+  searchCriteria?: AnnulmentMarriageSearchCriteria;
+  candidates: AnnulmentMarriageCandidate[];
+  selected?: AnnulmentMarriageCandidate;
+  notFoundEvidence: AnnulmentEvidence[];
+};
+
+export type AffectedParty = {
+  partyKey: AffectedPartyKey;
+  sdidIdentityId?: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  nin?: string;
+  documentType?: IdentityDocumentType;
+  documentNumber?: string;
+  dateOfBirth?: string;
+  nationality?: string;
+  sex: Sex;
+  phone?: string;
+  email?: string;
+  currentCivilStatus?: "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED";
+  identityMatchConfidence: "NO_MATCH" | "LOW_CONFIDENCE" | "PROBABLE" | "CONFIRMED";
+  identityVerification: VerificationState;
+  linkedToSelectedMarriage: boolean;
+};
+
+export type AnnulmentDecisionType =
+  | "COURT_ORDER"
+  | "TRIBUNAL_DECISION"
+  | "RELIGIOUS_AUTHORITY_DECISION"
+  | "ADMINISTRATIVE_DECISION"
+  | "OTHER";
+
+/** Deliberately narrow — captures only what's needed to register a decision
+ * a competent authority has already made, never allegations, testimony,
+ * medical detail or intimate information (spec §1, §6 Step 6). Distinct from
+ * AnnulmentLegalEffect below: this is what the decision SAYS; LegalEffect is
+ * what authorized staff, having reviewed it, CONFIRM it means for this
+ * registration. */
+export type AnnulmentDecision = {
+  country: string;
+  courtOrAuthorityName: string;
+  jurisdiction: string;
+  courtCaseNumber: string;
+  decisionNumber: string;
+  decisionDate: string;
+  finalityDate?: string;
+  // As reported on the decision itself — the confirmed, registration-facing
+  // effective date lives on AnnulmentLegalEffect.effectiveDate once staff
+  // have reviewed it (spec's "Confirm effective date" step).
+  effectiveDate?: string;
+  decisionType: AnnulmentDecisionType;
+  courtRegistryReference?: string;
+  verificationSource?: string;
+  // Spec §11 Step 6 "whether the decision describes the marriage as void or
+  // voidable" — raw fact from the document, not a classification.
+  describesMarriageAs: "VOID" | "VOIDABLE" | "UNSPECIFIED";
+  // Spec §11 Step 6 "legal-effect wording from the decision" — verbatim/near
+  // -verbatim text the public applicant may capture; never the classification
+  // itself (spec: "the public applicant must not make the final legal-effect
+  // classification").
+  legalEffectWording?: string;
+  notesForStaff?: string;
+  isForeign: boolean;
+};
+
+export type AnnulmentDecisionVerificationRuleKey =
+  | "COURT_REFERENCE"
+  | "DECISION_AUTHENTICITY_PLACEHOLDER"
+  | "DECISION_FINALITY"
+  | "MARRIAGE_MATCH"
+  | "PARTY_1_IDENTITY"
+  | "PARTY_2_IDENTITY"
+  | "EXISTING_CIVIL_STATUS"
+  | "DUPLICATE_ANNULMENT"
+  | "COURT_REFERENCE_DUPLICATE"
+  | "DECISION_NUMBER_DUPLICATE"
+  | "EXISTING_DIVORCE_CONFLICT"
+  | "EXISTING_JUDICIAL_SEPARATION_CONFLICT"
+  | "MARRIAGE_CORRECTION_IN_PROGRESS"
+  | "FOREIGN_DECISION_REVIEW_REQUIRED"
+  | "JURISDICTION"
+  | "APPLICANT_AUTHORITY"
+  | "MAKER_CHECKER"
+  | "CONFLICT_OF_INTEREST";
+
+/** One discrete rule outcome — spec §17/§31 "must never claim an annulment is
+ * legally valid merely because a mock lookup succeeded; display each
+ * verification result separately," never a single collapsed "verified"
+ * badge. */
+export type AnnulmentDecisionVerificationRuleResult = {
+  rule: AnnulmentDecisionVerificationRuleKey;
+  passed: boolean;
+  severity: "BLOCKING" | "REVIEW" | "INFO";
+  message: string;
+};
+
+export type AnnulmentDecisionVerification = {
+  status: AnnulmentDecisionVerificationStatus;
+  checkedAt?: string;
+  checkedBy?: string;
+  results: AnnulmentDecisionVerificationRuleResult[];
+  overallOutcome?: "VERIFIED" | "REQUIRES_CORRECTION" | "REQUIRES_EXCEPTION" | "UNVERIFIED";
+};
+
+export type ForeignAnnulmentRecognitionStatus =
+  | "NOT_APPLICABLE"
+  | "PENDING"
+  | "REQUIREMENTS_SATISFIED"
+  | "REQUIRES_LEGAL_REVIEW"
+  | "REJECTED";
+
+/** Spec §6D/§20 — a frontend-configured review workflow only; never claims to
+ * make a binding international-law determination. */
+export type ForeignAnnulmentRecognition = {
+  status: ForeignAnnulmentRecognitionStatus;
+  country: string;
+  foreignCourtOrAuthority: string;
+  jurisdiction?: string;
+  party1Nationality?: string;
+  party2Nationality?: string;
+  translationRequired: boolean;
+  translationProvided: boolean;
+  authenticationRequired: boolean;
+  authenticationProvided: boolean;
+  exequaturOrRecognitionRequired: boolean;
+  exequaturOrRecognitionProvided: boolean;
+  missingRequirements: string[];
+  supervisorNotes?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+};
+
+export type AnnulmentEvidence = EvidenceItem;
+
+export type AnnulmentReviewSectionKey =
+  | "APPLICANT"
+  | "EXISTING_MARRIAGE"
+  | "AFFECTED_PARTY_1"
+  | "AFFECTED_PARTY_2"
+  | "DECISION"
+  | "EVIDENCE"
+  | "IDENTITY_CHECKS"
+  | "LEGAL_EFFECT"
+  | "PROCESSING_OFFICE"
+  | "OFFICER_DECLARATION";
+
+export const emptyAnnulmentReviewSections = (): Record<AnnulmentReviewSectionKey, ReviewSectionStatus> => ({
+  APPLICANT: "NOT_REVIEWED",
+  EXISTING_MARRIAGE: "NOT_REVIEWED",
+  AFFECTED_PARTY_1: "NOT_REVIEWED",
+  AFFECTED_PARTY_2: "NOT_REVIEWED",
+  DECISION: "NOT_REVIEWED",
+  EVIDENCE: "NOT_REVIEWED",
+  IDENTITY_CHECKS: "NOT_REVIEWED",
+  LEGAL_EFFECT: "NOT_REVIEWED",
+  PROCESSING_OFFICE: "NOT_REVIEWED",
+  OFFICER_DECLARATION: "NOT_REVIEWED",
+});
+
+export type AnnulmentReviewDecisionType =
+  | "APPROVE"
+  | "REJECT"
+  | "REQUEST_CORRECTION"
+  | "REQUEST_EVIDENCE"
+  | "ROUTE_DECISION_VERIFICATION"
+  | "ROUTE_LEGAL_EFFECT_REVIEW"
+  | "ROUTE_FOREIGN_REVIEW"
+  | "ROUTE_EXCEPTION";
+
+export type AnnulmentReview = {
+  type: AnnulmentReviewDecisionType;
+  decidedBy: string;
+  decidedAt: string;
+  reason?: string;
+  note?: string;
+  // Both set true only on APPROVE — the Registrar's explicit maker-checker
+  // confirmation plus a declared conflict-of-interest check (spec §5/§17/
+  // §22), required in addition to the automatic canApproveAnnulmentCase()
+  // gate, never instead of it.
+  confirmedDidNotPrepare?: boolean;
+  confirmedNoConflictOfInterest?: boolean;
+};
+
+export type AnnulmentCorrectionItem = {
+  id: string;
+  section: AnnulmentReviewSectionKey;
+  fields: string[];
+  reason: string;
+  note?: string;
+  documentsRequired: boolean;
+  dueDate?: string;
+  addressed: boolean;
+  response?: string;
+};
+
+/** Backs both "request correction" and "request additional evidence" (spec
+ * §11 Step 7/§18/§26 lists these as two distinct staff actions) — unified
+ * under one requestType flag rather than two parallel record types, since
+ * the response flow (unlock affected sections, accept replacement evidence,
+ * require resubmission confirmation, never overwrite original values) is
+ * identical either way. */
+export type AnnulmentCorrectionRequest = {
+  id: string;
+  requestType: "CORRECTION" | "EVIDENCE";
+  requestedBy: string;
+  requestedAt: string;
+  items: AnnulmentCorrectionItem[];
+  responseDeadline?: string;
+  notifyApplicants: boolean;
+  resolvedAt?: string;
+  // Public /civil-registration/marriage-annulment/respond/:token route looks
+  // the registration up by this token rather than requiring a staff sign-in.
+  responseToken: string;
+};
+
+export type AnnulmentExceptionType =
+  | "MARRIAGE_RECORD_NOT_FOUND"
+  | "IDENTITY_NOT_FOUND_ONE"
+  | "IDENTITY_NOT_FOUND_BOTH"
+  | "MARRIAGE_PARTY_MISMATCH"
+  | "DUPLICATE_ANNULMENT"
+  | "DECISION_NUMBER_DUPLICATE"
+  | "DECISION_NOT_FINAL"
+  | "COURT_CANNOT_BE_VERIFIED"
+  | "EFFECTIVE_DATE_UNCLEAR"
+  | "LEGAL_EFFECT_UNCLEAR"
+  | "EXISTING_DIVORCE_CONFLICT"
+  | "EXISTING_ANNULMENT_CONFLICT"
+  | "EXISTING_JUDICIAL_SEPARATION_CONFLICT"
+  | "MARRIAGE_CORRECTION_IN_PROGRESS"
+  | "CONFLICTING_CIVIL_STATUS"
+  | "FOREIGN_DOCUMENT_ISSUE"
+  | "WRONG_PROCESSING_OFFICE"
+  | "LATE_REGISTRATION"
+  | "APPLICANT_AUTHORITY_UNCLEAR"
+  | "SDID_RELATIONSHIP_MISSING"
+  | "CERTIFICATE_STATUS_CONFLICT"
+  | "OTHER";
+
+export type AnnulmentExceptionRecord = {
+  type: AnnulmentExceptionType;
+  reason: string;
+  triggeringRule?: string;
+  affectedData?: string;
+  assignedTo?: string;
+  priority?: "LOW" | "MEDIUM" | "HIGH";
+  status: "OPEN" | "RESOLVED";
+  resolution?: {
+    type: string;
+    reason: string;
+    note?: string;
+    nextStatus: AnnulmentRegistrationStatus;
+    resolvedBy: string;
+    resolvedAt: string;
+  };
+};
+
+/** Immutable snapshot written the moment a registration transitions to
+ * REGISTERED (spec §22/§23 "the registered record must be read-only") —
+ * later legal changes go through the general CRVS rectification workflow,
+ * never a direct edit of this event. */
+export type AnnulmentRegistrationEvent = {
+  id: string;
+  registrationNumber: string;
+  registeredAt: string;
+  registeredBy: string;
+  registeredByName: string;
+  officeId: string;
+  officeName: string;
+  effectiveDate: string;
+  courtCaseNumber: string;
+  decisionNumber: string;
+  marriageRegistrationReference: string;
+  legalEffectClassification: AnnulmentLegalEffectClassification;
+  party1Summary: { firstName?: string; lastName?: string };
+  party2Summary: { firstName?: string; lastName?: string };
+};
+
+/** The one concept with no Divorce analog (spec §2/§17). The application
+ * never determines this itself — proposedClassification is only ever a
+ * suggestion computed from AnnulmentDecision.describesMarriageAs plus
+ * annulmentPolicyConfig; confirmedClassification is set exclusively by
+ * authorized staff (annulment.legal_effect.classify) after reviewing
+ * evidence, and is locked (lockedAt set) the moment the case is APPROVED —
+ * spec "must not allow the classification to be silently changed after
+ * approval." */
+export type AnnulmentLegalEffectClassification =
+  | "VOID_FROM_INCEPTION"
+  | "VOIDABLE_AND_ANNULLED"
+  | "ANNULLED_FROM_DECISION_DATE"
+  | "ANNULLED_FROM_EFFECTIVE_DATE"
+  | "EFFECT_REQUIRES_MANUAL_REVIEW"
+  | "OTHER_AUTHORIZED_EFFECT";
+
+export type AnnulmentLegalEffectClassificationHistoryEntry = {
+  classification: AnnulmentLegalEffectClassification;
+  setBy: string;
+  setAt: string;
+  note?: string;
+  locked?: boolean;
+};
+
+/** What SDID sync proposes to write for one party once the classification is
+ * confirmed — never assumed to be SINGLE (spec §24 "do not automatically
+ * assume the resulting civil status is SINGLE"). UNCHANGED / MANUAL_REVIEW
+ * are first-class outcomes, driven entirely by
+ * annulmentPolicyConfig.sdidSync.civilStatusMapping. */
+export type AnnulmentProposedIdentityStatus = "SINGLE" | "UNCHANGED" | "MANUAL_REVIEW";
+
+export type AnnulmentPartySdidConsequence = {
+  proposedCivilStatus: AnnulmentProposedIdentityStatus;
+  rationale: string;
+};
+
+export type AnnulmentLegalEffect = {
+  // Copied from AnnulmentDecision.legalEffectWording at the point staff begin
+  // classification, so the exact wording used to justify a classification is
+  // preserved even if the decision record is later corrected.
+  wordingFromDecision?: string;
+  proposedClassification?: AnnulmentLegalEffectClassification;
+  confirmedClassification?: AnnulmentLegalEffectClassification;
+  // References an AnnulmentEvidence.id (the decision document/page) or free
+  // text page reference supporting the classification.
+  supportingEvidenceRef?: string;
+  // Staff-confirmed effective date used for registration (spec's "Confirm
+  // effective date" modal) — distinct from AnnulmentDecision.effectiveDate,
+  // the raw value as first reported.
+  effectiveDate?: string;
+  marriageStatusResult: "ANNULLED" | "REQUIRES_MANUAL_REVIEW";
+  proposedSdid: { party1: AnnulmentPartySdidConsequence; party2: AnnulmentPartySdidConsequence };
+  // Fixed, spec-mandated value — documents the non-negotiable rule that the
+  // marriage record and its relationship history are marked, never deleted
+  // (spec §2 "preserve a complete timeline showing registration and
+  // annulment").
+  relationshipHistoryTreatment: "MARK_ANNULLED_PRESERVE_HISTORY";
+  certificateConsequence: "RESTRICT_EXISTING_CERTIFICATE" | "NO_RESTRICTION" | "MANUAL_REVIEW";
+  // Display-only list of explicitly excluded downstream effects (spec §2) —
+  // e.g. parent-child relationships, names, nationality, addresses — shown
+  // on the Legal Effect tab so staff never assume this module changes them.
+  downstreamChangesExplicitlyExcluded: string[];
+  reviewingOfficerId?: string;
+  reviewingOfficerName?: string;
+  supervisorReviewedBy?: string;
+  supervisorReviewedAt?: string;
+  classificationHistory: AnnulmentLegalEffectClassificationHistoryEntry[];
+  lockedAt?: string;
+};
+
+export type AnnulmentRecordEligibilityStatus = "NOT_CHECKED" | "ELIGIBLE" | "INELIGIBLE" | "MANUAL_REVIEW";
+export type AnnulmentCertificateEligibilityStatus = "NOT_CHECKED" | "ELIGIBLE" | "INELIGIBLE" | "MANUAL_REVIEW" | "NOT_ISSUED_BY_POLICY";
+
+export type AnnulmentRecordEligibility = {
+  status: AnnulmentRecordEligibilityStatus;
+  checkedAt?: string;
+  reasons: string[];
+};
+
+export type AnnulmentCertificateEligibility = {
+  status: AnnulmentCertificateEligibilityStatus;
+  checkedAt?: string;
+  reasons: string[];
+};
+
+/** Spec §25 — the existing marriage certificate is never deleted from
+ * history; this records only what restriction (if any) applies going
+ * forward, computed at registration time and stored on the annulment
+ * registration itself rather than mutated onto the marriage's own
+ * certificate-eligibility record (keeps the certificate module untouched). */
+export type ExistingMarriageCertificateConsequence = {
+  status: "RESTRICTED" | "NORMAL" | "MANUAL_REVIEW";
+  reason: string;
+  appliedAt?: string;
+};
+
+/** Records the effect of registration on the existing MarriageApplication —
+ * spec §16/§22 "update... never delete the original." Applied to the
+ * marriage record itself (via the additive `annulment` annotation field, see
+ * MarriageAnnulmentAnnotation below) by demoRegisterAnnulment(); this is a
+ * receipt of that mutation, not a duplicate of the marriage record. */
+export type MarriageAnnulmentUpdateResult = {
+  applied: boolean;
+  marriageApplicationId?: string;
+  marriageApplicationReference?: string;
+  previousCivilStatus?: MarriageCivilStatus;
+  newCivilStatus: "ANNULLED";
+  legalEffectClassification: AnnulmentLegalEffectClassification;
+  updatedAt: string;
+  annulmentRegistrationReference: string;
+};
+
+/** Per-party SDID sync sub-record — shape mirrors SdidDivorceSpouseSyncRecord. */
+export type SdidAnnulmentPartySyncRecord = {
+  status: AnnulmentPartySdidSyncStatus;
+  idempotencyKey?: string;
+  attempts: SyncAttempt[];
+  lastAttemptAt?: string;
+  lastFailureCode?: string;
+  linkedFoundationalIdentityId?: string;
+  linkedNin?: string;
+  resultingCivilStatus?: AnnulmentProposedIdentityStatus;
+  manualReview?: ManualReviewAssignment;
+  completedAt?: string;
+};
+
+/** Case-level aggregate wrapping both affected parties' independent sync
+ * sub-records (spec §18/§24: "create a separate synchronization operation
+ * for each identity... preserve separate synchronization results"). `status`
+ * is derived via aggregateAnnulmentSyncStatus() in crvsAnnulmentSdidSync.ts,
+ * never assigned directly. */
+export type SDIDAnnulmentSync = {
+  status: AnnulmentSdidSyncStatus;
+  party1: SdidAnnulmentPartySyncRecord;
+  party2: SdidAnnulmentPartySyncRecord;
+  // Whether the existing MarriageRelationship (on both identities) has been
+  // reclassified per policy — spec §24 "end or reclassify the active
+  // marriage relationship... do not delete the other person from historical
+  // relationships."
+  relationshipUpdated?: boolean;
+  manualReview?: ManualReviewAssignment;
+};
+
+/** Presentation-shape mirror of DemoAuditEvent, scoped to the annulment
+ * workflow — the actual store is the same shared db.auditEvents collection
+ * written by logCrvsAudit(). */
+export type AnnulmentAuditEntry = {
+  id: string;
+  actor: string;
+  action: string;
+  module: string;
+  targetRef: string;
+  at: string;
+  details?: string;
+};
+
+export type AnnulmentRejectionReason = {
+  reason: string;
+  explanation: string;
+  evidenceRefs: string[];
+  applicantsNotified: boolean;
+};
+
+export type AnnulmentRegistrationStatusHistoryEntry = {
+  status: AnnulmentRegistrationStatus;
+  at: string;
+  by: string;
+  note?: string;
+};
+
+export type AnnulmentProcessingOfficeJurisdictionResult = "CONFIRMED" | "ALTERNATIVE_REQUIRES_REASON" | "UNRESOLVED";
+
+export type AnnulmentProcessingOffice = {
+  marriageRegisteredOfficeName?: string;
+  applicantDomicileOfficeName?: string;
+  selectedProcessingOfficeId: string;
+  selectedProcessingOfficeName: string;
+  embassyOrForeignOfficePath: boolean;
+  jurisdictionResult: AnnulmentProcessingOfficeJurisdictionResult;
+  alternativeReason?: string;
+};
+
+export type AnnulmentRegistration = {
+  id: string;
+  reference: string;
+  status: AnnulmentRegistrationStatus;
+  source: AnnulmentSubmissionSource;
+  // Set only when source === "COURT_NOTIFICATION" — links back to the
+  // AnnulmentNotification this case was converted from.
+  sourceNotificationId?: string;
+  sourceNotificationReference?: string;
+
+  applicant: AnnulmentApplicant;
+  existingMarriage: AnnulmentExistingMarriageMatch;
+  affectedParty1: AffectedParty;
+  affectedParty2: AffectedParty;
+
+  decision: AnnulmentDecision;
+  decisionVerification: AnnulmentDecisionVerification;
+  legalEffect: AnnulmentLegalEffect;
+  // Present whenever decision.isForeign is true (spec §6D/§20) — created
+  // empty (status NOT_APPLICABLE) otherwise rather than left undefined, so
+  // the foreign-review tab always has a stable shape to render.
+  foreignRecognition: ForeignAnnulmentRecognition;
+
+  evidence: AnnulmentEvidence[];
+
+  processingOffice: AnnulmentProcessingOffice;
+  jurisdiction: string;
+
+  reviewSections: Record<AnnulmentReviewSectionKey, ReviewSectionStatus>;
+  reviewerId?: string;
+  reviewerName?: string;
+  reviewLockedAt?: string;
+  reviewDecisions: AnnulmentReview[];
+
+  correctionRequests: AnnulmentCorrectionRequest[];
+  exception?: AnnulmentExceptionRecord;
+
+  officerId: string;
+  officerName: string;
+  accuracyDeclarationConfirmed: boolean;
+  authorityToSubmitConfirmed: boolean;
+  // Spec §11 Step 10 — distinct declarations from divorce's single
+  // "judgmentFinalConfirmed": the applicant confirms a decision exists and
+  // that the uploaded copy is complete, never that the marriage was legally
+  // invalid (that conclusion comes only from the authoritative order).
+  authoritativeDecisionExistsConfirmed: boolean;
+  decisionCompleteConfirmed: boolean;
+  privacyAcknowledged: boolean;
+  electronicSubmissionConfirmed: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  approvedByName?: string;
+  approvalNote?: string;
+  registeredAt?: string;
+  rejectedAt?: string;
+  rejectedBy?: string;
+  rejectionReason?: AnnulmentRejectionReason;
+  cancelledAt?: string;
+  cancellationReason?: string;
+
+  registrationEvent?: AnnulmentRegistrationEvent;
+  marriageAnnulmentUpdate?: MarriageAnnulmentUpdateResult;
+  existingMarriageCertificateConsequence?: ExistingMarriageCertificateConsequence;
+
+  sdid: SDIDAnnulmentSync;
+  recordEligibility?: AnnulmentRecordEligibility;
+  certificateEligibility?: AnnulmentCertificateEligibility;
+
+  statusHistory: AnnulmentRegistrationStatusHistoryEntry[];
+  version: number;
+};
+
+/** A simulated court-integration notice (spec §6A) — never a real court API
+ * call, always this typed mock shape. Validated then either converted into
+ * an AnnulmentRegistration, returned to the (simulated) court contact, or
+ * marked a duplicate of an existing notification/registration. */
+export type AnnulmentNotification = {
+  id: string;
+  reference: string;
+  status: AnnulmentNotificationStatus;
+  courtName: string;
+  courtCaseNumber: string;
+  decisionNumber: string;
+  decisionDate: string;
+  finalityDate?: string;
+  effectiveDate?: string;
+  legalEffectWordingAsReported?: string;
+  applicantNamesAsReported: string;
+  marriageReferenceAsReported?: string;
+  signedDecisionDocument?: AnnulmentEvidence;
+  notifiedAt: string;
+  marriageMatch: AnnulmentExistingMarriageMatch;
+  duplicateWarning: boolean;
+  assignedOfficerId?: string;
+  assignedOfficerName?: string;
+  validationNotes?: string;
+  returnReason?: { reason: string; note?: string };
+  convertedRegistrationId?: string;
+  convertedRegistrationReference?: string;
+  createdAt: string;
+  updatedAt: string;
+  statusHistory: { status: AnnulmentNotificationStatus; at: string; by: string; note?: string }[];
+  version: number;
+};
+
+/** Redacted projection for the unauthenticated public tracking page (spec
+ * §12 — must never reveal restricted decision details, internal legal
+ * classifications before confirmation, restricted attachments, staff notes,
+ * audit metadata, or sensitive information about the other affected party). */
+export type AnnulmentPublicTrackingView = {
+  reference: string;
+  status: AnnulmentRegistrationStatus;
+  submittedAt?: string;
+  processingOfficeName: string;
+  timeline: { status: AnnulmentRegistrationStatus; label: string; at?: string }[];
+  hasOpenCorrection: boolean;
+  additionalEvidenceRequested: boolean;
+  applicantActionRequired: boolean;
+  registrationCompleted: boolean;
+  recordEligible: boolean;
+  certificateEligible: boolean;
+  nextAction: string;
+};
+
+/** Scoped projection for the token-based /respond/:token page — the
+ * requested corrections/evidence plus only the originally submitted values
+ * needed to respond, never the full case file. */
+export type AnnulmentApplicantResponseView = {
+  registrationReference: string;
+  correctionRequest?: AnnulmentCorrectionRequest;
+  applicant: AnnulmentApplicant;
+  evidence: AnnulmentEvidence[];
+};
+
+// ---------------------------------------------------------------------------
+// Marriage "civil status" — a display-only derived value (spec §8's
+// MarriageStatus list) computed from additive annotation fields on
+// MarriageApplication, exactly mirroring how `dissolution` already records a
+// divorce without a new MarriageApplicationStatus value (see
+// MarriageApplication.dissolution above). Nothing here changes divorce's own
+// behavior: the new fields are optional and divorce code never reads them.
+
+export type MarriageCivilStatus =
+  | "ACTIVE"
+  | "DISSOLVED_BY_DIVORCE"
+  | "ANNULLED"
+  | "ANNULMENT_PENDING"
+  | "JUDICIALLY_SEPARATED"
+  | "CORRECTION_PENDING"
+  | "STATUS_REQUIRES_REVIEW";
+
+/** Mirrors MarriageApplication.dissolution's shape/placement exactly. */
+export type MarriageAnnulmentAnnotation = {
+  annulmentRegistrationId: string;
+  annulmentRegistrationReference: string;
+  legalEffectClassification: AnnulmentLegalEffectClassification;
+  effectiveDate: string;
+  recordedAt: string;
+  recordedBy: string;
 };

@@ -1,4 +1,11 @@
-import { BirthRegistrationCase, BirthCertificateRequest, DeathRegistrationCase, MarriageApplication, DivorceRegistration } from "@/domain/crvs/types";
+import {
+  BirthRegistrationCase,
+  BirthCertificateRequest,
+  DeathRegistrationCase,
+  MarriageApplication,
+  DivorceRegistration,
+  AnnulmentRegistration,
+} from "@/domain/crvs/types";
 import { marriagePolicyConfig } from "@/domain/crvs/marriagePolicyConfig";
 import { getAssignmentForWorkspace } from ".";
 
@@ -274,6 +281,65 @@ export function canApproveDivorceCase(
   if (openCorrection) reasons.push("There is a pending correction request on this registration.");
   if (registration.exception && registration.exception.status === "OPEN") {
     reasons.push("There is an open exception on this registration.");
+  }
+  return { allowed: reasons.length === 0, reasons };
+}
+
+/**
+ * Conflict-of-interest reasons for a marriage-annulment registration (spec
+ * §5 "A user who created, prepared, or submitted a case cannot provide final
+ * approval... must block a Registrar from processing an annulment involving
+ * themselves"): checks the approver against the officer who prepared the
+ * case, the applicant, and both affected parties.
+ */
+export function annulmentConflictOfInterestReasons(
+  accountId: string | undefined,
+  registration: Pick<AnnulmentRegistration, "officerId" | "applicant" | "affectedParty1" | "affectedParty2">
+): string[] {
+  if (!accountId) return [];
+  const reasons: string[] = [];
+  if (accountId === registration.officerId) reasons.push("You prepared this annulment registration.");
+  if (registration.applicant.sdidIdentityId === accountId) reasons.push("You are the applicant on this registration.");
+  if (registration.affectedParty1.sdidIdentityId === accountId) reasons.push("You are the first affected party on this registration.");
+  if (registration.affectedParty2.sdidIdentityId === accountId) reasons.push("You are the second affected party on this registration.");
+  return reasons;
+}
+
+/** Same jurisdiction-gate shape as canAccessCaseJurisdiction(), scoped to annulment registrations. */
+export function canAccessAnnulmentCaseJurisdiction(caseJurisdiction: string | undefined): boolean {
+  return canAccessCaseJurisdiction(caseJurisdiction);
+}
+
+/**
+ * Full approval gate for marriage-annulment registrations:
+ * conflict-of-interest + jurisdiction + open-correction/evidence-request +
+ * open-exception + unresolved-legal-effect-classification checks, plus the
+ * Registrar's explicit "I did not prepare this case" / conflict-of-interest
+ * declaration (spec §5/§18/§22) enforced separately by the approval
+ * modal/service — this function is the automatic half of the maker-checker
+ * gate, not a replacement for that confirmation. Approval is blocked while
+ * the legal-effect classification is unresolved (spec §22 "approval cannot
+ * occur while material verification or exception checks remain
+ * unresolved") — legal-effect confirmation must happen first.
+ */
+export function canApproveAnnulmentCase(
+  accountId: string | undefined,
+  registration: Pick<
+    AnnulmentRegistration,
+    "officerId" | "applicant" | "affectedParty1" | "affectedParty2" | "jurisdiction" | "correctionRequests" | "exception" | "legalEffect"
+  >
+): { allowed: boolean; reasons: string[] } {
+  const reasons = annulmentConflictOfInterestReasons(accountId, registration);
+  if (!canAccessAnnulmentCaseJurisdiction(registration.jurisdiction)) {
+    reasons.push("This annulment registration is outside your assigned jurisdiction.");
+  }
+  const openCorrection = registration.correctionRequests.some((c) => !c.resolvedAt);
+  if (openCorrection) reasons.push("There is a pending correction or evidence request on this registration.");
+  if (registration.exception && registration.exception.status === "OPEN") {
+    reasons.push("There is an open exception on this registration.");
+  }
+  if (!registration.legalEffect.confirmedClassification) {
+    reasons.push("The legal-effect classification has not yet been confirmed.");
   }
   return { allowed: reasons.length === 0, reasons };
 }

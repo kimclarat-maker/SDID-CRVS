@@ -17,6 +17,7 @@ import { seedCrvsDeathRegistrations, seedDeathLinkedFoundationalIdentities } fro
 import { seedCrvsMarriageApplications, seedMarriageLinkedFoundationalIdentities } from "./crvsMarriageApplications";
 import { seedCrvsMarriageAppointments, seedCrvsMarriageCeremonies } from "./crvsMarriageAppointments";
 import { seedCrvsDivorceNotifications, seedCrvsDivorceRegistrations, seedDivorceLinkedFoundationalIdentities } from "./crvsDivorceRegistrations";
+import { seedCrvsAnnulmentNotifications, seedCrvsAnnulmentRegistrations, seedAnnulmentLinkedFoundationalIdentities } from "./crvsAnnulmentRegistrations";
 
 export const buildDemoDatabase = (): DemoDatabase => {
   const centers = seedCenters();
@@ -40,6 +41,7 @@ export const buildDemoDatabase = (): DemoDatabase => {
     ...seedDeathLinkedFoundationalIdentities(),
     ...seedMarriageLinkedFoundationalIdentities(),
     ...seedDivorceLinkedFoundationalIdentities(),
+    ...seedAnnulmentLinkedFoundationalIdentities(),
   ];
   const crvsCertificateRequests = seedCrvsCertificateRequests();
   const crvsCertificates = seedCrvsCertificates();
@@ -51,6 +53,8 @@ export const buildDemoDatabase = (): DemoDatabase => {
   const crvsMarriageCeremonies = seedCrvsMarriageCeremonies();
   const crvsDivorceNotifications = seedCrvsDivorceNotifications();
   const crvsDivorceRegistrations = seedCrvsDivorceRegistrations();
+  const crvsAnnulmentNotifications = seedCrvsAnnulmentNotifications();
+  const crvsAnnulmentRegistrations = seedCrvsAnnulmentRegistrations();
 
   return {
     version: DEMO_DATA_VERSION,
@@ -76,5 +80,7 @@ export const buildDemoDatabase = (): DemoDatabase => {
     crvsMarriageCeremonies,
     crvsDivorceNotifications,
     crvsDivorceRegistrations,
+    crvsAnnulmentNotifications,
+    crvsAnnulmentRegistrations,
   };
 };

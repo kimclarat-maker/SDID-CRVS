@@ -1,0 +1,188 @@
+/* Marriage-annulment-module-only styles. Everything else (wizard shell, form
+   grid, banners, sticky action bar, cards) is reused from
+   src/screens/dashboard/crvs/shared.css and
+   src/components/public/public.css — this file only adds what those two
+   genuinely don't have: the evidence drop zone, the restricted-document
+   badge, the error-summary link, and the per-check rows on the identity &
+   verification step. Colours come from the existing design tokens, never
+   from new hardcoded hex values. Mirrors divorce/divorcePublic.css exactly,
+   scoped under an "annulment-" prefix so neither stylesheet collides with
+   the other. */
+
+.annulment-error-summary {
+  align-items: flex-start;
+}
+
+.annulment-error-summary:focus-visible,
+.annulment-error-summary:focus {
+  outline: 2px solid var(--status-danger-fg, currentColor);
+  outline-offset: 3px;
+}
+
+.annulment-error-summary-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.annulment-error-summary-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---- Evidence upload drop zone ---- */
+
+.annulment-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 148px;
+  padding: 24px;
+  border: 2px dashed var(--border-default, #c9ced6);
+  border-radius: var(--radius-md, 10px);
+  background: var(--status-neutral-bg, rgba(0, 0, 0, 0.02));
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+.annulment-dropzone:hover:not(:disabled),
+.annulment-dropzone.is-dragging {
+  border-color: var(--status-info-fg, #2563eb);
+  background: var(--status-info-bg, rgba(37, 99, 235, 0.06));
+}
+
+.annulment-dropzone:focus-visible {
+  outline: 3px solid var(--status-info-fg, #2563eb);
+  outline-offset: 2px;
+}
+
+.annulment-dropzone:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.annulment-upload-progress {
+  width: 100%;
+  height: 6px;
+  margin-top: 12px;
+  border-radius: 999px;
+  background: var(--status-neutral-bg, rgba(0, 0, 0, 0.08));
+  overflow: hidden;
+}
+
+.annulment-upload-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--status-info-fg, #2563eb);
+  transition: width 200ms ease;
+}
+
+/* ---- Restricted-document badge ---- */
+
+.annulment-restricted-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--status-warning-bg, rgba(180, 83, 9, 0.1));
+  color: var(--status-warning-fg, #b45309);
+}
+
+/* ---- Identity & verification check rows ---- */
+
+.annulment-check-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-default, #e2e5ea);
+  border-radius: var(--radius-md, 10px);
+}
+
+.annulment-check-row + .annulment-check-row {
+  margin-top: 8px;
+}
+
+.annulment-check-row-label {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+/* ---- Candidate / option pick lists ---- */
+
+.annulment-option-card {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--border-default, #e2e5ea);
+  border-radius: var(--radius-md, 10px);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.annulment-option-card:hover {
+  border-color: var(--status-info-fg, #2563eb);
+}
+
+.annulment-option-card:focus-visible {
+  outline: 3px solid var(--status-info-fg, #2563eb);
+  outline-offset: 2px;
+}
+
+.annulment-option-card.is-selected {
+  border-color: var(--status-info-fg, #2563eb);
+  box-shadow: inset 0 0 0 1px var(--status-info-fg, #2563eb);
+}
+
+.annulment-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---- Responsive padding (spec: 24-32px desktop, 16-20px mobile) ---- */
+
+.annulment-public-body {
+  padding: 0 0 3rem;
+}
+
+@media (max-width: 720px) {
+  .annulment-check-row,
+  .annulment-option-card {
+    padding: 16px;
+  }
+
+  .annulment-dropzone {
+    padding: 20px 16px;
+    min-height: 128px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .annulment-dropzone,
+  .annulment-option-card,
+  .annulment-upload-progress-bar {
+    transition: none;
+  }
+}

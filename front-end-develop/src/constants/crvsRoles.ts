@@ -38,6 +38,16 @@ export const CRVS_ROLES = {
   DIVORCE_REGISTRATION_OFFICER: "DIVORCE_REGISTRATION_OFFICER",
   CRVS_RECORDS_OFFICER: "CRVS_RECORDS_OFFICER",
   COURT_NOTIFICATION_OFFICER: "COURT_NOTIFICATION_OFFICER",
+  // Marriage-annulment-workflow roles. CIVIL_REGISTRAR/CRVS_SUPERVISOR/
+  // CRVS_RECORDS_OFFICER/CRVS_AUDITOR/COURT_NOTIFICATION_OFFICER are reused
+  // (extended below) — only the two genuinely new annulment-specific roles
+  // are added here. ANNULMENT_REGISTRATION_OFFICER prepares/submits
+  // registration requests, mirroring DIVORCE_REGISTRATION_OFFICER's shape.
+  // FOREIGN_DECISION_REVIEWER is optional/narrow — reviews foreign-decision
+  // recognition requirements only (spec §4 "where required"); it carries no
+  // approval/registration authority of its own.
+  ANNULMENT_REGISTRATION_OFFICER: "ANNULMENT_REGISTRATION_OFFICER",
+  FOREIGN_DECISION_REVIEWER: "FOREIGN_DECISION_REVIEWER",
 } as const;
 
 export type CrvsRole = (typeof CRVS_ROLES)[keyof typeof CRVS_ROLES];
@@ -216,6 +226,48 @@ export const CRVS_PERMISSIONS = {
   DIVORCE_CERTIFICATE_REQUEST: "crvs.divorce.certificate.request",
   DIVORCE_AUDIT_VIEW: "crvs.divorce.audit.view",
   DIVORCE_REGISTERED_VIEW: "crvs.divorce_registered.view",
+
+  // Marriage-annulment-notification / annulment-registration / decision-
+  // verification / legal-effect-classification / foreign-decision-review /
+  // exception / SDID-sync / certificate lifecycle. Spec §4 lists these as
+  // annulment.x.y — translated into the existing crvs.annulment_x.y
+  // dot-namespace convention for consistency with every permission above,
+  // not adopted verbatim (matches how DIVORCE_* was normalized from
+  // divorce.x.y).
+  ANNULMENT_NOTIFICATION_CREATE: "crvs.annulment_notification.create",
+  ANNULMENT_NOTIFICATION_VIEW: "crvs.annulment_notification.view",
+  ANNULMENT_NOTIFICATION_EDIT: "crvs.annulment_notification.edit",
+  ANNULMENT_NOTIFICATION_SUBMIT: "crvs.annulment_notification.submit",
+  ANNULMENT_NOTIFICATION_VALIDATE: "crvs.annulment_notification.validate",
+  ANNULMENT_NOTIFICATION_RETURN: "crvs.annulment_notification.return",
+  ANNULMENT_NOTIFICATION_MARK_DUPLICATE: "crvs.annulment_notification.mark_duplicate",
+  ANNULMENT_NOTIFICATION_CONVERT: "crvs.annulment_notification.convert",
+  ANNULMENT_REGISTRATION_CREATE: "crvs.annulment_registration.create",
+  ANNULMENT_REGISTRATION_EDIT: "crvs.annulment_registration.edit",
+  ANNULMENT_REGISTRATION_SUBMIT: "crvs.annulment_registration.submit",
+  ANNULMENT_REGISTRATION_VIEW: "crvs.annulment_registration.view",
+  ANNULMENT_REGISTRATION_REVIEW: "crvs.annulment_registration.review",
+  ANNULMENT_CORRECTION_REQUEST: "crvs.annulment_registration.request_correction",
+  ANNULMENT_CORRECTION_RESPOND: "crvs.annulment_registration.respond_correction",
+  ANNULMENT_EVIDENCE_REQUEST: "crvs.annulment_registration.request_evidence",
+  ANNULMENT_REGISTRATION_APPROVE: "crvs.annulment_registration.approve",
+  ANNULMENT_REGISTRATION_REJECT: "crvs.annulment_registration.reject",
+  ANNULMENT_REGISTRATION_REGISTER: "crvs.annulment_registration.register",
+  ANNULMENT_ORDER_VERIFY: "crvs.annulment.order.verify",
+  ANNULMENT_LEGAL_EFFECT_CLASSIFY: "crvs.annulment.legal_effect.classify",
+  ANNULMENT_FOREIGN_DECISION_REVIEW: "crvs.annulment.foreign_decision.review",
+  ANNULMENT_EXCEPTION_REVIEW: "crvs.annulment.exception.review",
+  ANNULMENT_EXCEPTIONS_VIEW: "crvs.annulment.exceptions.view",
+  ANNULMENT_IDENTITY_SEARCH: "crvs.annulment.identity_search.run",
+  ANNULMENT_DUPLICATE_RESOLVE: "crvs.annulment.duplicate.resolve",
+  ANNULMENT_CASE_REASSIGN: "crvs.annulment.case.reassign",
+  ANNULMENT_SDID_SYNC_VIEW: "crvs.annulment.sdid_sync.view",
+  ANNULMENT_SDID_SYNC_RETRY: "crvs.annulment.sdid_sync.retry",
+  ANNULMENT_RECORD_REQUEST: "crvs.annulment.record.request",
+  ANNULMENT_CERTIFICATE_REQUEST: "crvs.annulment.certificate.request",
+  ANNULMENT_AUDIT_VIEW: "crvs.annulment.audit.view",
+  ANNULMENT_REGISTERED_VIEW: "crvs.annulment_registered.view",
+  ANNULMENT_RESTRICTED_DOCUMENTS_VIEW: "crvs.annulment.restricted_documents.view",
 } as const;
 
 export type CrvsPermission = (typeof CRVS_PERMISSIONS)[keyof typeof CRVS_PERMISSIONS];
@@ -365,6 +417,28 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DIVORCE_SDID_SYNC_VIEW,
     CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW,
     CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW,
+    // Marriage-annulment workflow: review registrations, request correction/
+    // evidence, verify the decision, classify legal effect, approve/reject,
+    // route to exception review, perform the final registration action,
+    // view registered annulments/sync status/audit history, view restricted
+    // decision documents. Subject to the same maker-checker/jurisdiction/
+    // conflict-of-interest gates as divorce — see canApproveAnnulmentCase().
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_REVIEW,
+    CRVS_PERMISSIONS.ANNULMENT_CORRECTION_REQUEST,
+    CRVS_PERMISSIONS.ANNULMENT_EVIDENCE_REQUEST,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_APPROVE,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_REJECT,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_REGISTER,
+    CRVS_PERMISSIONS.ANNULMENT_ORDER_VERIFY,
+    CRVS_PERMISSIONS.ANNULMENT_LEGAL_EFFECT_CLASSIFY,
+    CRVS_PERMISSIONS.ANNULMENT_EXCEPTION_REVIEW,
+    CRVS_PERMISSIONS.ANNULMENT_EXCEPTIONS_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_AUDIT_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_RESTRICTED_DOCUMENTS_VIEW,
   ],
   // Review late registrations and exceptions, resolve potential duplicates,
   // reassign cases, view workload, retry failed SDID synchronization, place
@@ -449,6 +523,25 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW,
     CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW,
     CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW,
+    // Marriage-annulment workflow: exception queue visibility and
+    // resolution, case reassignment (with its own audit entry, spec §5),
+    // duplicate resolution, foreign-decision review, SDID sync oversight +
+    // retry, supervisor-level legal-effect classification override, audit
+    // history. No routine registration drafting or approval unless
+    // separately assigned.
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_EXCEPTION_REVIEW,
+    CRVS_PERMISSIONS.ANNULMENT_EXCEPTIONS_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_FOREIGN_DECISION_REVIEW,
+    CRVS_PERMISSIONS.ANNULMENT_CASE_REASSIGN,
+    CRVS_PERMISSIONS.ANNULMENT_DUPLICATE_RESOLVE,
+    CRVS_PERMISSIONS.ANNULMENT_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_SDID_SYNC_RETRY,
+    CRVS_PERMISSIONS.ANNULMENT_LEGAL_EFFECT_CLASSIFY,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_AUDIT_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_RESTRICTED_DOCUMENTS_VIEW,
   ],
   // Configure certificate templates, fee rules, validity/verification
   // settings, delivery channels; manage permissions. Deliberately carries
@@ -498,6 +591,14 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW,
     CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW,
     CRVS_PERMISSIONS.DIVORCE_AUDIT_VIEW,
+    // Read-only oversight of the marriage-annulment workflow — same shape as
+    // divorce above, no create/edit/approve authority, but does include
+    // restricted-document visibility since audit review must be able to see
+    // what staff saw.
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_AUDIT_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_RESTRICTED_DOCUMENTS_VIEW,
   ],
   // Prepares, edits, and submits marriage declarations; runs identity search
   // and resolves duplicate/near-duplicate flags; records demo payments;
@@ -561,6 +662,13 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DIVORCE_REGISTRATION_VIEW,
     CRVS_PERMISSIONS.DIVORCE_REGISTERED_VIEW,
     CRVS_PERMISSIONS.DIVORCE_CERTIFICATE_REQUEST,
+    // Narrow read/record/certificate-request role over registered
+    // annulments — same shape as divorce above, no drafting, review, or
+    // approval authority at all.
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTERED_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_RECORD_REQUEST,
+    CRVS_PERMISSIONS.ANNULMENT_CERTIFICATE_REQUEST,
   ],
   // Optional/demo-only role standing in for the simulated court integration
   // (spec §3, §5A) — creates and submits DivorceNotification records only,
@@ -570,6 +678,47 @@ export const CRVS_ROLE_PERMISSIONS: Record<CrvsRole, CrvsPermission[]> = {
     CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_VIEW,
     CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_EDIT,
     CRVS_PERMISSIONS.DIVORCE_NOTIFICATION_SUBMIT,
+    // Same simulated-court-integration role, extended to annulment
+    // notifications (spec §4, §6A) — never a registration, never any
+    // review/approval authority.
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_CREATE,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_EDIT,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_SUBMIT,
+  ],
+  // Prepares, edits, and submits marriage-annulment registration requests
+  // across every submission source (applicant, both affected parties,
+  // interested person, staff-assisted, foreign decision); validates and
+  // converts court notifications into registrations; runs identity/marriage
+  // search and resolves duplicate flags; responds to corrections/evidence
+  // requests; requests annulment records/certificates. No approval, no
+  // decision-verification/legal-effect-classification authority, no
+  // registration authority (spec §4).
+  ANNULMENT_REGISTRATION_OFFICER: [
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_VALIDATE,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_RETURN,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_MARK_DUPLICATE,
+    CRVS_PERMISSIONS.ANNULMENT_NOTIFICATION_CONVERT,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_CREATE,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_EDIT,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_SUBMIT,
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_CORRECTION_RESPOND,
+    CRVS_PERMISSIONS.ANNULMENT_IDENTITY_SEARCH,
+    CRVS_PERMISSIONS.ANNULMENT_DUPLICATE_RESOLVE,
+    CRVS_PERMISSIONS.ANNULMENT_SDID_SYNC_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_RECORD_REQUEST,
+    CRVS_PERMISSIONS.ANNULMENT_CERTIFICATE_REQUEST,
+  ],
+  // Optional/narrow role (spec §4 "where required") reviewing only the
+  // configured foreign-decision recognition requirements (translation,
+  // authentication, exequatur) for annulment cases — no approval,
+  // registration, or general-review authority of its own.
+  FOREIGN_DECISION_REVIEWER: [
+    CRVS_PERMISSIONS.ANNULMENT_REGISTRATION_VIEW,
+    CRVS_PERMISSIONS.ANNULMENT_FOREIGN_DECISION_REVIEW,
+    CRVS_PERMISSIONS.ANNULMENT_AUDIT_VIEW,
   ],
 };
 
@@ -587,4 +736,6 @@ export const CRVS_ROLE_LABELS: Record<CrvsRole, string> = {
   DIVORCE_REGISTRATION_OFFICER: "Divorce Registration Officer",
   CRVS_RECORDS_OFFICER: "CRVS Records Officer",
   COURT_NOTIFICATION_OFFICER: "Court Notification Officer",
+  ANNULMENT_REGISTRATION_OFFICER: "Annulment Registration Officer",
+  FOREIGN_DECISION_REVIEWER: "Foreign Decision Reviewer",
 };
